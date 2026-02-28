@@ -2,42 +2,41 @@ import { Link, useNavigate } from "react-router-dom";
 import { useContext, useState, useRef, useEffect } from "react";
 import { ThemeContext } from "./App";
 import { useAuth } from "./AuthContext";
+import { STOCKS, STOCK_ROUTES } from "./dashboards/stocksDB";
 
 const GOLD = "#D4A017";
 const NAVY = "#0D1B2A";
 
-// ── Searchable items: stocks + pages ───────────────────────────────────────
-const SEARCH_ITEMS = [
-  // ── Live dashboards ──
-  { name:"Info Edge (India) Ltd",   ticker:"NSE: NAUKRI",     path:"/info-edge",     type:"stock",  active:true  },
-  { name:"Eicher Motors Ltd",       ticker:"NSE: EICHERMOT",  path:"/eicher-motors", type:"stock",  active:true  },
-  { name:"IGI Ltd",                 ticker:"NSE: IGIL",       path:"/igil",          type:"stock",  active:true  },
-  // ── Coming soon ──
-  { name:"Zomato Ltd",              ticker:"NSE: ZOMATO",     path:null,             type:"stock",  active:false },
-  { name:"PB Fintech Ltd",          ticker:"NSE: POLICYBZR",  path:null,             type:"stock",  active:false },
-  { name:"Trent Ltd",               ticker:"NSE: TRENT",      path:null,             type:"stock",  active:false },
-  { name:"Persistent Systems",      ticker:"NSE: PERSISTENT", path:null,             type:"stock",  active:false },
-  { name:"Dixon Technologies",      ticker:"NSE: DIXON",      path:null,             type:"stock",  active:false },
-  { name:"Rail Vikas Nigam",        ticker:"NSE: RVNL",       path:null,             type:"stock",  active:false },
-  { name:"Suzlon Energy",           ticker:"NSE: SUZLON",     path:null,             type:"stock",  active:false },
-  { name:"HDFC Bank Ltd",           ticker:"NSE: HDFCBANK",   path:null,             type:"stock",  active:false },
-  // ── Pages ──
-  { name:"Home",                    ticker:"Page",            path:"/",              type:"page",   active:true  },
-  { name:"Research Universe",       ticker:"Page",            path:"/#universe",     type:"page",   active:true  },
-  { name:"Investment Philosophy",   ticker:"Page",            path:"/philosophy",    type:"page",   active:true  },
-  { name:"About Us",                ticker:"Page",            path:"/about",         type:"page",   active:true  },
-  { name:"Sign Up",                 ticker:"Page",            path:"/signup",        type:"page",   active:true  },
-  { name:"Terms & Conditions",      ticker:"Page",            path:"/terms",         type:"page",   active:true  },
+// ── Search items: dynamically built from stocksDB active routes + static pages ──
+const STATIC_PAGES = [
+  { name:"Home",                 ticker:"Page", path:"/",           type:"page", active:true },
+  { name:"Research Universe",    ticker:"Page", path:"/#universe",  type:"page", active:true },
+  { name:"Investment Philosophy",ticker:"Page", path:"/philosophy", type:"page", active:true },
+  { name:"About Us",             ticker:"Page", path:"/about",      type:"page", active:true },
+  { name:"Sign Up",              ticker:"Page", path:"/signup",     type:"page", active:true },
+  { name:"Terms & Conditions",   ticker:"Page", path:"/terms",      type:"page", active:true },
 ];
 
-const NAV_LINKS = [
-  { label:"Home",                  path:"/"            },
-  { label:"Research Universe",     path:"/#universe"   },
-  { label:"Investment Philosophy", path:"/philosophy"  },
-  { label:"About Us",              path:"/about"       },
-  { label:"Info Edge",             path:"/info-edge"   },
-  { label:"Eicher Motors",         path:"/eicher-motors"},
-  { label:"IGI Ltd",               path:"/igil"        },
+const SEARCH_ITEMS = [
+  // Active stocks from stocksDB
+  ...STOCK_ROUTES.map(({ path, stockId }) => ({
+    name:   STOCKS[stockId].name,
+    ticker: `NSE: ${STOCKS[stockId].nse}`,
+    path,
+    type:   "stock",
+    active: true,
+  })),
+  // Static pages
+  ...STATIC_PAGES,
+];
+
+// ── Static nav links (non-stock pages) ──
+const PAGE_NAV_LINKS = [
+  { label:"Home",                  path:"/"           },
+  { label:"Research Universe",     path:"/#universe"  },
+  { label:"Investment Philosophy", path:"/philosophy" },
+  { label:"About Us",              path:"/about"      },
+  { label:"Terms & Conditions",    path:"/terms"      },
 ];
 
 export default function Navbar() {
@@ -49,6 +48,9 @@ export default function Navbar() {
   const [searchOpen,  setSearchOpen]  = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [menuOpen,    setMenuOpen]    = useState(false);
+  const [stocksOpen,  setStocksOpen]  = useState(false);
+  const stocksRef  = useRef(null);
+  const menuRef    = useRef(null);
   const searchRef      = useRef(null);
   const inputRef       = useRef(null);
   const mobileInputRef = useRef(null);
@@ -64,6 +66,21 @@ export default function Navbar() {
     document.addEventListener("mousedown", fn);
     return () => document.removeEventListener("mousedown", fn);
   }, [searchOpen]);
+
+  useEffect(() => {
+    if (!stocksOpen) return;
+    const fn = e => { if (stocksRef.current && !stocksRef.current.contains(e.target)) setStocksOpen(false); };
+    document.addEventListener("mousedown", fn);
+    return () => document.removeEventListener("mousedown", fn);
+  }, [stocksOpen]);
+
+  useEffect(() => {
+    if (!menuOpen) return;
+    const fn = e => { if (menuRef.current && !menuRef.current.contains(e.target)) setMenuOpen(false); };
+    document.addEventListener("mousedown", fn);
+    document.addEventListener("touchstart", fn);
+    return () => { document.removeEventListener("mousedown", fn); document.removeEventListener("touchstart", fn); };
+  }, [menuOpen]);
 
   // Theme-aware colours
   const navBg     = isDark ? "rgba(10,21,36,0.97)"      : "rgba(245,240,232,0.97)";
@@ -176,7 +193,7 @@ export default function Navbar() {
         }
       `}</style>
 
-      <nav style={{ position:"fixed", top:0, left:0, right:0, zIndex:100000, background:navBg, borderBottom:`1px solid ${borderCol}`, backdropFilter:"blur(20px)", WebkitBackdropFilter:"blur(20px)" }}>
+      <nav ref={menuRef} style={{ position:"fixed", top:0, left:0, right:0, zIndex:100000, background:navBg, borderBottom:`1px solid ${borderCol}`, backdropFilter:"blur(20px)", WebkitBackdropFilter:"blur(20px)" }}>
 
         {/* ── TOP ROW ── */}
         <div style={{ padding:"0 16px", height:58, display:"flex", alignItems:"center", justifyContent:"space-between", position:"relative" }}>
@@ -296,24 +313,89 @@ export default function Navbar() {
           </div>
         </div>
 
-        {/* ── SECONDARY RIBBON (desktop) — bigger + brighter ── */}
-        <div className="ribbon-links" style={{ borderTop:`1px solid rgba(212,160,23,0.08)`, padding:"0 24px", height:36, display:"flex", alignItems:"center", gap:28, overflowX:"auto", background:"transparent" }}>
-          {NAV_LINKS.map(l => (
+        {/* ── SECONDARY RIBBON (desktop) ── */}
+        <div className="ribbon-links" style={{ borderTop:`1px solid rgba(212,160,23,0.08)`, padding:"0 24px", height:36, display:"flex", alignItems:"center", gap:28, overflowX:"visible", background:"transparent", position:"relative", zIndex:200000 }}>
+          {PAGE_NAV_LINKS.map(l => (
             <Link key={l.label} to={l.path} className="nav-link" style={{ color:textCol }}>
               {l.label}
             </Link>
           ))}
+
+          {/* All Stocks dropdown */}
+          <div ref={stocksRef} style={{ position:"relative" }}>
+            <button
+              onClick={() => setStocksOpen(o => !o)}
+              className="nav-link"
+              style={{ background:"none", border:"none", cursor:"pointer", color:stocksOpen ? GOLD : textCol, display:"flex", alignItems:"center", gap:5, padding:0, fontFamily:"'DM Sans',sans-serif", fontSize:11, fontWeight:700, letterSpacing:"0.8px" }}
+            >
+              All Stocks
+              <span style={{ fontSize:9, transition:"transform .2s", display:"inline-block", transform:stocksOpen?"rotate(180deg)":"rotate(0deg)" }}>▼</span>
+            </button>
+            {stocksOpen && (
+              <div style={{ position:"absolute", top:"calc(100% + 10px)", left:0, minWidth:240, background:dropBg, border:`1px solid ${borderCol}`, borderRadius:10, boxShadow:"0 16px 40px rgba(0,0,0,0.55)", overflow:"hidden", animation:"searchDrop .2s ease", zIndex:999999 }}>
+                {STOCK_ROUTES.map(({ path, stockId }) => {
+                  const s = STOCKS[stockId];
+                  return (
+                    <Link key={stockId} to={path}
+                      onClick={() => setStocksOpen(false)}
+                      style={{ display:"flex", justifyContent:"space-between", alignItems:"center", padding:"11px 16px", textDecoration:"none", borderBottom:`1px solid rgba(212,160,23,0.07)`, transition:"background .15s" }}
+                      onMouseEnter={e => e.currentTarget.style.background="rgba(212,160,23,0.06)"}
+                      onMouseLeave={e => e.currentTarget.style.background="transparent"}
+                    >
+                      <div>
+                        <div style={{ fontSize:12, fontWeight:700, color: isDark ? "#c8dae8" : "#0D1B2A", fontFamily:"'DM Sans',sans-serif" }}>{s.name}</div>
+                        <div style={{ fontSize:9, color:"rgba(212,160,23,0.55)", letterSpacing:1, marginTop:1, fontFamily:"'DM Sans',sans-serif" }}>NSE: {s.nse}</div>
+                      </div>
+                      <span style={{ fontSize:9, fontWeight:700, color:GOLD, background:"rgba(212,160,23,0.1)", padding:"2px 8px", borderRadius:999, letterSpacing:1, fontFamily:"'DM Sans',sans-serif" }}>GO →</span>
+                    </Link>
+                  );
+                })}
+              </div>
+            )}
+          </div>
         </div>
 
         {/* ── MOBILE DRAWER ── */}
         {menuOpen && (
           <div className="mobile-menu" style={{ borderTop:`1px solid rgba(212,160,23,0.10)`, background:ribbonBg, padding:"4px 0 8px", animation:"menuSlide .25s ease forwards" }}>
-            {NAV_LINKS.map(l => (
+
+            {/* Static page links */}
+            {PAGE_NAV_LINKS.map(l => (
               <Link key={l.label} to={l.path} className="nav-link" onClick={() => setMenuOpen(false)}
                 style={{ display:"block", padding:"13px 24px", fontSize:12, borderBottom:`1px solid rgba(212,160,23,0.06)`, letterSpacing:"1.6px", color:textCol }}>
                 {l.label}
               </Link>
             ))}
+
+            {/* All Stocks accordion */}
+            <div>
+              <button
+                onClick={() => setStocksOpen(o => !o)}
+                style={{ width:"100%", textAlign:"left", background:"none", border:"none", borderBottom:`1px solid rgba(212,160,23,0.06)`, padding:"13px 24px", fontSize:12, fontWeight:700, letterSpacing:"1.6px", color:stocksOpen ? GOLD : textCol, fontFamily:"'DM Sans',sans-serif", cursor:"pointer", display:"flex", justifyContent:"space-between", alignItems:"center" }}
+              >
+                ALL STOCKS
+                <span style={{ fontSize:10, transition:"transform .2s", display:"inline-block", transform:stocksOpen?"rotate(180deg)":"rotate(0deg)" }}>▼</span>
+              </button>
+              {stocksOpen && (
+                <div style={{ background: isDark ? "rgba(0,0,0,0.18)" : "rgba(13,27,42,0.04)" }}>
+                  {STOCK_ROUTES.map(({ path, stockId }) => {
+                    const s = STOCKS[stockId];
+                    return (
+                      <Link key={stockId} to={path}
+                        onClick={() => { setMenuOpen(false); setStocksOpen(false); }}
+                        style={{ display:"flex", justifyContent:"space-between", alignItems:"center", padding:"13px 32px", textDecoration:"none", borderBottom:`1px solid rgba(212,160,23,0.05)`, cursor:"pointer" }}
+                      >
+                        <div>
+                          <div style={{ fontSize:13, fontWeight:700, color: isDark ? "#c8dae8" : "#0D1B2A", fontFamily:"'DM Sans',sans-serif" }}>{s.name}</div>
+                          <div style={{ fontSize:9, color:"rgba(212,160,23,0.5)", letterSpacing:1, marginTop:2, fontFamily:"'DM Sans',sans-serif" }}>NSE: {s.nse}</div>
+                        </div>
+                        <span style={{ fontSize:10, fontWeight:700, color:GOLD, background:"rgba(212,160,23,0.1)", padding:"4px 10px", borderRadius:999, letterSpacing:1, fontFamily:"'DM Sans',sans-serif", flexShrink:0 }}>GO →</span>
+                      </Link>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
 
             <div style={{ padding:"12px 24px", borderTop:`1px solid rgba(212,160,23,0.08)`, marginTop:4 }}>
               {user ? (

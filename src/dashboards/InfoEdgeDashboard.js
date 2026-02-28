@@ -120,7 +120,7 @@ function TabButton({ label, active, onClick }) {
 
 function MetricCard({ label, value, sub, color = GOLD }) {
   return (
-    <div style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 8, padding: "14px 18px", flex: 1, minWidth: 140 }}>
+    <div className="metric-card" style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 8, padding: "14px 18px" }}>
       <div style={{ fontSize: 11, color: "#94a3b8", textTransform: "uppercase", letterSpacing: 1, marginBottom: 4 }}>{label}</div>
       <div style={{ fontSize: 22, fontWeight: 800, color, fontFamily: "'DM Sans', sans-serif" }}>{value}</div>
       {sub && <div style={{ fontSize: 11, color: "#64748b", marginTop: 2 }}>{sub}</div>}
@@ -172,7 +172,14 @@ export default function InfoEdgeDashboard() {
       </Link>
 
       <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Playfair+Display:wght@700;800&display=swap" rel="stylesheet" />
-
+      <style>{`
+        .metric-grid { display: flex; gap: 10px; margin-top: 16px; flex-wrap: wrap; }
+        .metric-card { flex: 1; min-width: 140px; }
+        @media (max-width: 600px) {
+          .metric-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+          .metric-card { min-width: unset; }
+        }
+      `}</style>
 
       {/* Header */}
       <div style={{ padding: "90px 28px 0", borderBottom: `1px solid rgba(212,160,23,0.2)` }}>
@@ -190,7 +197,14 @@ export default function InfoEdgeDashboard() {
           </div>
         </div>
 
-        <div style={{ display: "flex", gap: 10, marginTop: 16, flexWrap: "wrap" }}>
+        {/* Company description */}
+        <div style={{ marginTop: 14, padding: "12px 16px", background: "rgba(212,160,23,0.06)", border: "1px solid rgba(212,160,23,0.18)", borderRadius: 8 }}>
+          <p style={{ margin: 0, fontSize: 13, color: "#c8dae8", lineHeight: 1.65 }}>
+            India's leading internet classifieds company operating <strong style={{color:"#fff"}}>Naukri.com</strong> (dominant job portal with 70%+ market share) and <strong style={{color:"#fff"}}>99acres.com</strong> (top real-estate platform). Also an active venture investor with a ₹36,855 Cr portfolio including stakes in Zomato and PB Fintech.
+          </p>
+        </div>
+
+        <div className="metric-grid">
           <MetricCard label="CMP" value="₹1,100" sub="Feb 2026" />
           <MetricCard label="Market Cap" value="₹70,000 Cr" sub="$8.3B" />
           <MetricCard label="FY30 Target" value="₹1,700–2,100" sub="12–17% CAGR" color={GREEN} />

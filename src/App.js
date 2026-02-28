@@ -2,15 +2,16 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { createContext, useState, useEffect } from "react";
 import Home from "./Home";
 import Navbar from "./Navbar";
-import InfoEdgeDashboard from "./dashboards/InfoEdgeDashboard";
-import EicherMotorsDashboard from "./dashboards/EicherMotorsDashboard";
-import IGILDashboard from "./dashboards/Igildashboard";
 import Footer from "./Footer";
 import SignUp from "./SignUp";
 import AboutUs from "./AboutUs";
 import TermsConditions from "./TermsConditions";
 import InvestmentPhilosophy from "./InvestmentPhilosophy";
 import { AuthProvider } from "./AuthContext";
+
+// ── New scalable dashboard system ──
+import { STOCKS, STOCK_ROUTES } from "./dashboards/stocksDB";
+import StockDashboard from "./dashboards/StockDashboard";
 
 export const ThemeContext = createContext();
 
@@ -34,14 +35,20 @@ function App() {
         <Router>
           <Navbar />
           <Routes>
-            <Route path="/"            element={<Home />} />
-            <Route path="/info-edge"   element={<InfoEdgeDashboard />} />
-            <Route path="/eicher-motors" element={<EicherMotorsDashboard />} />
-            <Route path="/igil"        element={<IGILDashboard />} />
-            <Route path="/signup"      element={<SignUp />} />
-            <Route path="/about"       element={<AboutUs />} />
-            <Route path="/terms"       element={<TermsConditions />} />
-            <Route path="/philosophy"  element={<InvestmentPhilosophy />} />
+            <Route path="/"           element={<Home />} />
+            <Route path="/signup"     element={<SignUp />} />
+            <Route path="/about"      element={<AboutUs />} />
+            <Route path="/terms"      element={<TermsConditions />} />
+            <Route path="/philosophy" element={<InvestmentPhilosophy />} />
+
+            {/* Auto-generated stock routes — add new stocks in stocksDB.js only */}
+            {STOCK_ROUTES.map(({ path, stockId }) => (
+              <Route
+                key={stockId}
+                path={path}
+                element={<StockDashboard stock={STOCKS[stockId]} />}
+              />
+            ))}
           </Routes>
           <Footer />
         </Router>

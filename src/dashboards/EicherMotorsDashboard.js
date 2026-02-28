@@ -111,7 +111,7 @@ function TabButton({label,active,onClick}) {
 
 function MetricCard({label,value,sub,color=GOLD}) {
   return (
-    <div style={{background:"rgba(255,255,255,0.03)",border:"1px solid rgba(255,255,255,0.08)",borderRadius:8,padding:"14px 18px",flex:1,minWidth:140}}>
+    <div className="metric-card" style={{background:"rgba(255,255,255,0.03)",border:"1px solid rgba(255,255,255,0.08)",borderRadius:8,padding:"14px 18px"}}>
       <div style={{fontSize:11,color:"#94a3b8",textTransform:"uppercase",letterSpacing:1,marginBottom:4}}>{label}</div>
       <div style={{fontSize:22,fontWeight:800,color,fontFamily:"'DM Sans',sans-serif"}}>{value}</div>
       {sub&&<div style={{fontSize:11,color:"#64748b",marginTop:2}}>{sub}</div>}
@@ -147,6 +147,14 @@ export default function EicherMotorsDashboard() {
       </Link>
 
       <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Playfair+Display:wght@700;800&display=swap" rel="stylesheet"/>
+      <style>{`
+        .metric-grid { display: flex; gap: 10px; margin-top: 16px; flex-wrap: wrap; }
+        .metric-card { flex: 1; min-width: 140px; }
+        @media (max-width: 600px) {
+          .metric-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+          .metric-card { min-width: unset; }
+        }
+      `}</style>
 
       {/* ── Header ── */}
       <div style={{padding:"90px 28px 0",borderBottom:`1px solid rgba(212,160,23,0.2)`}}>
@@ -164,8 +172,15 @@ export default function EicherMotorsDashboard() {
           </div>
         </div>
 
+        {/* Company description */}
+        <div style={{ marginTop: 14, padding: "12px 16px", background: "rgba(212,160,23,0.06)", border: "1px solid rgba(212,160,23,0.18)", borderRadius: 8 }}>
+          <p style={{ margin: 0, fontSize: 13, color: "#c8dae8", lineHeight: 1.65 }}>
+            India's only listed pure-play premium motorcycle company, owning the iconic <strong style={{color:"#fff"}}>Royal Enfield</strong> brand with 88.9% market share in the 250cc+ segment. Also holds 49.98% in <strong style={{color:"#fff"}}>VECV</strong> (Volvo Eicher commercial vehicles), combining cultural brand monopoly with disciplined capital allocation and zero net debt.
+          </p>
+        </div>
+
         {/* Metric cards */}
-        <div style={{display:"flex",gap:10,marginTop:16,flexWrap:"wrap"}}>
+        <div className="metric-grid">
           <MetricCard label="CMP"           value="₹8,190"          sub="Feb 27, 2026"          />
           <MetricCard label="Market Cap"    value="₹2,24,000 Cr"    sub="$27.3B · Nifty 50"     />
           <MetricCard label="FY30 Target"   value="₹12,500–15,000"  sub="14–16% CAGR"  color={GREEN}  />

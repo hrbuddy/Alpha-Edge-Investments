@@ -113,7 +113,7 @@ function TabButton({ label, active, onClick }) {
 
 function MetricCard({ label, value, sub, color = GOLD }) {
   return (
-    <div style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 8, padding: "14px 18px", flex: 1, minWidth: 140 }}>
+    <div className="metric-card" style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 8, padding: "14px 18px" }}>
       <div style={{ fontSize: 11, color: "#94a3b8", textTransform: "uppercase", letterSpacing: 1, marginBottom: 4 }}>{label}</div>
       <div style={{ fontSize: 22, fontWeight: 800, color, fontFamily: "'DM Sans', sans-serif" }}>{value}</div>
       {sub && <div style={{ fontSize: 11, color: "#64748b", marginTop: 2 }}>{sub}</div>}
@@ -165,7 +165,14 @@ export default function IGILDashboard() {
       </Link>
 
       <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Playfair+Display:wght@700;800&display=swap" rel="stylesheet" />
-
+      <style>{`
+        .metric-grid { display: flex; gap: 10px; margin-top: 16px; flex-wrap: wrap; }
+        .metric-card { flex: 1; min-width: 140px; }
+        @media (max-width: 600px) {
+          .metric-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+          .metric-card { min-width: unset; }
+        }
+      `}</style>
 
       {/* Header */}
       <div style={{ padding: "90px 28px 0", borderBottom: `1px solid rgba(212,160,23,0.2)` }}>
@@ -183,7 +190,14 @@ export default function IGILDashboard() {
           </div>
         </div>
 
-        <div style={{ display: "flex", gap: 10, marginTop: 16, flexWrap: "wrap" }}>
+        {/* Company description */}
+        <div style={{ marginTop: 14, padding: "12px 16px", background: "rgba(212,160,23,0.06)", border: "1px solid rgba(212,160,23,0.18)", borderRadius: 8 }}>
+          <p style={{ margin: 0, fontSize: 13, color: "#c8dae8", lineHeight: 1.65 }}>
+            World's largest independent diamond and gemstone certification lab, holding <strong style={{color:"#fff"}}>33% global market share</strong> and certifying 65% of all lab-grown diamonds worldwide. A pure picks-and-shovels play — every diamond entering organised retail needs an IGI certificate, making revenues agnostic to diamond price cycles.
+          </p>
+        </div>
+
+        <div className="metric-grid">
           <MetricCard label="CMP" value="₹330" sub="Feb 2026" />
           <MetricCard label="Market Cap" value="₹14,200 Cr" sub="$1.7B" />
           <MetricCard label="FY30 Target" value="₹550–700" sub="14–20% CAGR" color={GREEN} />

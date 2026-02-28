@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { useContext, useEffect, useRef, useState } from "react";
 import { ThemeContext } from "./App";
+import { STOCKS, STOCK_ROUTES } from "./dashboards/stocksDB";
 
 const NAVY  = "#0D1B2A";
 const GOLD  = "#D4A017";
@@ -63,18 +64,32 @@ const LIGHT_PAL = {
   sectionBg:       "#F5F0E8",
 };
 
+// ─── Active stock tiles — auto-generated from stocksDB ─────────────────────
 const stocks = [
-  { name:"Info Edge (India) Ltd", ticker:"NSE: NAUKRI · BSE: 532777", rating:"BUY", target:"₹1,700 – 2,100",   cagr:"12–17% CAGR to FY30", path:"/info-edge",     active:true  },
-  { name:"Eicher Motors Ltd",     ticker:"NSE: EICHERMOT",            rating:"BUY", target:"₹12,500 – 15,000", cagr:"14–16% CAGR to FY30", path:"/eicher-motors", active:true  },
-  { name:"IGI Ltd",               ticker:"NSE: IGIL",                 rating:"BUY", target:"₹550 – 700",       cagr:"14–20% CAGR to FY30", path:"/igil",          active:true  },
-  { name:"Zomato Ltd",            ticker:"NSE: ZOMATO",     path:"#", active:false },
-  { name:"PB Fintech Ltd",        ticker:"NSE: POLICYBZR",  path:"#", active:false },
-  { name:"Trent Ltd",             ticker:"NSE: TRENT",      path:"#", active:false },
-  { name:"Persistent Systems",    ticker:"NSE: PERSISTENT", path:"#", active:false },
-  { name:"Dixon Technologies",    ticker:"NSE: DIXON",      path:"#", active:false },
-  { name:"Rail Vikas Nigam",      ticker:"NSE: RVNL",       path:"#", active:false },
-  { name:"Suzlon Energy",         ticker:"NSE: SUZLON",     path:"#", active:false },
-  { name:"HDFC Bank Ltd",         ticker:"NSE: HDFCBANK",   path:"#", active:false },
+  // Live dashboards — pulled from stocksDB
+  ...STOCK_ROUTES.map(({ path, stockId }) => {
+    const s = STOCKS[stockId];
+    // Derive target & cagr from sensitivity base case
+    const baseScenario = s.sensitivity?.scenarios?.find(sc => sc.label === "BASE CASE");
+    return {
+      name:   s.name,
+      ticker: `NSE: ${s.nse} · BSE: ${s.bse}`,
+      rating: s.rating,
+      target: baseScenario?.target || s.metrics.find(m => m.label === "Target")?.value || "—",
+      cagr:   baseScenario?.pe ? `${baseScenario.pe} P/E to FY30` : s.sensitivity?.conclusion?.match(/\d+–?\d*%/)?.[0] || "",
+      path,
+      active: true,
+    };
+  }),
+  // Coming soon — kept here manually (not in stocksDB yet)
+  { name:"Zomato Ltd",         ticker:"NSE: ZOMATO",     path:"#", active:false },
+  { name:"PB Fintech Ltd",     ticker:"NSE: POLICYBZR",  path:"#", active:false },
+  { name:"Trent Ltd",          ticker:"NSE: TRENT",      path:"#", active:false },
+  { name:"Persistent Systems", ticker:"NSE: PERSISTENT", path:"#", active:false },
+  { name:"Dixon Technologies", ticker:"NSE: DIXON",      path:"#", active:false },
+  { name:"Rail Vikas Nigam",   ticker:"NSE: RVNL",       path:"#", active:false },
+  { name:"Suzlon Energy",      ticker:"NSE: SUZLON",     path:"#", active:false },
+  { name:"HDFC Bank Ltd",      ticker:"NSE: HDFCBANK",   path:"#", active:false },
 ];
 
 // ════════════════════════════════════════════════════════════════════════════
@@ -698,7 +713,7 @@ export default function Home() {
             {/* L3 — Tagline */}
             <p className="hero-sub hero-tagline" style={{
               fontSize:"clamp(14px,1.65vw,18px)", color:"#8aacbf",
-              margin:"0 0 clamp(24px,4vh,52px)", lineHeight:1.68, fontWeight:400,
+              margin:"0 0 clamp(24px, 4vh,5552px)", lineHeight:1.68, fontWeight:400,
               ...fu(560),
             }}>
               Institutional-grade equity research on India's finest compounders.<br/>
