@@ -2,9 +2,16 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { LineChart, Line, BarChart, Bar, ComposedChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, ReferenceLine, Cell } from "recharts";
 
-const COLORS = { navy: "#0D1B2A", blue: "#2E75B6", teal: "#0E7C7B", green: "#27AE60", red: "#C0392B", orange: "#E67E22", purple: "#8E44AD", gold: "#F39C12", gray: "#95A5A6" };
+const NAVY = "#0D1B2A";
+const BLUE = "#2E75B6";
+const TEAL = "#0E7C7B";
+const GREEN = "#27AE60";
+const RED = "#C0392B";
+const ORANGE = "#E67E22";
+const GOLD = "#D4A017";
+const GRAY = "#95A5A6";
 
-// ===== DATA =====
+// ===== ALL YOUR ORIGINAL DATA (100% untouched) =====
 const years = ["FY16","FY17","FY18","FY19","FY20","FY21","FY22","FY23","FY24","FY25","FY26E","FY27E","FY28E","FY29E","FY30E"];
 const isF = (y) => y.includes("E");
 
@@ -74,103 +81,93 @@ const cashFlowData = years.map((y,i) => ({
   forecast: isF(y)
 }));
 
+// Dark theme Tooltip (exactly like Info Edge)
 const CustomTooltip = ({ active, payload, label }) => {
   if (!active || !payload) return null;
   return (
-    <div style={{ background: "#fff", border: "1px solid #ddd", borderRadius: 6, padding: "8px 12px", fontSize: 12, boxShadow: "0 2px 8px rgba(0,0,0,0.1)" }}>
-      <p style={{ fontWeight: 700, marginBottom: 4, color: COLORS.navy }}>{label}</p>
+    <div style={{ background: NAVY, border: `1px solid ${GOLD}`, borderRadius: 6, padding: "8px 12px", color: "#fff", fontSize: 12 }}>
+      <p style={{ margin: 0, fontWeight: 700, color: GOLD }}>{label}</p>
       {payload.map((p, i) => (
-        <p key={i} style={{ color: p.color, margin: "2px 0" }}>
-          {p.name}: {typeof p.value === "number" ? (p.value >= 1000 ? `₹${(p.value).toLocaleString()} Cr` : p.value < 200 ? (p.name.includes("%") || p.name.includes("ROCE") || p.name.includes("OPM") || p.name.includes("NPM") || p.name.includes("Ratio") || p.name.includes("Payout") || p.name.includes("Retained") ? `${p.value}%` : `₹${p.value}`) : `${p.value}`) : p.value}
+        <p key={i} style={{ margin: "2px 0", color: p.color }}>
+          {p.name}: {typeof p.value === "number" ? (p.value >= 1000 ? `₹${p.value.toLocaleString()} Cr` : p.value < 200 ? `${p.value}%` : p.value) : p.value}
         </p>
       ))}
     </div>
   );
 };
 
+// Dark theme SectionCard (exactly like Info Edge cards)
 const SectionCard = ({ title, verdict, score, children, explanation }) => (
-  <div style={{ background: "#fff", borderRadius: 12, padding: "20px 24px", marginBottom: 20, boxShadow: "0 1px 6px rgba(0,0,0,0.08)", border: "1px solid #e8ecf0" }}>
+  <div style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 12, padding: "20px 24px", marginBottom: 20 }}>
     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 4 }}>
-      <h3 style={{ margin: 0, fontSize: 16, color: COLORS.navy, fontWeight: 700 }}>{title}</h3>
+      <h3 style={{ margin: 0, fontSize: 16, color: GOLD, fontWeight: 700 }}>{title}</h3>
       <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
-        <span style={{ background: verdict === "EXCELLENT" ? "#E8F5E9" : verdict === "STRONG" ? "#FFF3E0" : "#E3F2FD", color: verdict === "EXCELLENT" ? COLORS.green : verdict === "STRONG" ? COLORS.orange : COLORS.blue, padding: "2px 10px", borderRadius: 12, fontSize: 11, fontWeight: 700 }}>{verdict}</span>
-        <span style={{ background: COLORS.navy, color: "#fff", padding: "2px 10px", borderRadius: 12, fontSize: 11, fontWeight: 700 }}>{score}/10</span>
+        <span style={{ background: verdict === "EXCELLENT" ? "#E8F5E9" : verdict === "STRONG" ? "#FFF3E0" : "#E3F2FD", color: verdict === "EXCELLENT" ? GREEN : verdict === "STRONG" ? ORANGE : BLUE, padding: "2px 10px", borderRadius: 12, fontSize: 11, fontWeight: 700 }}>{verdict}</span>
+        <span style={{ background: NAVY, color: "#fff", padding: "2px 10px", borderRadius: 12, fontSize: 11, fontWeight: 700 }}>{score}/10</span>
       </div>
     </div>
-    <p style={{ fontSize: 12.5, color: "#555", margin: "6px 0 14px", lineHeight: 1.5 }}>{explanation}</p>
+    <p style={{ fontSize: 12.5, color: "#94a3b8", margin: "6px 0 14px", lineHeight: 1.5 }}>{explanation}</p>
     {children}
   </div>
 );
 
 export default function EicherQualityDashboard() {
-  const [tab, setTab] = useState("all");
-
   return (
-    <div style={{ fontFamily: "'Segoe UI', system-ui, sans-serif", background: "#f4f6f8", minHeight: "100vh", padding: "0" }}>
-      {/* Header */}
-      <div style={{ background: `linear-gradient(135deg, ${COLORS.navy} 0%, ${COLORS.teal} 100%)`, padding: "24px 28px 18px", color: "#fff" }}>
+    <div style={{ background: `linear-gradient(135deg, ${NAVY} 0%, #0a1628 100%)`, minHeight: "100vh", color: "#e2e8f0", fontFamily: "'DM Sans', sans-serif" }}>
 
-        {/* BACK TO HOME BUTTON */}
-        <Link
-          to="/"
-          style={{
-            position: "fixed",
-            top: "20px",
-            left: "28px",
-            zIndex: 10000,
-            color: "#D4A017",
-            textDecoration: "none",
-            fontWeight: 700,
-            background: "rgba(13,27,42,0.95)",
-            padding: "8px 18px",
-            borderRadius: 8,
-            fontSize: 13,
-            boxShadow: "0 4px 12px rgba(0,0,0,0.3)"
-          }}
-        >
-          ← Back to Alpha Edge Home
-        </Link>
+      {/* BACK TO HOME BUTTON - exactly like Info Edge */}
+      <Link
+        to="/"
+        style={{
+          position: "fixed",
+          top: "20px",
+          left: "28px",
+          zIndex: 10000,
+          color: GOLD,
+          textDecoration: "none",
+          fontWeight: 700,
+          background: "rgba(13,27,42,0.95)",
+          padding: "8px 18px",
+          borderRadius: 8,
+          fontSize: 13,
+          boxShadow: "0 4px 12px rgba(0,0,0,0.3)"
+        }}
+      >
+        ← Back to Alpha Edge Home
+      </Link>
 
-        <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Playfair+Display:wght@700;800&display=swap" rel="stylesheet" />
+      <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Playfair+Display:wght@700;800&display=swap" rel="stylesheet" />
 
-        {/* Header Content */}
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
+      {/* Header - exactly same structure as Info Edge */}
+      <div style={{ padding: "90px 28px 0", borderBottom: `1px solid rgba(212,160,23,0.2)` }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: 12 }}>
           <div>
-            <p style={{ margin: 0, fontSize: 11, letterSpacing: 3, opacity: 0.7, textTransform: "uppercase" }}>Quality Analysis Dashboard</p>
-            <h1 style={{ margin: "4px 0 2px", fontSize: 26, fontWeight: 800 }}>Eicher Motors Ltd</h1>
-            <p style={{ margin: 0, fontSize: 13, opacity: 0.8 }}>NSE: EICHERMOT | Royal Enfield + VECV | FY30 Target: ₹12,500–15,000</p>
+            <div style={{ fontSize: 11, color: GOLD, letterSpacing: 2, textTransform: "uppercase", fontWeight: 700 }}>Alpha Edge Research — Quality Analysis</div>
+            <h1 style={{ margin: "6px 0 2px", fontSize: 30, fontWeight: 800, fontFamily: "'Playfair Display', serif", color: "#fff" }}>
+              Eicher Motors Ltd
+            </h1>
+            <div style={{ fontSize: 13, color: "#94a3b8" }}>NSE: EICHERMOT | Royal Enfield + VECV | FY30 Target: ₹12,500–15,000</div>
           </div>
-          <div style={{ textAlign: "right" }}>
-            <div style={{ background: "rgba(255,255,255,0.15)", borderRadius: 10, padding: "10px 16px" }}>
-              <p style={{ margin: 0, fontSize: 10, opacity: 0.7 }}>QUALITY SCORE</p>
-              <p style={{ margin: 0, fontSize: 32, fontWeight: 800, color: "#4ADE80" }}>8.9<span style={{ fontSize: 14, opacity: 0.6 }}>/10</span></p>
-            </div>
+          <div style={{ display: "flex", gap: 8, padding: "6px 14px", background: "rgba(39,174,96,0.12)", border: `1px solid ${GREEN}44`, borderRadius: 8, alignItems: "center" }}>
+            <span style={{ fontSize: 11, color: "#94a3b8", fontWeight: 600 }}>QUALITY SCORE</span>
+            <span style={{ fontSize: 22, fontWeight: 800, color: GREEN }}>8.9/10</span>
           </div>
-        </div>
-
-        {/* Score pills */}
-        <div style={{ display: "flex", gap: 6, marginTop: 12, flexWrap: "wrap" }}>
-          {[["CMP","₹8,190"],["P/E","41x"],["ROCE","30%"],["ROE","24%"],["Mkt Cap","₹2.2L Cr"],["Debt","~0"],["Div Yield","0.9%"]].map(([k,v])=>(
-            <span key={k} style={{ background: "rgba(255,255,255,0.12)", borderRadius: 6, padding: "3px 10px", fontSize: 11 }}>
-              <span style={{ opacity: 0.6 }}>{k}: </span><span style={{ fontWeight: 700 }}>{v}</span>
-            </span>
-          ))}
         </div>
       </div>
 
-      <div style={{ padding: "16px 20px 30px" }}>
-        <p style={{ fontSize: 12, color: COLORS.gray, marginBottom: 16, textAlign: "center" }}>
+      {/* Content Area */}
+      <div style={{ padding: "20px 28px 40px" }}>
+        <p style={{ fontSize: 12, color: GRAY, marginBottom: 16, textAlign: "center" }}>
           10 years historical (FY16–FY25) + 5 years forecast (FY26E–FY30E) • Shaded area = forecasted
         </p>
 
-        {/* ALL YOUR SECTION CARDS (exactly as you wrote them) */}
         {/* a) Longevity */}
         <SectionCard title="a) Longevity / Long Period of Operation" verdict="EXCELLENT" score="10" explanation="Eicher Motors: incorporated 1982 (43 years). Royal Enfield: founded 1901 (125 years). Never reported a loss in listed history. Profitable through 2008 crisis, demonetization, COVID. One of the longest-operating industrial brands globally.">
           <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
             {[["Founded","1901 (RE)"],["Incorporated","1982"],["Years Operating","43+"],["Loss Years","ZERO"],["COVID PAT","₹1,347 Cr"],["Brand Age","125 yrs"]].map(([k,v])=>(
-              <div key={k} style={{ flex: "1 1 120px", background: "#f8fafb", borderRadius: 8, padding: "10px 14px", textAlign: "center", border: "1px solid #e8ecf0" }}>
-                <p style={{ margin: 0, fontSize: 10, color: COLORS.gray }}>{k}</p>
-                <p style={{ margin: "2px 0 0", fontSize: 16, fontWeight: 700, color: COLORS.navy }}>{v}</p>
+              <div key={k} style={{ flex: "1 1 120px", background: "rgba(255,255,255,0.03)", borderRadius: 8, padding: "10px 14px", textAlign: "center", border: "1px solid rgba(255,255,255,0.08)" }}>
+                <p style={{ margin: 0, fontSize: 10, color: GRAY }}>{k}</p>
+                <p style={{ margin: "2px 0 0", fontSize: 16, fontWeight: 700, color: "#fff" }}>{v}</p>
               </div>
             ))}
           </div>
@@ -180,18 +177,18 @@ export default function EicherQualityDashboard() {
         <SectionCard title="b) Predictable Cash Flow (CFO ₹ Cr)" verdict="EXCELLENT" score="9" explanation="Cash flows are highly predictable: daily cash motorcycle sales, negative working capital cycle (collects before paying suppliers), low maintenance capex. CFO grew from ₹1,463 Cr (FY16) to ₹3,980 Cr (FY25). 5Y CFO CAGR: 19%.">
           <ResponsiveContainer width="100%" height={240}>
             <ComposedChart data={cashFlowData} margin={{ top: 5, right: 20, left: 10, bottom: 5 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#eee" />
-              <XAxis dataKey="year" tick={{ fontSize: 10 }} />
-              <YAxis tick={{ fontSize: 10 }} />
+              <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.06)" />
+              <XAxis dataKey="year" tick={{ fill: "#94a3b8", fontSize: 10 }} />
+              <YAxis tick={{ fill: "#94a3b8", fontSize: 10 }} />
               <Tooltip content={<CustomTooltip />} />
               <defs>
                 <linearGradient id="cfGrad" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor={COLORS.teal} stopOpacity={0.3} />
-                  <stop offset="100%" stopColor={COLORS.teal} stopOpacity={0.05} />
+                  <stop offset="0%" stopColor={TEAL} stopOpacity={0.3} />
+                  <stop offset="100%" stopColor={TEAL} stopOpacity={0.05} />
                 </linearGradient>
               </defs>
-              <Area type="monotone" dataKey="cfo" name="CFO" fill="url(#cfGrad)" stroke={COLORS.teal} strokeWidth={2.5} dot={{ r: 3, fill: COLORS.teal }} />
-              <ReferenceLine x="FY25" stroke={COLORS.gray} strokeDasharray="5 5" label={{ value: "Forecast →", fontSize: 9, fill: COLORS.gray }} />
+              <Area type="monotone" dataKey="cfo" name="CFO" fill="url(#cfGrad)" stroke={TEAL} strokeWidth={2.5} dot={{ r: 3, fill: TEAL }} />
+              <ReferenceLine x="FY25" stroke={GRAY} strokeDasharray="5 5" label={{ value: "Forecast →", fontSize: 9, fill: GRAY }} />
             </ComposedChart>
           </ResponsiveContainer>
         </SectionCard>
@@ -200,17 +197,17 @@ export default function EicherQualityDashboard() {
         <SectionCard title="c) High ROCE (%)" verdict="EXCELLENT" score="9" explanation="ROCE averaged ~30% over 10 years, peaking at 53% (FY17), bottoming at 17% (FY21 COVID). Current 30% is well above 11-12% cost of capital and among the highest in Indian auto. Projected to sustain 31-34% through FY30.">
           <ResponsiveContainer width="100%" height={240}>
             <ComposedChart data={roceData} margin={{ top: 5, right: 20, left: 10, bottom: 5 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#eee" />
-              <XAxis dataKey="year" tick={{ fontSize: 10 }} />
-              <YAxis domain={[0, 60]} tick={{ fontSize: 10 }} tickFormatter={v => `${v}%`} />
+              <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.06)" />
+              <XAxis dataKey="year" tick={{ fill: "#94a3b8", fontSize: 10 }} />
+              <YAxis domain={[0, 60]} tick={{ fill: "#94a3b8", fontSize: 10 }} tickFormatter={v => `${v}%`} />
               <Tooltip content={<CustomTooltip />} />
-              <ReferenceLine y={12} stroke={COLORS.red} strokeDasharray="4 4" label={{ value: "WACC ~12%", fontSize: 9, fill: COLORS.red, position: "right" }} />
+              <ReferenceLine y={12} stroke={RED} strokeDasharray="4 4" label={{ value: "WACC ~12%", fontSize: 9, fill: RED, position: "right" }} />
               <Bar dataKey="value" name="ROCE %" radius={[4, 4, 0, 0]}>
                 {roceData.map((d, i) => (
-                  <Cell key={i} fill={d.forecast ? COLORS.orange : d.value >= 30 ? COLORS.green : d.value >= 20 ? COLORS.blue : COLORS.gray} opacity={d.forecast ? 0.6 : 1} />
+                  <Cell key={i} fill={d.forecast ? ORANGE : d.value >= 30 ? GREEN : d.value >= 20 ? BLUE : GRAY} opacity={d.forecast ? 0.6 : 1} />
                 ))}
               </Bar>
-              <ReferenceLine x="FY25" stroke={COLORS.gray} strokeDasharray="5 5" />
+              <ReferenceLine x="FY25" stroke={GRAY} strokeDasharray="5 5" />
             </ComposedChart>
           </ResponsiveContainer>
         </SectionCard>
@@ -219,23 +216,23 @@ export default function EicherQualityDashboard() {
         <SectionCard title="d) Resilience — Revenue Growth (₹ Cr)" verdict="STRONG" score="8" explanation="Revenue fell only in FY20 (-7%) and FY21 (-5%) due to COVID. Otherwise every year positive. 5Y CAGR: 16%, 3Y CAGR: 22%. Recovery from shocks is swift and V-shaped. Revenue projected to reach ₹39,500 Cr by FY30.">
           <ResponsiveContainer width="100%" height={260}>
             <ComposedChart data={revenueData} margin={{ top: 5, right: 20, left: 10, bottom: 5 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#eee" />
-              <XAxis dataKey="year" tick={{ fontSize: 10 }} />
-              <YAxis tick={{ fontSize: 10 }} tickFormatter={v => `${(v/1000).toFixed(0)}K`} />
+              <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.06)" />
+              <XAxis dataKey="year" tick={{ fill: "#94a3b8", fontSize: 10 }} />
+              <YAxis tick={{ fill: "#94a3b8", fontSize: 10 }} tickFormatter={v => `${(v/1000).toFixed(0)}K`} />
               <Tooltip content={<CustomTooltip />} />
               <defs>
                 <linearGradient id="revGrad" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor={COLORS.blue} stopOpacity={0.25} />
-                  <stop offset="100%" stopColor={COLORS.blue} stopOpacity={0.03} />
+                  <stop offset="0%" stopColor={BLUE} stopOpacity={0.25} />
+                  <stop offset="100%" stopColor={BLUE} stopOpacity={0.03} />
                 </linearGradient>
               </defs>
               <Area type="monotone" dataKey="value" name="Revenue" fill="url(#revGrad)" stroke="none" />
               <Bar dataKey="value" name="Revenue" radius={[3, 3, 0, 0]}>
                 {revenueData.map((d, i) => (
-                  <Cell key={i} fill={d.forecast ? COLORS.orange : COLORS.blue} opacity={d.forecast ? 0.55 : 0.85} />
+                  <Cell key={i} fill={d.forecast ? ORANGE : BLUE} opacity={d.forecast ? 0.55 : 0.85} />
                 ))}
               </Bar>
-              <ReferenceLine x="FY25" stroke={COLORS.gray} strokeDasharray="5 5" label={{ value: "Forecast →", fontSize: 9, fill: COLORS.gray }} />
+              <ReferenceLine x="FY25" stroke={GRAY} strokeDasharray="5 5" label={{ value: "Forecast →", fontSize: 9, fill: GRAY }} />
             </ComposedChart>
           </ResponsiveContainer>
         </SectionCard>
@@ -244,21 +241,21 @@ export default function EicherQualityDashboard() {
         <SectionCard title="e) Non-Cyclical: EPS Growth (₹)" verdict="STRONG" score="8" explanation="EPS dipped during FY20-21 (COVID) and recovered sharply to new highs. 5Y EPS CAGR: 29%. EPS growth healthy in 8 of 10 years. While auto is cyclical, Royal Enfield's mid-weight niche behaves more like a consumer franchise. FY30E EPS: ₹394.">
           <ResponsiveContainer width="100%" height={250}>
             <ComposedChart data={epsData} margin={{ top: 5, right: 20, left: 10, bottom: 5 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#eee" />
-              <XAxis dataKey="year" tick={{ fontSize: 10 }} />
-              <YAxis tick={{ fontSize: 10 }} tickFormatter={v => `₹${v}`} />
+              <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.06)" />
+              <XAxis dataKey="year" tick={{ fill: "#94a3b8", fontSize: 10 }} />
+              <YAxis tick={{ fill: "#94a3b8", fontSize: 10 }} tickFormatter={v => `₹${v}`} />
               <Tooltip content={<CustomTooltip />} />
               <defs>
                 <linearGradient id="epsGrad" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor={COLORS.green} stopOpacity={0.25} />
-                  <stop offset="100%" stopColor={COLORS.green} stopOpacity={0.03} />
+                  <stop offset="0%" stopColor={GREEN} stopOpacity={0.25} />
+                  <stop offset="100%" stopColor={GREEN} stopOpacity={0.03} />
                 </linearGradient>
               </defs>
-              <Area type="monotone" dataKey="value" name="EPS" fill="url(#epsGrad)" stroke={COLORS.green} strokeWidth={2.5} dot={(props) => {
+              <Area type="monotone" dataKey="value" name="EPS" fill="url(#epsGrad)" stroke={GREEN} strokeWidth={2.5} dot={(props) => {
                 const { cx, cy, payload } = props;
-                return <circle cx={cx} cy={cy} r={payload.forecast ? 4 : 3.5} fill={payload.forecast ? COLORS.orange : COLORS.green} stroke="#fff" strokeWidth={1.5} />;
+                return <circle cx={cx} cy={cy} r={payload.forecast ? 4 : 3.5} fill={payload.forecast ? ORANGE : GREEN} stroke="#fff" strokeWidth={1.5} />;
               }} />
-              <ReferenceLine x="FY25" stroke={COLORS.gray} strokeDasharray="5 5" />
+              <ReferenceLine x="FY25" stroke={GRAY} strokeDasharray="5 5" />
             </ComposedChart>
           </ResponsiveContainer>
         </SectionCard>
@@ -267,17 +264,17 @@ export default function EicherQualityDashboard() {
         <SectionCard title="f) Converts Profit to Cash: CFO/PAT" verdict="EXCELLENT" score="9" explanation="CFO/PAT averaged ~98% over 9 years. Virtually every rupee of profit converts to operating cash. FY18 stood out at 127% (working capital release). This is the hallmark of a truly high-quality business.">
           <ResponsiveContainer width="100%" height={280}>
             <ComposedChart data={cfoPatData} margin={{ top: 5, right: 20, left: 10, bottom: 5 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#eee" />
-              <XAxis dataKey="year" tick={{ fontSize: 10 }} />
-              <YAxis yAxisId="left" tick={{ fontSize: 10 }} tickFormatter={v => `${(v/1000).toFixed(0)}K`} />
-              <YAxis yAxisId="right" orientation="right" tick={{ fontSize: 10 }} tickFormatter={v => `${v}%`} domain={[0, 150]} />
+              <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.06)" />
+              <XAxis dataKey="year" tick={{ fill: "#94a3b8", fontSize: 10 }} />
+              <YAxis yAxisId="left" tick={{ fill: "#94a3b8", fontSize: 10 }} tickFormatter={v => `${(v/1000).toFixed(0)}K`} />
+              <YAxis yAxisId="right" orientation="right" tick={{ fill: "#94a3b8", fontSize: 10 }} tickFormatter={v => `${v}%`} domain={[0, 150]} />
               <Tooltip content={<CustomTooltip />} />
               <Legend wrapperStyle={{ fontSize: 11 }} />
-              <Bar yAxisId="left" dataKey="cfo" name="CFO (₹ Cr)" fill={COLORS.teal} opacity={0.7} radius={[3, 3, 0, 0]} />
-              <Bar yAxisId="left" dataKey="pat" name="PAT (₹ Cr)" fill={COLORS.blue} opacity={0.5} radius={[3, 3, 0, 0]} />
-              <Line yAxisId="right" type="monotone" dataKey="ratio" name="CFO/PAT Ratio %" stroke={COLORS.red} strokeWidth={2.5} dot={{ r: 3, fill: COLORS.red }} />
-              <ReferenceLine yAxisId="right" y={100} stroke={COLORS.green} strokeDasharray="4 4" label={{ value: "100%", fontSize: 9, fill: COLORS.green, position: "right" }} />
-              <ReferenceLine x="FY25" stroke={COLORS.gray} strokeDasharray="5 5" />
+              <Bar yAxisId="left" dataKey="cfo" name="CFO (₹ Cr)" fill={TEAL} opacity={0.7} radius={[3, 3, 0, 0]} />
+              <Bar yAxisId="left" dataKey="pat" name="PAT (₹ Cr)" fill={BLUE} opacity={0.5} radius={[3, 3, 0, 0]} />
+              <Line yAxisId="right" type="monotone" dataKey="ratio" name="CFO/PAT Ratio %" stroke={RED} strokeWidth={2.5} dot={{ r: 3, fill: RED }} />
+              <ReferenceLine yAxisId="right" y={100} stroke={GOLD} strokeDasharray="4 4" label={{ value: "100%", fontSize: 9, fill: GOLD, position: "right" }} />
+              <ReferenceLine x="FY25" stroke={GRAY} strokeDasharray="5 5" />
             </ComposedChart>
           </ResponsiveContainer>
         </SectionCard>
@@ -286,20 +283,20 @@ export default function EicherQualityDashboard() {
         <SectionCard title="g) Low Capex Driven: High PAT & Operating Margins (%)" verdict="EXCELLENT" score="9" explanation="PAT margin averaged ~21% over 5 years, reaching 25% in FY25. Operating margin averaged 25%. Extraordinary for an auto company — reflects Royal Enfield's brand-driven pricing power. Capex/Revenue typically 4-6%, indicating high-margin, low-capex business.">
           <ResponsiveContainer width="100%" height={240}>
             <ComposedChart data={marginData} margin={{ top: 5, right: 20, left: 10, bottom: 5 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#eee" />
-              <XAxis dataKey="year" tick={{ fontSize: 10 }} />
-              <YAxis domain={[0, 40]} tick={{ fontSize: 10 }} tickFormatter={v => `${v}%`} />
+              <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.06)" />
+              <XAxis dataKey="year" tick={{ fill: "#94a3b8", fontSize: 10 }} />
+              <YAxis domain={[0, 40]} tick={{ fill: "#94a3b8", fontSize: 10 }} tickFormatter={v => `${v}%`} />
               <Tooltip content={<CustomTooltip />} />
               <Legend wrapperStyle={{ fontSize: 11 }} />
-              <Line type="monotone" dataKey="opm" name="OPM %" stroke={COLORS.blue} strokeWidth={2.5} dot={(props) => {
+              <Line type="monotone" dataKey="opm" name="OPM %" stroke={BLUE} strokeWidth={2.5} dot={(props) => {
                 const { cx, cy, payload } = props;
-                return <circle cx={cx} cy={cy} r={payload.forecast ? 4 : 3} fill={payload.forecast ? COLORS.orange : COLORS.blue} stroke="#fff" strokeWidth={1} />;
+                return <circle cx={cx} cy={cy} r={payload.forecast ? 4 : 3} fill={payload.forecast ? ORANGE : BLUE} stroke="#fff" strokeWidth={1} />;
               }} />
-              <Line type="monotone" dataKey="npm" name="NPM %" stroke={COLORS.green} strokeWidth={2.5} dot={(props) => {
+              <Line type="monotone" dataKey="npm" name="NPM %" stroke={GREEN} strokeWidth={2.5} dot={(props) => {
                 const { cx, cy, payload } = props;
-                return <circle cx={cx} cy={cy} r={payload.forecast ? 4 : 3} fill={payload.forecast ? COLORS.orange : COLORS.green} stroke="#fff" strokeWidth={1} />;
+                return <circle cx={cx} cy={cy} r={payload.forecast ? 4 : 3} fill={payload.forecast ? ORANGE : GREEN} stroke="#fff" strokeWidth={1} />;
               }} />
-              <ReferenceLine x="FY25" stroke={COLORS.gray} strokeDasharray="5 5" label={{ value: "Forecast →", fontSize: 9, fill: COLORS.gray }} />
+              <ReferenceLine x="FY25" stroke={GRAY} strokeDasharray="5 5" label={{ value: "Forecast →", fontSize: 9, fill: GRAY }} />
             </ComposedChart>
           </ResponsiveContainer>
         </SectionCard>
@@ -308,22 +305,22 @@ export default function EicherQualityDashboard() {
         <SectionCard title="h) High Reinvestment — Dividend Payout vs Retention + Investment Portfolio (₹ Cr)" verdict="GOOD" score="8" explanation="Company retains ~59-62% of PAT while paying rising dividends (16% → 41% payout). Investment portfolio grew from ₹4,987 Cr (FY17) to ₹14,791 Cr (FY25). At 30% ROCE and 59% retention, organic growth potential is ~18% (ROCE × Reinvestment Rate).">
           <ResponsiveContainer width="100%" height={260}>
             <ComposedChart data={reinvestData} margin={{ top: 5, right: 20, left: 10, bottom: 5 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#eee" />
-              <XAxis dataKey="year" tick={{ fontSize: 10 }} />
-              <YAxis yAxisId="left" tick={{ fontSize: 10 }} tickFormatter={v => `${(v/1000).toFixed(0)}K`} />
-              <YAxis yAxisId="right" orientation="right" tick={{ fontSize: 10 }} tickFormatter={v => `${v}%`} domain={[0, 100]} />
+              <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.06)" />
+              <XAxis dataKey="year" tick={{ fill: "#94a3b8", fontSize: 10 }} />
+              <YAxis yAxisId="left" tick={{ fill: "#94a3b8", fontSize: 10 }} tickFormatter={v => `${(v/1000).toFixed(0)}K`} />
+              <YAxis yAxisId="right" orientation="right" tick={{ fill: "#94a3b8", fontSize: 10 }} tickFormatter={v => `${v}%`} domain={[0, 100]} />
               <Tooltip content={<CustomTooltip />} />
               <Legend wrapperStyle={{ fontSize: 11 }} />
-              <Bar yAxisId="left" dataKey="investments" name="Investments (₹ Cr)" fill={COLORS.purple} opacity={0.5} radius={[3, 3, 0, 0]} />
-              <Line yAxisId="right" type="monotone" dataKey="retained" name="Retained %" stroke={COLORS.green} strokeWidth={2.5} dot={{ r: 3, fill: COLORS.green }} />
-              <Line yAxisId="right" type="monotone" dataKey="divPayout" name="Div Payout %" stroke={COLORS.orange} strokeWidth={2} strokeDasharray="5 3" dot={{ r: 3, fill: COLORS.orange }} />
-              <ReferenceLine x="FY25" stroke={COLORS.gray} strokeDasharray="5 5" />
+              <Bar yAxisId="left" dataKey="investments" name="Investments (₹ Cr)" fill="#8E44AD" opacity={0.5} radius={[3, 3, 0, 0]} />
+              <Line yAxisId="right" type="monotone" dataKey="retained" name="Retained %" stroke={GREEN} strokeWidth={2.5} dot={{ r: 3, fill: GREEN }} />
+              <Line yAxisId="right" type="monotone" dataKey="divPayout" name="Div Payout %" stroke={ORANGE} strokeWidth={2} strokeDasharray="5 3" dot={{ r: 3, fill: ORANGE }} />
+              <ReferenceLine x="FY25" stroke={GRAY} strokeDasharray="5 5" />
             </ComposedChart>
           </ResponsiveContainer>
         </SectionCard>
 
-        {/* Overall Summary */}
-        <div style={{ background: `linear-gradient(135deg, ${COLORS.navy} 0%, #1a3f5c 100%)`, borderRadius: 14, padding: "22px 26px", color: "#fff", marginTop: 8 }}>
+        {/* Overall Summary - same dark style as Info Edge */}
+        <div style={{ background: `linear-gradient(135deg, ${NAVY} 0%, #1a3f5c 100%)`, borderRadius: 14, padding: "22px 26px", color: "#fff", marginTop: 8 }}>
           <h3 style={{ margin: "0 0 14px", fontSize: 18, fontWeight: 800 }}>Overall Quality Scorecard — Eicher Motors</h3>
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: 10 }}>
             {[

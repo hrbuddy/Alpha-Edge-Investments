@@ -1,15 +1,14 @@
 import { useState } from "react";
-import { BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar, ComposedChart, Area, Cell, ReferenceLine } from "recharts";
+import { Link } from "react-router-dom";
+import { BarChart, Bar, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar, ComposedChart, Area, Cell, ReferenceLine } from "recharts";
 
 const NAVY = "#0D1B2A";
-const DARK = "#1B3A5C";
 const BLUE = "#2E75B6";
 const TEAL = "#0E7C7B";
 const GREEN = "#27AE60";
 const RED = "#C0392B";
 const ORANGE = "#E67E22";
 const GOLD = "#D4A017";
-const PURPLE = "#7B2D8E";
 
 const tabs = ["Overview", "Porter's 5 Forces", "Revenue Model", "FCFF & CFO/PAT", "OPM & ROCE", "Quality Score", "Sensitivity"];
 
@@ -150,13 +149,36 @@ export default function InfoEdgeDashboard() {
 
   return (
     <div style={{ background: `linear-gradient(135deg, ${NAVY} 0%, #0a1628 100%)`, minHeight: "100vh", color: "#e2e8f0", fontFamily: "'DM Sans', sans-serif" }}>
+
+      {/* BACK TO HOME BUTTON - now always visible */}
+      <Link
+        to="/"
+        style={{
+          position: "fixed",
+          top: "20px",
+          left: "28px",
+          zIndex: 10000,
+          color: GOLD,
+          textDecoration: "none",
+          fontWeight: 700,
+          background: "rgba(13,27,42,0.95)",
+          padding: "8px 18px",
+          borderRadius: 8,
+          fontSize: 13,
+          boxShadow: "0 4px 12px rgba(0,0,0,0.3)"
+        }}
+      >
+        ← Back to Alpha Edge Home
+      </Link>
+
       <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Playfair+Display:wght@700;800&display=swap" rel="stylesheet" />
 
+
       {/* Header */}
-      <div style={{ padding: "24px 28px 0", borderBottom: `1px solid rgba(212,160,23,0.2)` }}>
+      <div style={{ padding: "90px 28px 0", borderBottom: `1px solid rgba(212,160,23,0.2)` }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: 12 }}>
           <div>
-            <div style={{ fontSize: 11, color: GOLD, letterSpacing: 2, textTransform: "uppercase", fontWeight: 700 }}>Equity Research — Initiating Coverage</div>
+            <div style={{ fontSize: 11, color: GOLD, letterSpacing: 2, textTransform: "uppercase", fontWeight: 700 }}>Alpha Edge Research — Initiating Coverage</div>
             <h1 style={{ margin: "6px 0 2px", fontSize: 30, fontWeight: 800, fontFamily: "'Playfair Display', serif", color: "#fff" }}>
               Info Edge (India) Ltd
             </h1>
