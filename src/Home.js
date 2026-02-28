@@ -794,16 +794,16 @@ export default function Home() {
         /* ── MOBILE OVERRIDES ── */
         @media(max-width:600px){
           .hero-section{height:auto !important;min-height:0 !important;}
-          .hero-content{padding-top:56px !important;padding-bottom:100px !important;}
+          .hero-content{padding-top:110px !important;padding-bottom:120px !important;}
           .hero-h1{font-size:clamp(36px,11vw,52px) !important;letter-spacing:-.8px !important;line-height:1.0 !important;}
           .hero-brand-alpha{margin-bottom:2px !important;}
-          .hero-brand-investments{margin-bottom:20px !important;}
+          .hero-brand-investments{margin-bottom:35px !important;}
           .hero-tagline{font-size:13px !important;line-height:1.6 !important;margin-bottom:86px !important;}
           .hero-tags-row{gap:8px !important;margin-bottom: 45px !important;}
           .hero-tag{padding:6px 12px !important;font-size:10px !important;}
           .hero-cta-wrapper{margin-bottom:0 !important;}
           .hero-cta-btn{padding:12px 32px !important;font-size:11px !important;}
-          .hero-eyebrow{font-size:11px !important;letter-spacing:0.22em !important;margin-bottom:10px !important;}
+          .hero-eyebrow{font-size:11px !important;letter-spacing:0.22em !important;margin-bottom:25px !important;}
           .active-grid{grid-template-columns:1fr !important;}
           .inactive-grid{grid-template-columns:1fr 1fr !important;}
           .sec-h2{font-size:22px !important;}
@@ -911,7 +911,7 @@ export default function Home() {
             <div className="hero-tags-row" style={{
               display:"flex", justifyContent:"center", flexWrap:"wrap",
               gap:"clamp(8px,2vw,28px)",
-              marginBottom:"clamp(20px,24vh,78px)",
+              marginBottom:"clamp(20px,24vh,98px)",
               ...fu(680),
             }}>
               {["MOAT","QUALITY","GROWTH","VALUATION","COMPOUNDING"].map(tag => (
