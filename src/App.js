@@ -4,6 +4,9 @@ import Home from "./Home";
 import Navbar from "./Navbar";
 import InfoEdgeDashboard from "./dashboards/InfoEdgeDashboard";
 import EicherMotorsDashboard from "./dashboards/EicherMotorsDashboard";
+// import EicherMotorsDashboard from "./dashboards/Igildashboard";
+import IGILDashboard from "./dashboards/Igildashboard";
+import Footer from "./Footer";     
 
 export const ThemeContext = createContext();
 
@@ -29,7 +32,9 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/info-edge" element={<InfoEdgeDashboard />} />
           <Route path="/eicher-motors" element={<EicherMotorsDashboard />} />
+          <Route path="/igil" element={<IGILDashboard />} />
         </Routes>
+        <Footer />          {/* ← Footer appears on EVERY page */}
       </Router>
     </ThemeContext.Provider>
   );
