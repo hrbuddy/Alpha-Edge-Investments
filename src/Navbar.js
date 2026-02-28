@@ -49,6 +49,7 @@ export default function Navbar() {
   const [searchQuery, setSearchQuery] = useState("");
   const [menuOpen,    setMenuOpen]    = useState(false);
   const [stocksOpen,  setStocksOpen]  = useState(false);
+  const [mobileStocksOpen, setMobileStocksOpen] = useState(false);
   const stocksRef  = useRef(null);
   const menuRef    = useRef(null);
   const searchRef      = useRef(null);
@@ -149,7 +150,7 @@ export default function Navbar() {
 
         /* ── Ribbon nav links — bigger, brighter ── */
         .nav-link{
-          font-size:12px;font-weight:700;letter-spacing:1.6px;
+          font-size:13px;font-weight:700;letter-spacing:1.4px;
           text-decoration:none;font-family:'DM Sans',sans-serif;
           padding:4px 0;transition:color .2s,border-bottom-color .2s;
           border-bottom:1.5px solid transparent;white-space:nowrap;
@@ -314,7 +315,7 @@ export default function Navbar() {
         </div>
 
         {/* ── SECONDARY RIBBON (desktop) ── */}
-        <div className="ribbon-links" style={{ borderTop:`1px solid rgba(212,160,23,0.08)`, padding:"0 24px", height:36, display:"flex", alignItems:"center", gap:28, overflowX:"visible", background:"transparent", position:"relative", zIndex:200000 }}>
+        <div className="ribbon-links" style={{ borderTop:`1px solid rgba(212,160,23,0.08)`, padding:"0 24px", height:38, display:"flex", alignItems:"center", justifyContent:"center", gap:32, overflowX:"visible", background:"transparent", position:"relative", zIndex:200000 }}>
           {PAGE_NAV_LINKS.map(l => (
             <Link key={l.label} to={l.path} className="nav-link" style={{ color:textCol }}>
               {l.label}
@@ -346,7 +347,7 @@ export default function Navbar() {
                         <div style={{ fontSize:12, fontWeight:700, color: isDark ? "#c8dae8" : "#0D1B2A", fontFamily:"'DM Sans',sans-serif" }}>{s.name}</div>
                         <div style={{ fontSize:9, color:"rgba(212,160,23,0.55)", letterSpacing:1, marginTop:1, fontFamily:"'DM Sans',sans-serif" }}>NSE: {s.nse}</div>
                       </div>
-                      <span style={{ fontSize:9, fontWeight:700, color:GOLD, background:"rgba(212,160,23,0.1)", padding:"2px 8px", borderRadius:999, letterSpacing:1, fontFamily:"'DM Sans',sans-serif" }}>GO →</span>
+                      <span style={{ fontSize:9, fontWeight:700, color:GOLD, background:"rgba(212,160,23,0.1)", padding:"3px 10px", borderRadius:999, letterSpacing:1, fontFamily:"'DM Sans',sans-serif", whiteSpace:"nowrap", flexShrink:0, display:"inline-flex", alignItems:"center" }}>GO →</span>
                     </Link>
                   );
                 })}
@@ -370,26 +371,26 @@ export default function Navbar() {
             {/* All Stocks accordion */}
             <div>
               <button
-                onClick={() => setStocksOpen(o => !o)}
-                style={{ width:"100%", textAlign:"left", background:"none", border:"none", borderBottom:`1px solid rgba(212,160,23,0.06)`, padding:"13px 24px", fontSize:12, fontWeight:700, letterSpacing:"1.6px", color:stocksOpen ? GOLD : textCol, fontFamily:"'DM Sans',sans-serif", cursor:"pointer", display:"flex", justifyContent:"space-between", alignItems:"center" }}
+                onClick={() => setMobileStocksOpen(o => !o)}
+                style={{ width:"100%", textAlign:"left", background:"none", border:"none", borderBottom:`1px solid rgba(212,160,23,0.06)`, padding:"13px 24px", fontSize:12, fontWeight:700, letterSpacing:"1.6px", color:mobileStocksOpen ? GOLD : textCol, fontFamily:"'DM Sans',sans-serif", cursor:"pointer", display:"flex", justifyContent:"space-between", alignItems:"center" }}
               >
                 ALL STOCKS
-                <span style={{ fontSize:10, transition:"transform .2s", display:"inline-block", transform:stocksOpen?"rotate(180deg)":"rotate(0deg)" }}>▼</span>
+                <span style={{ fontSize:10, transition:"transform .2s", display:"inline-block", transform:mobileStocksOpen?"rotate(180deg)":"rotate(0deg)" }}>▼</span>
               </button>
-              {stocksOpen && (
+              {mobileStocksOpen && (
                 <div style={{ background: isDark ? "rgba(0,0,0,0.18)" : "rgba(13,27,42,0.04)" }}>
                   {STOCK_ROUTES.map(({ path, stockId }) => {
                     const s = STOCKS[stockId];
                     return (
                       <Link key={stockId} to={path}
-                        onClick={() => { setMenuOpen(false); setStocksOpen(false); }}
-                        style={{ display:"flex", justifyContent:"space-between", alignItems:"center", padding:"13px 32px", textDecoration:"none", borderBottom:`1px solid rgba(212,160,23,0.05)`, cursor:"pointer" }}
+                        onClick={() => { setMenuOpen(false); setMobileStocksOpen(false); }}
+                        style={{ display:"flex", justifyContent:"space-between", alignItems:"center", padding:"13px 32px", textDecoration:"none", color:"inherit", borderBottom:`1px solid rgba(212,160,23,0.05)`, cursor:"pointer" }}
                       >
                         <div>
                           <div style={{ fontSize:13, fontWeight:700, color: isDark ? "#c8dae8" : "#0D1B2A", fontFamily:"'DM Sans',sans-serif" }}>{s.name}</div>
                           <div style={{ fontSize:9, color:"rgba(212,160,23,0.5)", letterSpacing:1, marginTop:2, fontFamily:"'DM Sans',sans-serif" }}>NSE: {s.nse}</div>
                         </div>
-                        <span style={{ fontSize:10, fontWeight:700, color:GOLD, background:"rgba(212,160,23,0.1)", padding:"4px 10px", borderRadius:999, letterSpacing:1, fontFamily:"'DM Sans',sans-serif", flexShrink:0 }}>GO →</span>
+                        <span style={{ fontSize:10, fontWeight:700, color:GOLD, background:"rgba(212,160,23,0.1)", padding:"4px 10px", borderRadius:999, letterSpacing:1, fontFamily:"'DM Sans',sans-serif", flexShrink:0, whiteSpace:"nowrap", display:"inline-flex", alignItems:"center" }}>GO →</span>
                       </Link>
                     );
                   })}
