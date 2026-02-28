@@ -55,12 +55,12 @@ function CosmicCanvas() {
     const ctx = canvas.getContext("2d");
     let W, H, cx, cy;
 
-    // ── Atom is placed in the TOP-CENTRE of the canvas, above all text ──
-    // Orbit sizes kept intentionally small (≈18–20% of W) so they stay contained
+    // ── Atom overlaps the brand name text block in the hero ──
+    // Orbit sizes ~25–27% of W for a prominent, visible atom
     const ORBITS = [
-      { rxF:.18, ryF:.068, tilt:  0, spd: .0052, eA: 0        },
-      { rxF:.19, ryF:.072, tilt: 60, spd:-.0045, eA: Math.PI*.67  },
-      { rxF:.185,ryF:.070, tilt:-60, spd: .0058, eA: Math.PI*1.33 },
+      { rxF:.255, ryF:.095, tilt:  0, spd: .0052, eA: 0        },
+      { rxF:.268, ryF:.101, tilt: 60, spd:-.0045, eA: Math.PI*.67  },
+      { rxF:.260, ryF:.098, tilt:-60, spd: .0058, eA: Math.PI*1.33 },
     ];
 
     const G  = [212,160,23];
@@ -74,14 +74,15 @@ function CosmicCanvas() {
       W = canvas.width  = canvas.offsetWidth;
       H = canvas.height = canvas.offsetHeight;
       cx = W / 2;
-      // Atom sits at 24% from top so it floats above the text block
-      cy = H * .24;
+      // Atom at 42% — aligns with brand name when content is centered
+      cy = H * .42;
     }
 
+    function orbitRy(o){ return Math.min(o.ryF*H, o.rxF*W*0.40); }
     function orbitPos(o,a){
       const r = o.tilt*Math.PI/180;
       const lx= Math.cos(a)*o.rxF*W;
-      const ly= Math.sin(a)*o.ryF*H;
+      const ly= Math.sin(a)*orbitRy(o);
       return { x:cx+lx*Math.cos(r)-ly*Math.sin(r), y:cy+lx*Math.sin(r)+ly*Math.cos(r) };
     }
 
@@ -206,8 +207,9 @@ function CosmicCanvas() {
         ctx.rotate(o.tilt*Math.PI/180);
 
         // Soft outer glow (very transparent)
+        const ry=orbitRy(o);
         ctx.shadowColor=gc(G,.25); ctx.shadowBlur=10;
-        ctx.beginPath(); ctx.ellipse(0,0,o.rxF*W,o.ryF*H,0,0,Math.PI*2);
+        ctx.beginPath(); ctx.ellipse(0,0,o.rxF*W,ry,0,0,Math.PI*2);
         ctx.strokeStyle=gc(G,.08); ctx.lineWidth=7; ctx.stroke();
         ctx.shadowBlur=0;
 
@@ -215,7 +217,7 @@ function CosmicCanvas() {
         // Opacity stepped so orbit 0 is most vivid, orbit 2 fades
         const opa = oi===0 ? .55 : oi===1 ? .38 : .24;
         const lw  = oi===0 ? 1.4 : oi===1 ? 1.1 : .85;
-        ctx.beginPath(); ctx.ellipse(0,0,o.rxF*W,o.ryF*H,0,0,Math.PI*2);
+        ctx.beginPath(); ctx.ellipse(0,0,o.rxF*W,ry,0,0,Math.PI*2);
         ctx.strokeStyle=gc(G,opa); ctx.lineWidth=lw; ctx.stroke();
         ctx.restore();
 
@@ -431,12 +433,33 @@ export default function Home(){
         *{box-sizing:border-box}
 
         @media(max-width:600px){
-          .hero-h1{font-size:40px !important;letter-spacing:-.8px !important;}
-          .hero-sub{font-size:13px !important;}
-          .hero-cta-btn{padding:12px 28px !important;font-size:11px !important;}
-          .active-grid{grid-template-columns:1fr !important;}
-          .inactive-grid{grid-template-columns:1fr 1fr !important;}
-          .sec-h2{font-size:22px !important;}
+          /* ── HERO SECTION ── */
+          .hero-section{ height:auto !important; min-height:0 !important; }
+
+          /* ── HERO CONTENT WRAPPER ── */
+          .hero-content{ padding-top:56px !important; padding-bottom:100px !important; }
+
+          /* ── BRAND NAME ── */
+          .hero-h1{ font-size:clamp(36px,11vw,52px) !important; letter-spacing:-.8px !important; line-height:1.0 !important; }
+          .hero-brand-alpha{ margin-bottom:2px !important; }
+          .hero-brand-investments{ margin-bottom:20px !important; }
+
+          /* ── TAGLINE ── */
+          .hero-tagline{ font-size:13px !important; line-height:1.6 !important; margin-bottom:75px !important; }
+
+          /* ── FLOATING TAGS (MOAT, QUALITY…) ── */
+          .hero-tags-row{ gap:8px !important; margin-bottom:64px !important; }
+          .hero-tag{ padding:6px 12px !important; font-size:10px !important; }
+
+          /* ── EXPLORE DASHBOARDS BUTTON ── */
+          .hero-cta-wrapper{ margin-bottom:0 !important; }
+          .hero-cta-btn{ padding:12px 32px !important; font-size:11px !important; }
+
+          /* ── OTHER ── */
+          .hero-eyebrow{ font-size:11px !important; letter-spacing:0.22em !important; margin-bottom:16px !important; }
+          .active-grid{ grid-template-columns:1fr !important; }
+          .inactive-grid{ grid-template-columns:1fr 1fr !important; }
+          .sec-h2{ font-size:22px !important; }
         }
         @media(min-width:601px) and (max-width:900px){
           .active-grid{grid-template-columns:1fr !important;}
@@ -447,7 +470,7 @@ export default function Home(){
       <div style={{background:NAVY,minHeight:"100vh",color:pal.text,fontFamily:"'DM Sans',sans-serif",paddingTop:70,overflowX:"hidden"}}>
 
         {/* ─────────────────── HERO ─────────────────── */}
-        <section style={{
+        <section className="hero-section" style={{
           position:"relative",
           height:"calc(100vh - 50px)",
           minHeight:120,
@@ -466,13 +489,12 @@ export default function Home(){
           }}/>
 
           {/* ── Hero content ── */}
-          <div style={{
+          <div className="hero-content" style={{
             position:"relative",zIndex:2,
             maxWidth:800,padding:"0 22px",width:"100%",
             display:"flex",flexDirection:"column",alignItems:"center",
-            // Top padding pushes text to lower ~55% so atom (cy=24%) stays clear above
-            paddingTop:"clamp(10px, 8vh, 10px)",
-            paddingBottom:"450",
+            paddingTop:"clamp(10px, 6vh, 60px)",
+            paddingBottom:0,
           }}>
 
             {/*
@@ -485,7 +507,7 @@ export default function Home(){
             */}
 
             {/* L1 — eyebrow caption */}
-            <div style={{
+            <div className="hero-eyebrow" style={{
               fontSize:14, letterSpacing:"0.32em", color:GOLD,
               fontWeight:600, marginBottom:0, fontFamily:"'DM Sans',sans-serif",
               opacity:.95, ...fu(150),
@@ -494,7 +516,7 @@ export default function Home(){
             </div>
 
             {/* L2 — Brand name */}
-            <h1 className="hero-h1" style={{
+            <h1 className="hero-h1 hero-brand-alpha" style={{
               fontSize:"clamp(52px,7.5vw,88px)",
               fontWeight:900, lineHeight:.93, margin:"0 0 4px",
               color:"#fff", fontFamily:"'Playfair Display',serif",
@@ -502,9 +524,9 @@ export default function Home(){
             }}>
               Alpha Edge
             </h1>
-            <h2 className="hero-h1" style={{
+            <h2 className="hero-h1 hero-brand-investments" style={{
               fontSize:"clamp(52px,7.5vw,88px)",
-              fontWeight:900, lineHeight:.93, margin:"0 0 48px",
+              fontWeight:900, lineHeight:.93, margin:"0 0 clamp(18px,3vh,48px)",
               fontFamily:"'Playfair Display',serif", letterSpacing:"-1.5px",
               background:"linear-gradient(135deg,#f8dc72 0%,#D4A017 42%,#c08a0a 100%)",
               WebkitBackgroundClip:"text", WebkitTextFillColor:"transparent", backgroundClip:"text",
@@ -514,9 +536,9 @@ export default function Home(){
             </h2>
 
             {/* L3 — Tagline */}
-            <p className="hero-sub" style={{
+            <p className="hero-sub hero-tagline" style={{
               fontSize:"clamp(14px,1.65vw,18px)", color:"#4e6e88",
-              margin:"0 0 100px", lineHeight:1.68, fontWeight:300,
+              margin:"0 0 clamp(24px,4vh,72px)", lineHeight:1.68, fontWeight:300,
               ...fu(560),
             }}>
               Institutional-grade equity research on India's finest compounders.<br/>
@@ -524,12 +546,12 @@ export default function Home(){
             </p>
 
             {/* L4 — Floating keyword tags — NO dark background, just a fine border */}
-            <div style={{
+            <div className="hero-tags-row" style={{
               display:"flex",justifyContent:"center",flexWrap:"wrap",
-              gap:38, marginBottom:90, ...fu(680),
+              gap:"clamp(8px,2vw,32px)", marginBottom:"clamp(28px,5vh,72px)", ...fu(680),
             }}>
               {["MOAT","QUALITY","GROWTH","VALUATION","COMPOUNDING"].map(tag=>(
-                <div key={tag} className="ft" style={{
+                <div key={tag} className="ft hero-tag" style={{
                   padding:"7px 16px",
                   // Transparent background — just a gold border ring
                   background:"transparent",
@@ -543,7 +565,7 @@ export default function Home(){
             </div>
 
             {/* L5 — CTA */}
-            <div style={fu(780)}>
+            <div className="hero-cta-wrapper" style={fu(780)}>
               <button
                 className="hero-cta-btn"
                 onClick={()=>document.getElementById("universe").scrollIntoView({behavior:"smooth"})}
@@ -588,6 +610,29 @@ export default function Home(){
             </div>
           ))}
         </div>
+
+        {/* ── RESEARCH PHILOSOPHY ── */}
+        <section style={{padding:"56px 24px 0",maxWidth:860,margin:"0 auto",textAlign:"center"}}>
+          <div style={{
+            background:"rgba(212,160,23,0.04)",
+            border:"1px solid rgba(212,160,23,0.12)",
+            borderRadius:16,
+            padding:"clamp(24px,4vw,44px) clamp(20px,5vw,56px)",
+          }}>
+            <div style={{fontSize:9,letterSpacing:"0.38em",color:GOLD,fontWeight:700,marginBottom:14,fontFamily:"'DM Sans',sans-serif"}}>OUR EDGE</div>
+            <p style={{fontSize:"clamp(15px,1.8vw,18px)",color:pal.subText,lineHeight:1.8,margin:"0 0 28px",fontFamily:"'DM Sans',sans-serif",fontWeight:300}}>
+              We focus on <span style={{color:GOLD,fontWeight:600}}>10–15 exceptional businesses</span> with durable competitive moats, 
+              run by honest operators, priced for long-term compounding — not momentum plays or short-term calls.
+            </p>
+            <div style={{display:"flex",justifyContent:"center",flexWrap:"wrap",gap:"clamp(12px,3vw,36px)"}}>
+              {[["🔍","Deep Due Diligence"],["🏆","Quality First"],["📐","Valuation Discipline"],["♾️","Long-Term Horizon"]].map(([icon,label])=>(
+                <div key={label} style={{display:"flex",alignItems:"center",gap:8,fontSize:12,color:pal.muted,fontFamily:"'DM Sans',sans-serif",letterSpacing:"0.08em"}}>
+                  <span style={{fontSize:16}}>{icon}</span>{label}
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
 
         {/* ── RESEARCH UNIVERSE ── */}
         <section id="universe" style={{padding:"72px 18px 90px",maxWidth:1360,margin:"0 auto"}}>
