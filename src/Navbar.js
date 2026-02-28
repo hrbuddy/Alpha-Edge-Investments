@@ -262,8 +262,8 @@ export default function Navbar() {
               </g>
             </svg>
             <div>
-              <div className="logo-wordmark" style={{ fontSize:17, fontWeight:800, letterSpacing:"0.4px", color:GOLD, fontFamily:"'Playfair Display',serif", lineHeight:1 }}>ALPHA EDGE</div>
-              <div className="logo-sub" style={{ fontSize:7.5, letterSpacing:"3px", color:"rgba(212,160,23,0.42)", fontFamily:"'DM Sans',sans-serif", fontWeight:700, marginTop:2, textTransform:"uppercase" }}>INVESTMENTS</div>
+              <div className="logo-wordmark" style={{ fontSize:20, fontWeight:800, letterSpacing:"0.4px", color:GOLD, fontFamily:"'Playfair Display',serif", lineHeight:1 }}>VANTAGE CAPITAL</div>
+              <div className="logo-sub" style={{ fontSize:10.5, letterSpacing:"3px", color:"rgba(212,160,23,0.42)", fontFamily:"'DM Sans',sans-serif", fontWeight:700, marginTop:2, textTransform:"uppercase" }}>INVESTMENTS</div>
             </div>
           </Link>
 
@@ -273,13 +273,13 @@ export default function Navbar() {
             {/* Search */}
             <div ref={searchRef} style={{ position:"relative" }}>
               <button className="nav-btn" onClick={() => setSearchOpen(o => !o)} style={{ borderRadius:8, padding:"6px 10px", cursor:"pointer", display:"flex", alignItems:"center", gap:5, transition:"background .2s" }}>
-                <SearchSVG size={14}/>
+                <SearchSVG size={20}/>
                 <span className="search-word" style={{ fontSize:11, fontWeight:700, color:textCol, letterSpacing:1, fontFamily:"'DM Sans',sans-serif" }}>SEARCH</span>
               </button>
               {searchOpen && (
                 <div className="desktop-search-dropdown" style={{ position:"absolute", top:"calc(100% + 8px)", right:0, width:320, background:dropBg, border:`1px solid ${borderCol}`, borderRadius:12, boxShadow:"0 16px 48px rgba(0,0,0,0.5)", overflow:"hidden", animation:"searchDrop .2s ease", zIndex:10 }}>
                   <div style={{ padding:"10px 14px", borderBottom:`1px solid rgba(212,160,23,0.1)`, display:"flex", alignItems:"center", gap:8 }}>
-                    <SearchSVG size={12} op={0.5}/>
+                    <SearchSVG size={20} op={0.5}/>
                     <input ref={inputRef} value={searchQuery} onChange={e => setSearchQuery(e.target.value)} placeholder="Search stocks & pages…" style={{ background:"transparent", border:"none", outline:"none", color:inputText, fontSize:13, width:"100%", fontFamily:"'DM Sans',sans-serif" }}/>
                     {searchQuery && <button onClick={() => setSearchQuery("")} style={{ background:"none", border:"none", cursor:"pointer", color:"rgba(212,160,23,0.4)", fontSize:14, padding:0, lineHeight:1 }}>×</button>}
                   </div>

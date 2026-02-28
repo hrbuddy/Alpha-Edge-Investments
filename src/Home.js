@@ -798,12 +798,12 @@ export default function Home() {
           .hero-h1{font-size:clamp(36px,11vw,52px) !important;letter-spacing:-.8px !important;line-height:1.0 !important;}
           .hero-brand-alpha{margin-bottom:2px !important;}
           .hero-brand-investments{margin-bottom:20px !important;}
-          .hero-tagline{font-size:13px !important;line-height:1.6 !important;margin-bottom:36px !important;}
-          .hero-tags-row{gap:8px !important;margin-bottom:28px !important;}
+          .hero-tagline{font-size:13px !important;line-height:1.6 !important;margin-bottom:86px !important;}
+          .hero-tags-row{gap:8px !important;margin-bottom:110px !important;}
           .hero-tag{padding:6px 12px !important;font-size:10px !important;}
           .hero-cta-wrapper{margin-bottom:0 !important;}
           .hero-cta-btn{padding:12px 32px !important;font-size:11px !important;}
-          .hero-eyebrow{font-size:11px !important;letter-spacing:0.22em !important;margin-bottom:16px !important;}
+          .hero-eyebrow{font-size:11px !important;letter-spacing:0.22em !important;margin-bottom:46px !important;}
           .active-grid{grid-template-columns:1fr !important;}
           .inactive-grid{grid-template-columns:1fr 1fr !important;}
           .sec-h2{font-size:22px !important;}
@@ -880,7 +880,7 @@ export default function Home() {
               color:"#fff", fontFamily:"'Playfair Display',serif",
               letterSpacing:"-1.5px", ...fu(300),
             }}>
-              Alpha Edge
+              Vantage Capitals
             </h1>
             <h2 className="hero-h1 hero-brand-investments" style={{
               fontSize:"clamp(52px,7.5vw,88px)",

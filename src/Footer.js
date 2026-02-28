@@ -44,8 +44,8 @@ export default function Footer() {
             <path d="M22 15.5 L26.2 22 L22 28.5 L17.8 22 Z" fill="url(#footNucG)"/>
           </svg>
           <div>
-            <div style={{ fontSize:20, fontWeight:800, color:GOLD, fontFamily:"'Playfair Display', serif", lineHeight:1 }}>ALPHA EDGE</div>
-            <div style={{ fontSize:7.5, letterSpacing:"3px", color:"rgba(212,160,23,0.4)", fontFamily:"'DM Sans',sans-serif", fontWeight:700, marginTop:2 }}>INVESTMENTS</div>
+            <div style={{ fontSize:20, fontWeight:800, color:GOLD, fontFamily:"'Playfair Display', serif", lineHeight:1 }}>VANTAGE CAPITAL</div>
+            <div style={{ fontSize:10.5, letterSpacing:"3px", color:"rgba(212,160,23,0.4)", fontFamily:"'DM Sans',sans-serif", fontWeight:700, marginTop:2 }}>INVESTMENTS</div>
           </div>
         </div>
 
@@ -70,14 +70,14 @@ export default function Footer() {
 
         {/* Disclaimer */}
         <div style={{ fontSize:11, lineHeight:1.7, maxWidth:600, margin:"0 auto 24px", color:muteCol }}>
-          Alpha Edge Research provides institutional-grade equity analysis for informational purposes only.<br/>
+          Vantage Capital Investments provides institutional-grade equity analysis for informational purposes only.<br/>
           Not SEBI-registered investment advisors. Past performance does not indicate future results.<br/>
           Always consult a qualified financial advisor before making investment decisions.
         </div>
 
         {/* Copyright */}
         <div style={{ fontSize:11, color:copyCol, borderTop:`1px solid ${isDark ? "rgba(255,255,255,0.06)" : "rgba(13,27,42,0.08)"}`, paddingTop:22 }}>
-          © {new Date().getFullYear()} Alpha Edge Investments · All Rights Reserved
+          © {new Date().getFullYear()} Vantage Capital Investmentse  · All Rights Reserved
         </div>
       </div>
     </footer>
