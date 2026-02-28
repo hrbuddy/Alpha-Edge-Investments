@@ -1,7 +1,7 @@
 const express = require('express');
 const path = require('path');
 const app = express();
-const PORT = 1000;   // ← changed to 3000
+const PORT = process.env.PORT || 1000;   // ← Render will override this automatically
 
 app.use(express.static(path.join(__dirname, 'build')));
 
@@ -10,6 +10,5 @@ app.use((req, res) => {
 });
 
 app.listen(PORT, () => {
-  console.log(`🚀 Info Edge Dashboard is now LIVE at http://localhost:${PORT}`);
-  console.log(`   Open http://localhost:3000 in your browser!`);
+  console.log(`🚀 Alpha Edge Dashboard running on port ${PORT}`);
 });

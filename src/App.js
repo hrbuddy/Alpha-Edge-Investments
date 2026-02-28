@@ -4,9 +4,13 @@ import Home from "./Home";
 import Navbar from "./Navbar";
 import InfoEdgeDashboard from "./dashboards/InfoEdgeDashboard";
 import EicherMotorsDashboard from "./dashboards/EicherMotorsDashboard";
-// import EicherMotorsDashboard from "./dashboards/Igildashboard";
 import IGILDashboard from "./dashboards/Igildashboard";
-import Footer from "./Footer";     
+import Footer from "./Footer";
+import SignUp from "./SignUp";
+import AboutUs from "./AboutUs";
+import TermsConditions from "./TermsConditions";
+import InvestmentPhilosophy from "./InvestmentPhilosophy";
+import { AuthProvider } from "./AuthContext";
 
 export const ThemeContext = createContext();
 
@@ -26,16 +30,22 @@ function App() {
 
   return (
     <ThemeContext.Provider value={{ theme, toggleTheme }}>
-      <Router>
-        <Navbar />
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/info-edge" element={<InfoEdgeDashboard />} />
-          <Route path="/eicher-motors" element={<EicherMotorsDashboard />} />
-          <Route path="/igil" element={<IGILDashboard />} />
-        </Routes>
-        <Footer />          {/* ← Footer appears on EVERY page */}
-      </Router>
+      <AuthProvider>
+        <Router>
+          <Navbar />
+          <Routes>
+            <Route path="/"            element={<Home />} />
+            <Route path="/info-edge"   element={<InfoEdgeDashboard />} />
+            <Route path="/eicher-motors" element={<EicherMotorsDashboard />} />
+            <Route path="/igil"        element={<IGILDashboard />} />
+            <Route path="/signup"      element={<SignUp />} />
+            <Route path="/about"       element={<AboutUs />} />
+            <Route path="/terms"       element={<TermsConditions />} />
+            <Route path="/philosophy"  element={<InvestmentPhilosophy />} />
+          </Routes>
+          <Footer />
+        </Router>
+      </AuthProvider>
     </ThemeContext.Provider>
   );
 }

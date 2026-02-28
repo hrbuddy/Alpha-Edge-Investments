@@ -7,41 +7,78 @@ const GOLD  = "#D4A017";
 const GREEN = "#27AE60";
 const TEAL  = "#0E7C7B";
 
+// ─── Committed design system palettes ──────────────────────────────────────
+//  DARK  → deep navy background, gold accents, muted blue-grey text
+//  LIGHT → warm off-white (#F5F0E8), dark navy text, same gold accents
+// ---------------------------------------------------------------------------
 const DARK_PAL = {
-  bg:        NAVY,
-  text:      "#e2e8f0",
-  subText:   "#5a7a94",
-  muted:     "#3d5570",
-  cardBg:    "rgba(255,255,255,0.025)",
-  cardBorder:"rgba(212,160,23,0.38)",
-  stripBg:   "rgba(212,160,23,0.022)",
+  bg:              NAVY,
+  text:            "#e2e8f0",
+  subText:         "#5a7a94",
+  muted:           "#3d5570",
+  cardBg:          "rgba(255,255,255,0.025)",
+  cardBorder:      "rgba(212,160,23,0.38)",
+  stripBg:         "rgba(212,160,23,0.022)",
+  // inactive tiles
+  inactiveBorder:  "rgba(255,255,255,0.07)",
+  inactiveBg:      "rgba(255,255,255,0.015)",
+  inactiveDivider: "rgba(255,255,255,0.05)",
+  inactiveBoxBg:   "rgba(255,255,255,0.03)",
+  inactiveBoxBdr:  "rgba(255,255,255,0.055)",
+  inactiveLabel:   "#2a3d52",
+  // carousel
+  carouselBg:      "rgba(212,160,23,0.04)",
+  carouselBorder:  "rgba(212,160,23,0.12)",
+  carouselTitle:   "#c8dae8",
+  carouselBody:    "#6a8fa8",
+  // stats
+  statLabel:       "#6a8fa8",
+  // section underlay
+  sectionBg:       NAVY,
 };
+
 const LIGHT_PAL = {
-  bg:        "#F2EDE0",
-  text:      "#0D1B2A",
-  subText:   "#3a5068",
-  muted:     "#7a8a9a",
-  cardBg:    "rgba(13,27,42,0.04)",
-  cardBorder:"rgba(212,160,23,0.35)",
-  stripBg:   "rgba(212,160,23,0.07)",
+  bg:              "#F5F0E8",
+  text:            "#0D1B2A",
+  subText:         "#3a5068",
+  muted:           "#7a8a9a",
+  cardBg:          "rgba(13,27,42,0.04)",
+  cardBorder:      "rgba(212,160,23,0.38)",
+  stripBg:         "rgba(212,160,23,0.07)",
+  // inactive tiles
+  inactiveBorder:  "rgba(13,27,42,0.10)",
+  inactiveBg:      "rgba(13,27,42,0.02)",
+  inactiveDivider: "rgba(13,27,42,0.08)",
+  inactiveBoxBg:   "rgba(13,27,42,0.04)",
+  inactiveBoxBdr:  "rgba(13,27,42,0.10)",
+  inactiveLabel:   "#7a8a9a",
+  // carousel
+  carouselBg:      "rgba(13,27,42,0.03)",
+  carouselBorder:  "rgba(212,160,23,0.20)",
+  carouselTitle:   "#0D1B2A",
+  carouselBody:    "#3a5068",
+  // stats
+  statLabel:       "#5a7a94",
+  // section underlay
+  sectionBg:       "#F5F0E8",
 };
 
 const stocks = [
   { name:"Info Edge (India) Ltd", ticker:"NSE: NAUKRI · BSE: 532777", rating:"BUY", target:"₹1,700 – 2,100",   cagr:"12–17% CAGR to FY30", path:"/info-edge",     active:true  },
   { name:"Eicher Motors Ltd",     ticker:"NSE: EICHERMOT",            rating:"BUY", target:"₹12,500 – 15,000", cagr:"14–16% CAGR to FY30", path:"/eicher-motors", active:true  },
-  { name:"IGI Ltd",     ticker:"NSE: IGIL",            rating:"BUY", target:"₹550 – 700", cagr:"14–20% CAGR to FY30", path:"/igil", active:true  },
-  { name:"Zomato Ltd",        ticker:"NSE: ZOMATO",     path:"#", active:false },
-  { name:"PB Fintech Ltd",    ticker:"NSE: POLICYBZR",  path:"#", active:false },
-  { name:"Trent Ltd",         ticker:"NSE: TRENT",      path:"#", active:false },
-  { name:"Persistent Systems",ticker:"NSE: PERSISTENT", path:"#", active:false },
-  { name:"Dixon Technologies",ticker:"NSE: DIXON",      path:"#", active:false },
-  { name:"Rail Vikas Nigam",  ticker:"NSE: RVNL",       path:"#", active:false },
-  { name:"Suzlon Energy",     ticker:"NSE: SUZLON",     path:"#", active:false },
-  { name:"HDFC Bank Ltd",     ticker:"NSE: HDFCBANK",   path:"#", active:false },
+  { name:"IGI Ltd",               ticker:"NSE: IGIL",                 rating:"BUY", target:"₹550 – 700",       cagr:"14–20% CAGR to FY30", path:"/igil",          active:true  },
+  { name:"Zomato Ltd",            ticker:"NSE: ZOMATO",     path:"#", active:false },
+  { name:"PB Fintech Ltd",        ticker:"NSE: POLICYBZR",  path:"#", active:false },
+  { name:"Trent Ltd",             ticker:"NSE: TRENT",      path:"#", active:false },
+  { name:"Persistent Systems",    ticker:"NSE: PERSISTENT", path:"#", active:false },
+  { name:"Dixon Technologies",    ticker:"NSE: DIXON",      path:"#", active:false },
+  { name:"Rail Vikas Nigam",      ticker:"NSE: RVNL",       path:"#", active:false },
+  { name:"Suzlon Energy",         ticker:"NSE: SUZLON",     path:"#", active:false },
+  { name:"HDFC Bank Ltd",         ticker:"NSE: HDFCBANK",   path:"#", active:false },
 ];
 
 // ════════════════════════════════════════════════════════════════════════════
-//  COSMIC CANVAS  — subtle atom in background, never obscuring text
+//  COSMIC CANVAS  — atom in background, comets, dense star field
 // ════════════════════════════════════════════════════════════════════════════
 function CosmicCanvas() {
   const canvasRef = useRef(null);
@@ -49,16 +86,14 @@ function CosmicCanvas() {
   const mouse     = useRef({ x:0, y:0 });
   const scrollYR  = useRef(0);
 
-  useEffect(()=>{
+  useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
     const ctx = canvas.getContext("2d");
     let W, H, cx, cy;
 
-    // ── Atom overlaps the brand name text block in the hero ──
-    // Orbit sizes ~25–27% of W for a prominent, visible atom
     const ORBITS = [
-      { rxF:.255, ryF:.095, tilt:  0, spd: .0052, eA: 0        },
+      { rxF:.255, ryF:.095, tilt:  0, spd: .0052, eA: 0           },
       { rxF:.268, ryF:.101, tilt: 60, spd:-.0045, eA: Math.PI*.67  },
       { rxF:.260, ryF:.098, tilt:-60, spd: .0058, eA: Math.PI*1.33 },
     ];
@@ -70,28 +105,27 @@ function CosmicCanvas() {
 
     let stars=[], crystals=[], comets=[];
 
-    function resize(){
+    function resize() {
       W = canvas.width  = canvas.offsetWidth;
       H = canvas.height = canvas.offsetHeight;
       cx = W / 2;
-      // Atom at 42% — aligns with brand name when content is centered
-      cy = H * .42;
+      cy = W <= 600 ? H * .28 : H * .42;
     }
 
-    function orbitRy(o){ return Math.min(o.ryF*H, o.rxF*W*0.40); }
-    function orbitPos(o,a){
+    function orbitRy(o) { return Math.min(o.ryF*H, o.rxF*W*0.40); }
+    function orbitPos(o, a) {
       const r = o.tilt*Math.PI/180;
-      const lx= Math.cos(a)*o.rxF*W;
-      const ly= Math.sin(a)*orbitRy(o);
+      const lx = Math.cos(a)*o.rxF*W;
+      const ly = Math.sin(a)*orbitRy(o);
       return { x:cx+lx*Math.cos(r)-ly*Math.sin(r), y:cy+lx*Math.sin(r)+ly*Math.cos(r) };
     }
 
-    function build(){
+    function build() {
       stars=[]; crystals=[]; comets=[];
 
       // Dense sharp stars
-      for(let i=0;i<750;i++){
-        const bright=Math.random()<.11;
+      for (let i=0; i<750; i++) {
+        const bright = Math.random()<.11;
         stars.push({
           x:Math.random()*W, y:Math.random()*H,
           vx:(Math.random()-.5)*.032, vy:(Math.random()-.5)*.032,
@@ -103,7 +137,7 @@ function CosmicCanvas() {
         });
       }
       // Fine cosmic dust
-      for(let i=0;i<700;i++){
+      for (let i=0; i<700; i++) {
         stars.push({
           x:Math.random()*W, y:Math.random()*H,
           vx:(Math.random()-.5)*.012, vy:(Math.random()-.5)*.012,
@@ -114,8 +148,8 @@ function CosmicCanvas() {
       }
 
       // Drifting crystal diamonds
-      for(let i=0;i<50;i++){
-        const big=Math.random()<.13;
+      for (let i=0; i<50; i++) {
+        const big = Math.random()<.13;
         crystals.push({
           x:Math.random()*W, y:Math.random()*H,
           vx:(Math.random()-.5)*.06, vy:(Math.random()-.5)*.06,
@@ -128,25 +162,23 @@ function CosmicCanvas() {
         });
       }
 
-      for(let i=0;i<5;i++) spawnComet();
+      for (let i=0; i<5; i++) spawnComet();
     }
 
-    function spawnComet(){
-      const fromLeft=Math.random()<.5;
+    function spawnComet() {
+      const fromLeft = Math.random()<.5;
       comets.push({
-        x: fromLeft?-140:W+140,
-        y: Math.random()*H*.78,
+        x:fromLeft?-140:W+140, y:Math.random()*H*.78,
         vx:fromLeft? 2.2+Math.random()*2.8 : -(2.2+Math.random()*2.8),
         vy:.35+Math.random()*.9,
-        len:65+Math.random()*140,
-        sz:.6+Math.random()*.75,
+        len:65+Math.random()*140, sz:.6+Math.random()*.75,
         ob:0, targetOb:.5+Math.random()*.4,
         life:0, maxLife:190+Math.random()*210,
       });
     }
 
-    function drawStar(x,y,sz,alpha,rgb){
-      if(sz<.45){
+    function drawStar(x,y,sz,alpha,rgb) {
+      if (sz<.45) {
         ctx.globalAlpha=alpha; ctx.fillStyle=gc(rgb,1);
         ctx.beginPath(); ctx.arc(x,y,sz,0,Math.PI*2); ctx.fill();
         ctx.globalAlpha=1; return;
@@ -168,9 +200,9 @@ function CosmicCanvas() {
       ctx.globalAlpha=1;
     }
 
-    function drawDiamond(x,y,sz,rot,alpha,rgb,glow){
+    function drawDiamond(x,y,sz,rot,alpha,rgb,glow) {
       ctx.save(); ctx.translate(x,y); ctx.rotate(rot);
-      if(glow){
+      if (glow) {
         const g=ctx.createRadialGradient(0,0,0,0,0,sz*5);
         g.addColorStop(0,gc(rgb,alpha*.45)); g.addColorStop(.5,gc(rgb,alpha*.09)); g.addColorStop(1,gc(rgb,0));
         ctx.fillStyle=g; ctx.globalAlpha=1;
@@ -187,7 +219,7 @@ function CosmicCanvas() {
       ctx.restore(); ctx.globalAlpha=1;
     }
 
-    function drawComet(c){
+    function drawComet(c) {
       const ang=Math.atan2(c.vy,c.vx);
       const tx=c.x-Math.cos(ang)*c.len, ty=c.y-Math.sin(ang)*c.len;
       const g=ctx.createLinearGradient(tx,ty,c.x,c.y);
@@ -199,62 +231,44 @@ function CosmicCanvas() {
       ctx.fillStyle=hg; ctx.beginPath(); ctx.arc(c.x,c.y,c.sz*5.5,0,Math.PI*2); ctx.fill();
     }
 
-    // ── SOLID ORBIT LINES — kept subtle so they don't cut text ──
-    function drawOrbits(){
-      ORBITS.forEach((o,oi)=>{
+    function drawOrbits() {
+      ORBITS.forEach((o,oi) => {
         ctx.save();
         ctx.translate(cx,cy);
         ctx.rotate(o.tilt*Math.PI/180);
-
-        // Soft outer glow (very transparent)
         const ry=orbitRy(o);
-        ctx.shadowColor=gc(G,.25); ctx.shadowBlur=10;
+        ctx.shadowColor=gc(G,.15); ctx.shadowBlur=8;
         ctx.beginPath(); ctx.ellipse(0,0,o.rxF*W,ry,0,0,Math.PI*2);
-        ctx.strokeStyle=gc(G,.08); ctx.lineWidth=7; ctx.stroke();
+        ctx.strokeStyle=gc(G,.05); ctx.lineWidth=5; ctx.stroke();
         ctx.shadowBlur=0;
-
-        // ── Main orbit line ──
-        // Opacity stepped so orbit 0 is most vivid, orbit 2 fades
-        const opa = oi===0 ? .55 : oi===1 ? .38 : .24;
-        const lw  = oi===0 ? 1.4 : oi===1 ? 1.1 : .85;
+        const opa = oi===0?.32:oi===1?.22:.14;
+        const lw  = oi===0?1.1:oi===1?.9:.7;
         ctx.beginPath(); ctx.ellipse(0,0,o.rxF*W,ry,0,0,Math.PI*2);
         ctx.strokeStyle=gc(G,opa); ctx.lineWidth=lw; ctx.stroke();
         ctx.restore();
-
-        // ── Electron ──
         o.eA += o.spd;
         const ep=orbitPos(o,o.eA);
-        // Glow corona
-        const eg=ctx.createRadialGradient(ep.x,ep.y,0,ep.x,ep.y,18);
-        eg.addColorStop(0,gc(G,.7)); eg.addColorStop(.45,gc(G,.18)); eg.addColorStop(1,gc(G,0));
-        ctx.fillStyle=eg; ctx.beginPath(); ctx.arc(ep.x,ep.y,18,0,Math.PI*2); ctx.fill();
-        // Core dot
+        const eg=ctx.createRadialGradient(ep.x,ep.y,0,ep.x,ep.y,12);
+        eg.addColorStop(0,gc(G,.5)); eg.addColorStop(.45,gc(G,.10)); eg.addColorStop(1,gc(G,0));
+        ctx.fillStyle=eg; ctx.beginPath(); ctx.arc(ep.x,ep.y,12,0,Math.PI*2); ctx.fill();
         const ec=ctx.createRadialGradient(ep.x-.8,ep.y-.8,0,ep.x,ep.y,5.5);
         ec.addColorStop(0,gc(W3,.98)); ec.addColorStop(.45,gc(G,1)); ec.addColorStop(1,gc(G,0));
         ctx.fillStyle=ec; ctx.beginPath(); ctx.arc(ep.x,ep.y,5.5,0,Math.PI*2); ctx.fill();
       });
     }
 
-    // ── NUCLEUS — smaller, elegant ──
-    function drawNucleus(t){
+    function drawNucleus(t) {
       const pulse=.5+.5*Math.sin(t*.0018);
-      const R=12+pulse*4;  // compact nucleus
-
-      // Atmosphere halos
-      [4.5,3.2,2.2,1.6].forEach((mult,i)=>{
-        const r=R*mult;
-        const a=(.042-i*.006)*(.68+.32*pulse);
+      const R=12+pulse*4;
+      [4.5,3.2,2.2,1.6].forEach((mult,i) => {
+        const r=R*mult, a=(.042-i*.006)*(.68+.32*pulse);
         const grd=ctx.createRadialGradient(cx,cy,0,cx,cy,r);
         grd.addColorStop(0,gc(G,a)); grd.addColorStop(.55,gc(G,a*.32)); grd.addColorStop(1,gc(G,0));
         ctx.fillStyle=grd; ctx.beginPath(); ctx.arc(cx,cy,r,0,Math.PI*2); ctx.fill();
       });
-
-      // White-gold inner glow
       const ig=ctx.createRadialGradient(cx,cy,0,cx,cy,R*1.7);
       ig.addColorStop(0,gc(W3,.96)); ig.addColorStop(.22,gc(G,1)); ig.addColorStop(.75,gc(G,.10)); ig.addColorStop(1,gc(G,0));
       ctx.fillStyle=ig; ctx.beginPath(); ctx.arc(cx,cy,R*1.7,0,Math.PI*2); ctx.fill();
-
-      // Rotating diamond body
       ctx.save(); ctx.translate(cx,cy); ctx.rotate(t*.0012);
       const dg=ctx.createLinearGradient(0,-R,0,R);
       dg.addColorStop(0,gc(W3,.96)); dg.addColorStop(.3,gc(G,1)); dg.addColorStop(1,gc([175,115,5],1));
@@ -266,53 +280,44 @@ function CosmicCanvas() {
     }
 
     let t=0;
-    function frame(){
+    function frame() {
       t++;
       ctx.clearRect(0,0,W,H);
       const py=scrollYR.current*.25;
       ctx.save(); ctx.translate(0,-py);
-
       const bg=ctx.createRadialGradient(cx,cy*.5,0,cx,cy,Math.max(W,H)*.98);
       bg.addColorStop(0,"#152442"); bg.addColorStop(.5,"#0d1e3a"); bg.addColorStop(1,NAVY);
       ctx.fillStyle=bg; ctx.fillRect(0,py,W,H);
-
       const nb=ctx.createRadialGradient(cx,cy,0,cx,cy,W*.32);
       nb.addColorStop(0,gc(G,.07)); nb.addColorStop(.5,gc(G,.025)); nb.addColorStop(1,gc(G,0));
       ctx.fillStyle=nb; ctx.beginPath(); ctx.arc(cx,cy,W*.32,0,Math.PI*2); ctx.fill();
-
       const mdx=(mouse.current.x/(W||1)-.5)*2;
       const mdy=(mouse.current.y/(H||1)-.5)*2;
-
-      stars.forEach(p=>{
+      stars.forEach(p => {
         p.ph+=p.phv; const pulse=.5+.5*Math.sin(p.ph);
         p.x+=p.vx-mdx*p.px*W*.00007; p.y+=p.vy-mdy*p.px*H*.00007;
         if(p.x<-5)p.x=W+5; if(p.x>W+5)p.x=-5;
         if(p.y<-5)p.y=H+5; if(p.y>H+5)p.y=-5;
         drawStar(p.x,p.y,p.sz,p.ob*(.5+.5*pulse),p.rgb);
       });
-
-      crystals.forEach(p=>{
+      crystals.forEach(p => {
         p.ph+=p.phv; p.rot+=p.rv; const pulse=.5+.5*Math.sin(p.ph);
         p.x+=p.vx-mdx*p.px*W*.00010; p.y+=p.vy-mdy*p.px*H*.00010;
         if(p.x<-12)p.x=W+12; if(p.x>W+12)p.x=-12;
         if(p.y<-12)p.y=H+12; if(p.y>H+12)p.y=-12;
         drawDiamond(p.x,p.y,p.sz,p.rot,p.ob*(.55+.45*pulse),p.rgb,p.sz>2.2);
       });
-
-      for(let i=comets.length-1;i>=0;i--){
+      for (let i=comets.length-1; i>=0; i--) {
         const c=comets[i]; c.life++; c.x+=c.vx; c.y+=c.vy;
-        if(c.life<35) c.ob=c.targetOb*(c.life/35);
+        if(c.life<35)      c.ob=c.targetOb*(c.life/35);
         else if(c.life>c.maxLife-45) c.ob=c.targetOb*((c.maxLife-c.life)/45);
         else c.ob=c.targetOb;
         drawComet(c);
         if(c.life>=c.maxLife||c.x<-260||c.x>W+260){ comets.splice(i,1); if(Math.random()<.45) spawnComet(); }
       }
       if(comets.length<4&&Math.random()<.005) spawnComet();
-
-      // Atom drawn last so it sits on top of stars but behind the text layer
       drawOrbits();
       drawNucleus(t);
-
       ctx.restore();
       rafRef.current=requestAnimationFrame(frame);
     }
@@ -324,7 +329,7 @@ function CosmicCanvas() {
     window.addEventListener("mousemove",onM);
     window.addEventListener("scroll",onS,{passive:true});
     resize(); build(); frame();
-    return()=>{
+    return () => {
       cancelAnimationFrame(rafRef.current); ro.disconnect();
       window.removeEventListener("mousemove",onM);
       window.removeEventListener("scroll",onS);
@@ -334,8 +339,8 @@ function CosmicCanvas() {
   return <canvas ref={canvasRef} style={{position:"absolute",inset:0,width:"100%",height:"100%",display:"block"}}/>;
 }
 
-// ─── Scroll reveal ─────────────────────────────────────────────────────────
-function useReveal(threshold=.08){
+// ─── Scroll reveal ──────────────────────────────────────────────────────────
+function useReveal(threshold=.08) {
   const ref=useRef(null);
   const [vis,setVis]=useState(false);
   useEffect(()=>{
@@ -346,29 +351,51 @@ function useReveal(threshold=.08){
   return [ref,vis];
 }
 
-// ─── Stock tile ────────────────────────────────────────────────────────────
-function StockTile({stock,delay=0,pal}){
+// ─── Stock tile ─────────────────────────────────────────────────────────────
+function StockTile({stock, delay=0, pal}) {
   const [hov,setHov]=useState(false);
   const [ref,vis]=useReveal(.05);
-  return(
-    <div ref={ref} style={{opacity:vis?1:0,transform:vis?"translateY(0)":"translateY(24px)",transition:`opacity .6s ease ${delay}ms,transform .6s cubic-bezier(.22,1,.36,1) ${delay}ms`}}>
+
+  return (
+    <div ref={ref} style={{
+      opacity:vis?1:0, transform:vis?"translateY(0)":"translateY(24px)",
+      transition:`opacity .6s ease ${delay}ms,transform .6s cubic-bezier(.22,1,.36,1) ${delay}ms`,
+    }}>
       <Link to={stock.path} style={{textDecoration:"none"}} onClick={!stock.active?e=>e.preventDefault():undefined}>
         <div
           onMouseEnter={()=>setHov(true)} onMouseLeave={()=>setHov(false)}
           style={{
-            background: hov&&stock.active?"rgba(212,160,23,0.05)":pal.cardBg,
-            border:`1px solid ${stock.active?(hov?GOLD:pal.cardBorder):"rgba(255,255,255,0.06)"}`,
+            background: stock.active ? (hov?"rgba(212,160,23,0.05)":pal.cardBg) : pal.inactiveBg,
+            border:`1px solid ${stock.active?(hov?GOLD:pal.cardBorder):pal.inactiveBorder}`,
             borderRadius:14, padding:"20px 18px", height:"100%", boxSizing:"border-box",
             transition:"all .25s cubic-bezier(.4,0,.2,1)",
-            boxShadow:hov&&stock.active?"0 0 0 1px rgba(212,160,23,.25),0 14px 36px rgba(212,160,23,.09),0 4px 16px rgba(0,0,0,.4)":"0 4px 18px rgba(0,0,0,.28)",
-            cursor:stock.active?"pointer":"default", position:"relative", overflow:"hidden",
+            boxShadow:hov&&stock.active
+              ?"0 0 0 1px rgba(212,160,23,.25),0 14px 36px rgba(212,160,23,.09),0 4px 16px rgba(0,0,0,.25)"
+              :"0 4px 18px rgba(0,0,0,.12)",
+            cursor:stock.active?"pointer":"default",
+            position:"relative", overflow:"hidden",
           }}
         >
-          {stock.active&&<div style={{position:"absolute",top:0,left:0,right:0,height:1,background:`linear-gradient(90deg,transparent,${GOLD},transparent)`,opacity:hov?1:0,transition:"opacity .3s"}}/>}
-          <div style={{fontSize:9,color:GOLD,letterSpacing:2.5,fontWeight:700,marginBottom:9,fontFamily:"'DM Sans',sans-serif"}}>ALPHA EDGE RESEARCH</div>
-          <div style={{fontSize:17,fontWeight:800,color:pal.text,fontFamily:"'Playfair Display',serif",lineHeight:1.3,marginBottom:4}}>{stock.name}</div>
-          <div style={{fontSize:11,color:pal.muted,letterSpacing:.3,fontFamily:"'DM Sans',sans-serif"}}>{stock.ticker}</div>
-          {stock.active?(
+          {/* Top shimmer line on hover */}
+          {stock.active && (
+            <div style={{
+              position:"absolute",top:0,left:0,right:0,height:1,
+              background:`linear-gradient(90deg,transparent,${GOLD},transparent)`,
+              opacity:hov?1:0,transition:"opacity .3s",
+            }}/>
+          )}
+
+          <div style={{fontSize:9,color:stock.active?GOLD:"rgba(212,160,23,0.35)",letterSpacing:2.5,fontWeight:700,marginBottom:9,fontFamily:"'DM Sans',sans-serif"}}>
+            ALPHA EDGE RESEARCH
+          </div>
+          <div style={{fontSize:17,fontWeight:800,color:stock.active?pal.text:pal.muted,fontFamily:"'Playfair Display',serif",lineHeight:1.3,marginBottom:4}}>
+            {stock.name}
+          </div>
+          <div style={{fontSize:11,color:pal.muted,letterSpacing:.3,fontFamily:"'DM Sans',sans-serif"}}>
+            {stock.ticker}
+          </div>
+
+          {stock.active ? (
             <>
               <div style={{height:1,background:"rgba(212,160,23,0.12)",margin:"14px 0"}}/>
               <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-end",marginBottom:5,gap:8}}>
@@ -381,13 +408,30 @@ function StockTile({stock,delay=0,pal}){
                   <div style={{fontSize:13,fontWeight:800,color:pal.text,fontFamily:"'DM Sans',sans-serif"}}>{stock.target}</div>
                 </div>
               </div>
-              {stock.cagr&&<div style={{fontSize:11,color:TEAL,marginBottom:14,fontFamily:"'DM Sans',sans-serif"}}>{stock.cagr}</div>}
-              <div style={{padding:"10px 14px",background:GOLD,color:NAVY,textAlign:"center",borderRadius:8,fontWeight:800,fontSize:11,letterSpacing:1.5,fontFamily:"'DM Sans',sans-serif",opacity:hov?1:.88,transition:"opacity .2s"}}>VIEW FULL DASHBOARD →</div>
+              {stock.cagr && (
+                <div style={{fontSize:11,color:TEAL,marginBottom:14,fontFamily:"'DM Sans',sans-serif"}}>{stock.cagr}</div>
+              )}
+              <div style={{
+                padding:"10px 14px",background:GOLD,color:NAVY,textAlign:"center",
+                borderRadius:8,fontWeight:800,fontSize:11,letterSpacing:1.5,
+                fontFamily:"'DM Sans',sans-serif",opacity:hov?1:.88,transition:"opacity .2s",
+              }}>
+                VIEW FULL DASHBOARD →
+              </div>
             </>
-          ):(
+          ) : (
             <>
-              <div style={{height:1,background:"rgba(255,255,255,0.05)",margin:"14px 0"}}/>
-              <div style={{padding:"8px 12px",background:"rgba(255,255,255,0.03)",border:"1px solid rgba(255,255,255,0.055)",borderRadius:8,textAlign:"center",fontSize:10,color:"#2a3d52",letterSpacing:2,fontFamily:"'DM Sans',sans-serif"}}>RESEARCH IN PROGRESS</div>
+              <div style={{height:1,background:pal.inactiveDivider,margin:"14px 0"}}/>
+              <div style={{
+                padding:"8px 12px",
+                background:pal.inactiveBoxBg,
+                border:`1px solid ${pal.inactiveBoxBdr}`,
+                borderRadius:8,textAlign:"center",fontSize:10,
+                color:pal.inactiveLabel,letterSpacing:2,
+                fontFamily:"'DM Sans',sans-serif",
+              }}>
+                RESEARCH IN PROGRESS
+              </div>
             </>
           )}
         </div>
@@ -396,16 +440,125 @@ function StockTile({stock,delay=0,pal}){
   );
 }
 
-// ─── Main ──────────────────────────────────────────────────────────────────
-export default function Home(){
+// ─── Edge Carousel (Research Philosophy Slideshow) ──────────────────────────
+const EDGE_SLIDES = [
+  {
+    icon:"🔍",
+    title:"Deep Due Diligence",
+    body:"We go beyond screeners. Every business is stress-tested across multiple economic cycles — studying unit economics, capital allocation history, and management track record before forming a view.",
+  },
+  {
+    icon:"🏆",
+    title:"Quality First",
+    body:"We only invest in businesses with durable competitive moats — pricing power, network effects, switching costs, or cost advantages — that compound shareholder value across decades.",
+  },
+  {
+    icon:"📐",
+    title:"Valuation Discipline",
+    body:"Great businesses bought at the wrong price destroy wealth. We wait for the right entry — using DCF, reverse DCF, and peer-relative frameworks to ensure a meaningful margin of safety.",
+  },
+  {
+    icon:"♾️",
+    title:"Long-Term Horizon",
+    body:"We think in decades, not quarters. Our FY30 targets reflect 5+ year conviction — not momentum calls. Low churn, patient capital, and compounding are the foundations of our edge.",
+  },
+];
+
+function EdgeCarousel({ pal }) {
+  const [active, setActive] = useState(0);
+  const [paused, setPaused] = useState(false);
+  const timerRef = useRef(null);
+
+  function goTo(i) { setActive(i); }
+
+  useEffect(() => {
+    if (paused) return;
+    timerRef.current = setInterval(() => {
+      setActive(a => (a+1) % EDGE_SLIDES.length);
+    }, 4000);
+    return () => clearInterval(timerRef.current);
+  }, [paused]);
+
+  const slide = EDGE_SLIDES[active];
+
+  return (
+    <section style={{padding:"56px 24px 0", maxWidth:860, margin:"0 auto", textAlign:"center"}}>
+      <div
+        onMouseEnter={()=>setPaused(true)}
+        onMouseLeave={()=>setPaused(false)}
+        style={{
+          background: pal.carouselBg,
+          border:     `1px solid ${pal.carouselBorder}`,
+          borderRadius:16,
+          padding:"clamp(28px,4vw,48px) clamp(20px,5vw,56px)",
+          position:"relative",
+          minHeight:220,
+          display:"flex", flexDirection:"column",
+          alignItems:"center", justifyContent:"center",
+        }}
+      >
+        <div style={{fontSize:9,letterSpacing:"0.38em",color:GOLD,fontWeight:700,marginBottom:20,fontFamily:"'DM Sans',sans-serif"}}>
+          OUR EDGE
+        </div>
+
+        {/* Slide content — fade-up transition */}
+        <div key={active} style={{animation:"edgeFadeIn .55s ease forwards"}}>
+          <div style={{fontSize:36,marginBottom:14}}>{slide.icon}</div>
+          <div style={{
+            fontSize:"clamp(16px,2vw,20px)", fontWeight:800,
+            color:pal.carouselTitle,
+            fontFamily:"'Playfair Display',serif", marginBottom:14, letterSpacing:"-0.3px",
+          }}>
+            {slide.title}
+          </div>
+          <p style={{
+            fontSize:"clamp(13px,1.5vw,15px)",
+            color:pal.carouselBody,
+            lineHeight:1.85, margin:0,
+            fontFamily:"'DM Sans',sans-serif", fontWeight:400,
+            maxWidth:560,
+          }}>
+            {slide.body}
+          </p>
+        </div>
+
+        {/* Dot indicators */}
+        <div style={{display:"flex",gap:8,marginTop:28}}>
+          {EDGE_SLIDES.map((_,i) => (
+            <button
+              key={i}
+              onClick={()=>goTo(i)}
+              style={{
+                width:i===active?22:7, height:7, borderRadius:999,
+                background:i===active?GOLD:"rgba(212,160,23,0.25)",
+                border:"none", cursor:"pointer", padding:0,
+                transition:"width .35s ease, background .35s ease",
+              }}
+            />
+          ))}
+        </div>
+
+        {/* Progress bar */}
+        {!paused && (
+          <div style={{position:"absolute",bottom:0,left:0,right:0,height:2,borderRadius:"0 0 16px 16px",overflow:"hidden",background:"rgba(212,160,23,0.08)"}}>
+            <div key={active} style={{height:"100%",background:GOLD,animation:"edgeProgress 4s linear forwards"}}/>
+          </div>
+        )}
+      </div>
+    </section>
+  );
+}
+
+// ─── Main ────────────────────────────────────────────────────────────────────
+export default function Home() {
   const { theme } = useContext(ThemeContext);
-  const isDark    = theme==="dark";
+  const isDark    = theme === "dark";
   const pal       = isDark ? DARK_PAL : LIGHT_PAL;
 
-  const [heroVis, setHeroVis] = useState(false);
-  const [scrolled,setScrolled]= useState(false);
-  const [stripRef,stripVis]   = useReveal(.18);
-  const [headRef, headVis]    = useReveal(.12);
+  const [heroVis,  setHeroVis]  = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+  const [stripRef, stripVis]    = useReveal(.18);
+  const [headRef,  headVis]     = useReveal(.12);
 
   useEffect(()=>{const t=setTimeout(()=>setHeroVis(true),120);return()=>clearTimeout(t);},[]);
   useEffect(()=>{
@@ -420,46 +573,43 @@ export default function Home(){
     transition:`opacity .85s ease ${d}ms,transform .85s cubic-bezier(.22,1,.36,1) ${d}ms`,
   });
 
-  return(
+  return (
     <>
       <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,600;0,9..40,700;0,9..40,800;1,9..40,300&family=Playfair+Display:ital,wght@0,700;0,800;0,900;1,800&display=swap" rel="stylesheet"/>
       <style>{`
         @keyframes floatTag{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
         @keyframes pulseCTA{0%,100%{box-shadow:0 6px 28px rgba(212,160,23,.32)}50%{box-shadow:0 6px 48px rgba(212,160,23,.65)}}
         @keyframes arrowBounce{0%,100%{transform:translateY(0)}50%{transform:translateY(7px)}}
+        @keyframes edgeFadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+        @keyframes edgeProgress{from{width:0%}to{width:100%}}
+
+        /* ── Floating tags — each child offset for staggered float ── */
         .ft{animation:floatTag 5.5s ease-in-out infinite}
-        .ft:nth-child(2){animation-delay:.5s}.ft:nth-child(3){animation-delay:1s}
-        .ft:nth-child(4){animation-delay:1.5s}.ft:nth-child(5){animation-delay:2s}
+        .ft:nth-child(2){animation-delay:.5s}
+        .ft:nth-child(3){animation-delay:1s}
+        .ft:nth-child(4){animation-delay:1.5s}
+        .ft:nth-child(5){animation-delay:2s}
+
         *{box-sizing:border-box}
 
+        /* ── MOBILE OVERRIDES ── */
         @media(max-width:600px){
-          /* ── HERO SECTION ── */
-          .hero-section{ height:auto !important; min-height:0 !important; }
-
-          /* ── HERO CONTENT WRAPPER ── */
-          .hero-content{ padding-top:56px !important; padding-bottom:100px !important; }
-
-          /* ── BRAND NAME ── */
-          .hero-h1{ font-size:clamp(36px,11vw,52px) !important; letter-spacing:-.8px !important; line-height:1.0 !important; }
-          .hero-brand-alpha{ margin-bottom:2px !important; }
-          .hero-brand-investments{ margin-bottom:20px !important; }
-
-          /* ── TAGLINE ── */
-          .hero-tagline{ font-size:13px !important; line-height:1.6 !important; margin-bottom:75px !important; }
-
-          /* ── FLOATING TAGS (MOAT, QUALITY…) ── */
-          .hero-tags-row{ gap:8px !important; margin-bottom:64px !important; }
-          .hero-tag{ padding:6px 12px !important; font-size:10px !important; }
-
-          /* ── EXPLORE DASHBOARDS BUTTON ── */
-          .hero-cta-wrapper{ margin-bottom:0 !important; }
-          .hero-cta-btn{ padding:12px 32px !important; font-size:11px !important; }
-
-          /* ── OTHER ── */
-          .hero-eyebrow{ font-size:11px !important; letter-spacing:0.22em !important; margin-bottom:16px !important; }
-          .active-grid{ grid-template-columns:1fr !important; }
-          .inactive-grid{ grid-template-columns:1fr 1fr !important; }
-          .sec-h2{ font-size:22px !important; }
+          .hero-section{height:auto !important;min-height:0 !important;}
+          .hero-content{padding-top:56px !important;padding-bottom:100px !important;}
+          .hero-h1{font-size:clamp(36px,11vw,52px) !important;letter-spacing:-.8px !important;line-height:1.0 !important;}
+          .hero-brand-alpha{margin-bottom:2px !important;}
+          .hero-brand-investments{margin-bottom:20px !important;}
+          .hero-tagline{font-size:13px !important;line-height:1.6 !important;margin-bottom:36px !important;}
+          .hero-tags-row{gap:8px !important;margin-bottom:28px !important;}
+          .hero-tag{padding:6px 12px !important;font-size:10px !important;}
+          .hero-cta-wrapper{margin-bottom:0 !important;}
+          .hero-cta-btn{padding:12px 32px !important;font-size:11px !important;}
+          .hero-eyebrow{font-size:11px !important;letter-spacing:0.22em !important;margin-bottom:16px !important;}
+          .active-grid{grid-template-columns:1fr !important;}
+          .inactive-grid{grid-template-columns:1fr 1fr !important;}
+          .sec-h2{font-size:22px !important;}
+          .stat-item{width:42% !important;text-align:center !important;}
+          .stat-label{font-size:9px !important;letter-spacing:0.10em !important;}
         }
         @media(min-width:601px) and (max-width:900px){
           .active-grid{grid-template-columns:1fr !important;}
@@ -467,9 +617,24 @@ export default function Home(){
         }
       `}</style>
 
-      <div style={{background:NAVY,minHeight:"100vh",color:pal.text,fontFamily:"'DM Sans',sans-serif",paddingTop:70,overflowX:"hidden"}}>
+      {/*
+        ── OUTER WRAPPER ──
+        Hero section is always dark (the canvas lives there).
+        Everything BELOW the hero responds to the theme toggle.
+      */}
+      <div style={{
+        background:pal.bg,
+        minHeight:"100vh",
+        color:pal.text,
+        fontFamily:"'DM Sans',sans-serif",
+        paddingTop:70,
+        overflowX:"hidden",
+      }}>
 
-        {/* ─────────────────── HERO ─────────────────── */}
+        {/* ══════════ HERO ══════════
+            Always renders with a dark canvas — theme toggle doesn't
+            affect the hero background since the canvas paints it.
+        */}
         <section className="hero-section" style={{
           position:"relative",
           height:"calc(100vh - 50px)",
@@ -479,37 +644,31 @@ export default function Home(){
           justifyContent:"center",
           textAlign:"center",
           overflow:"hidden",
+          // Hero is always dark regardless of theme (canvas paints this area)
+          background:NAVY,
         }}>
           <CosmicCanvas/>
 
-          {/* Vignette — soft, lets stars breathe but keeps text sharp */}
+          {/* Soft vignette keeps text readable without killing stars */}
           <div style={{
             position:"absolute",inset:0,pointerEvents:"none",
             background:"radial-gradient(ellipse 92% 70% at 50% 60%, transparent 22%, rgba(10,18,32,.72) 100%)",
           }}/>
 
-          {/* ── Hero content ── */}
+          {/* ── Hero text — always light since bg is dark ── */}
           <div className="hero-content" style={{
-            position:"relative",zIndex:2,
-            maxWidth:800,padding:"0 22px",width:"100%",
-            display:"flex",flexDirection:"column",alignItems:"center",
+            position:"relative", zIndex:2,
+            maxWidth:800, padding:"0 22px", width:"100%",
+            display:"flex", flexDirection:"column", alignItems:"center",
             paddingTop:"clamp(10px, 6vh, 60px)",
             paddingBottom:0,
           }}>
 
-            {/*
-              ── TYPE HIERARCHY ──
-              Level 1 (caption):  13px · caps · wide tracking · subdued gold
-              Level 2 (h1 brand): clamp 52–88px · serif · white + gold gradient
-              Level 3 (tagline):  clamp 15–19px · light weight · muted blue-grey
-              Level 4 (tags):     10px · caps · no background · gold outline
-              Level 5 (CTA btn):  12px · caps · filled gold
-            */}
-
-            {/* L1 — eyebrow caption */}
+            {/* L1 — Eyebrow */}
             <div className="hero-eyebrow" style={{
               fontSize:14, letterSpacing:"0.32em", color:GOLD,
-              fontWeight:600, marginBottom:0, fontFamily:"'DM Sans',sans-serif",
+              fontWeight:600, marginBottom:0,
+              fontFamily:"'DM Sans',sans-serif",
               opacity:.95, ...fu(150),
             }}>
               THE BEST TIME TO INVEST IS NOW!
@@ -526,7 +685,8 @@ export default function Home(){
             </h1>
             <h2 className="hero-h1 hero-brand-investments" style={{
               fontSize:"clamp(52px,7.5vw,88px)",
-              fontWeight:900, lineHeight:.93, margin:"0 0 clamp(18px,3vh,48px)",
+              fontWeight:900, lineHeight:.93,
+              margin:"0 0 clamp(18px,3vh,48px)",
               fontFamily:"'Playfair Display',serif", letterSpacing:"-1.5px",
               background:"linear-gradient(135deg,#f8dc72 0%,#D4A017 42%,#c08a0a 100%)",
               WebkitBackgroundClip:"text", WebkitTextFillColor:"transparent", backgroundClip:"text",
@@ -537,30 +697,36 @@ export default function Home(){
 
             {/* L3 — Tagline */}
             <p className="hero-sub hero-tagline" style={{
-              fontSize:"clamp(14px,1.65vw,18px)", color:"#4e6e88",
-              margin:"0 0 clamp(24px,4vh,72px)", lineHeight:1.68, fontWeight:300,
+              fontSize:"clamp(14px,1.65vw,18px)", color:"#8aacbf",
+              margin:"0 0 clamp(24px,4vh,52px)", lineHeight:1.68, fontWeight:400,
               ...fu(560),
             }}>
               Institutional-grade equity research on India's finest compounders.<br/>
               Hand-picked businesses built to last decades.
             </p>
 
-            {/* L4 — Floating keyword tags — NO dark background, just a fine border */}
+            {/* L4 — Floating concept tags
+                ── KEY FIX: inline in flow (NOT position:absolute) so they
+                   never get displaced regardless of viewport height ──
+            */}
             <div className="hero-tags-row" style={{
-              display:"flex",justifyContent:"center",flexWrap:"wrap",
-              gap:"clamp(8px,2vw,32px)", marginBottom:"clamp(28px,5vh,72px)", ...fu(680),
+              display:"flex", justifyContent:"center", flexWrap:"wrap",
+              gap:"clamp(8px,2vw,28px)",
+              marginBottom:"clamp(20px,4vh,48px)",
+              ...fu(680),
             }}>
-              {["MOAT","QUALITY","GROWTH","VALUATION","COMPOUNDING"].map(tag=>(
+              {["MOAT","QUALITY","GROWTH","VALUATION","COMPOUNDING"].map(tag => (
                 <div key={tag} className="ft hero-tag" style={{
                   padding:"7px 16px",
-                  // Transparent background — just a gold border ring
                   background:"transparent",
                   border:"1px solid rgba(212,160,23,.40)",
                   borderRadius:999,
                   fontSize:12, letterSpacing:"0.26em", color:GOLD,
                   fontWeight:700, fontFamily:"'DM Sans',sans-serif",
                   whiteSpace:"nowrap",
-                }}>{tag}</div>
+                }}>
+                  {tag}
+                </div>
               ))}
             </div>
 
@@ -584,9 +750,9 @@ export default function Home(){
 
           {/* Scroll arrow */}
           <div style={{
-            position:"absolute",bottom:20,left:"50%",transform:"translateX(-50%)",
-            display:"flex",flexDirection:"column",alignItems:"center",gap:3,
-            opacity:scrolled?0:heroVis?.6:0,transition:"opacity .5s",pointerEvents:"none",
+            position:"absolute", bottom:20, left:"50%", transform:"translateX(-50%)",
+            display:"flex", flexDirection:"column", alignItems:"center", gap:3,
+            opacity:scrolled?0:heroVis?.6:0, transition:"opacity .5s", pointerEvents:"none",
             animation:heroVis?"arrowBounce 2.4s ease-in-out 2.5s infinite":"none",
           }}>
             <div style={{width:1,height:26,background:"linear-gradient(to bottom,rgba(212,160,23,.75),transparent)"}}/>
@@ -596,64 +762,92 @@ export default function Home(){
           </div>
         </section>
 
-        {/* ── STATS STRIP ── */}
+        {/* ══════════ STATS STRIP ══════════ */}
         <div ref={stripRef} style={{
-          borderTop:"1px solid rgba(212,160,23,.11)", borderBottom:"1px solid rgba(212,160,23,.11)",
-          background:pal.stripBg, padding:"22px 36px",
-          display:"flex", justifyContent:"center", gap:"clamp(20px,5vw,80px)", flexWrap:"wrap",
-          opacity:stripVis?1:0, transform:stripVis?"none":"translateY(14px)", transition:"opacity .7s,transform .7s",
+          borderTop:`1px solid rgba(212,160,23,.11)`,
+          borderBottom:`1px solid rgba(212,160,23,.11)`,
+          background:pal.stripBg,
+          padding:"22px 36px",
+          display:"flex", justifyContent:"center",
+          gap:"clamp(20px,5vw,80px)", flexWrap:"wrap",
+          opacity:stripVis?1:0, transform:stripVis?"none":"translateY(14px)",
+          transition:"opacity .7s,transform .7s",
         }}>
-          {[["10","Researched Companies"],["FY30","Projection Horizon"],["₹0","Paid Subscription"],["100%","Independent Research"]].map(([v,l])=>(
-            <div key={l} style={{textAlign:"center"}}>
-              <div style={{fontSize:"clamp(20px,2.8vw,28px)",fontWeight:800,color:GOLD,fontFamily:"'Playfair Display',serif"}}>{v}</div>
-              <div style={{fontSize:10,color:pal.muted,letterSpacing:"0.14em",marginTop:3,fontFamily:"'DM Sans',sans-serif"}}>{l}</div>
+          {[["10","Researched Companies"],["FY30","Projection Horizon"],["₹0","Paid Subscription"],["100%","Independent Research"]].map(([v,l]) => (
+            <div key={l} className="stat-item" style={{textAlign:"center"}}>
+              <div style={{
+                fontSize:"clamp(20px,2.8vw,28px)",
+                fontWeight:800, color:GOLD,
+                fontFamily:"'Playfair Display',serif",
+              }}>
+                {v}
+              </div>
+              <div className="stat-label" style={{
+                fontSize:10, color:pal.statLabel,
+                letterSpacing:"0.14em", marginTop:3,
+                fontFamily:"'DM Sans',sans-serif",
+              }}>
+                {l}
+              </div>
             </div>
           ))}
         </div>
 
-        {/* ── RESEARCH PHILOSOPHY ── */}
-        <section style={{padding:"56px 24px 0",maxWidth:860,margin:"0 auto",textAlign:"center"}}>
-          <div style={{
-            background:"rgba(212,160,23,0.04)",
-            border:"1px solid rgba(212,160,23,0.12)",
-            borderRadius:16,
-            padding:"clamp(24px,4vw,44px) clamp(20px,5vw,56px)",
-          }}>
-            <div style={{fontSize:9,letterSpacing:"0.38em",color:GOLD,fontWeight:700,marginBottom:14,fontFamily:"'DM Sans',sans-serif"}}>OUR EDGE</div>
-            <p style={{fontSize:"clamp(15px,1.8vw,18px)",color:pal.subText,lineHeight:1.8,margin:"0 0 28px",fontFamily:"'DM Sans',sans-serif",fontWeight:300}}>
-              We focus on <span style={{color:GOLD,fontWeight:600}}>10–15 exceptional businesses</span> with durable competitive moats, 
-              run by honest operators, priced for long-term compounding — not momentum plays or short-term calls.
-            </p>
-            <div style={{display:"flex",justifyContent:"center",flexWrap:"wrap",gap:"clamp(12px,3vw,36px)"}}>
-              {[["🔍","Deep Due Diligence"],["🏆","Quality First"],["📐","Valuation Discipline"],["♾️","Long-Term Horizon"]].map(([icon,label])=>(
-                <div key={label} style={{display:"flex",alignItems:"center",gap:8,fontSize:12,color:pal.muted,fontFamily:"'DM Sans',sans-serif",letterSpacing:"0.08em"}}>
-                  <span style={{fontSize:16}}>{icon}</span>{label}
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
+        {/* ══════════ RESEARCH PHILOSOPHY CAROUSEL ══════════ */}
+        <EdgeCarousel pal={pal}/>
 
-        {/* ── RESEARCH UNIVERSE ── */}
-        <section id="universe" style={{padding:"72px 18px 90px",maxWidth:1360,margin:"0 auto"}}>
-          <div ref={headRef} style={{textAlign:"center",marginBottom:44,opacity:headVis?1:0,transform:headVis?"none":"translateY(18px)",transition:"opacity .7s,transform .7s"}}>
-            <div style={{fontSize:9,letterSpacing:"0.38em",color:GOLD,fontWeight:700,marginBottom:10,fontFamily:"'DM Sans',sans-serif"}}>CURATED EQUITY RESEARCH</div>
-            <h2 className="sec-h2" style={{fontSize:"clamp(22px,3.5vw,36px)",fontWeight:800,color:pal.text,fontFamily:"'Playfair Display',serif",margin:0,lineHeight:1.2}}>Our Research Universe</h2>
+        {/* ══════════ RESEARCH UNIVERSE ══════════ */}
+        <section id="universe" style={{
+          padding:"72px 18px 90px",
+          maxWidth:1360,
+          margin:"0 auto",
+        }}>
+          <div ref={headRef} style={{
+            textAlign:"center", marginBottom:44,
+            opacity:headVis?1:0, transform:headVis?"none":"translateY(18px)",
+            transition:"opacity .7s,transform .7s",
+          }}>
+            <div style={{
+              fontSize:9, letterSpacing:"0.38em", color:GOLD,
+              fontWeight:700, marginBottom:10,
+              fontFamily:"'DM Sans',sans-serif",
+            }}>
+              CURATED EQUITY RESEARCH
+            </div>
+            <h2 className="sec-h2" style={{
+              fontSize:"clamp(22px,3.5vw,36px)",
+              fontWeight:800, color:pal.text,
+              fontFamily:"'Playfair Display',serif",
+              margin:0, lineHeight:1.2,
+            }}>
+              Our Research Universe
+            </h2>
             <div style={{width:44,height:2,background:GOLD,margin:"14px auto 0",borderRadius:2}}/>
           </div>
 
-          <div className="active-grid" style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(min(100%,340px),1fr))",gap:16,marginBottom:13}}>
-            {stocks.filter(s=>s.active).map((s,i)=><StockTile key={s.name} stock={s} delay={i*100} pal={pal}/>)}
+          {/* Active dashboards — wider cards */}
+          <div className="active-grid" style={{
+            display:"grid",
+            gridTemplateColumns:"repeat(auto-fit,minmax(min(100%,340px),1fr))",
+            gap:16, marginBottom:13,
+          }}>
+            {stocks.filter(s=>s.active).map((s,i) => (
+              <StockTile key={s.name} stock={s} delay={i*100} pal={pal}/>
+            ))}
           </div>
-          <div className="inactive-grid" style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(min(100%,228px),1fr))",gap:11}}>
-            {stocks.filter(s=>!s.active).map((s,i)=><StockTile key={s.name} stock={s} delay={80+i*45} pal={pal}/>)}
+
+          {/* Coming-soon — tighter grid */}
+          <div className="inactive-grid" style={{
+            display:"grid",
+            gridTemplateColumns:"repeat(auto-fill,minmax(min(100%,228px),1fr))",
+            gap:11,
+          }}>
+            {stocks.filter(s=>!s.active).map((s,i) => (
+              <StockTile key={s.name} stock={s} delay={80+i*45} pal={pal}/>
+            ))}
           </div>
         </section>
 
-        <footer style={{borderTop:"1px solid rgba(255,255,255,0.04)",padding:"26px 20px",textAlign:"center",background:NAVY}}>
-          <div style={{fontSize:11,color:"#1c3350",marginBottom:4,fontFamily:"'DM Sans',sans-serif"}}>Alpha Edge Research · High-Conviction Indian Equity Analysis</div>
-          <div style={{fontSize:10,color:"#1c3350",fontFamily:"'DM Sans',sans-serif"}}>Not SEBI-registered investment advice. For informational purposes only.</div>
-        </footer>
       </div>
     </>
   );
