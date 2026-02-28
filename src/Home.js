@@ -803,7 +803,7 @@ export default function Home() {
           .hero-tag{padding:6px 12px !important;font-size:10px !important;}
           .hero-cta-wrapper{margin-bottom:0 !important;}
           .hero-cta-btn{padding:12px 32px !important;font-size:11px !important;}
-          .hero-eyebrow{font-size:11px !important;letter-spacing:0.22em !important;margin-bottom:16px !important;}
+          .hero-eyebrow{font-size:11px !important;letter-spacing:0.22em !important;margin-bottom:10px !important;}
           .active-grid{grid-template-columns:1fr !important;}
           .inactive-grid{grid-template-columns:1fr 1fr !important;}
           .sec-h2{font-size:22px !important;}
