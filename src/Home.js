@@ -836,7 +836,7 @@ export default function Home() {
         */}
         <section className="hero-section" style={{
           position:"relative",
-          height:"calc(100vh - 50px)",
+          height:"calc(90vh - 00px)",
           minHeight:120,
           display:"flex",
           alignItems:"center",
@@ -885,7 +885,7 @@ export default function Home() {
             <h2 className="hero-h1 hero-brand-investments" style={{
               fontSize:"clamp(52px,7.5vw,88px)",
               fontWeight:900, lineHeight:.93,
-              margin:"0 0 clamp(18px,3vh,48px)",
+              margin:"0 0 clamp(28px,23vh,98px)",
               fontFamily:"'Playfair Display',serif", letterSpacing:"-1.5px",
               background:"linear-gradient(135deg,#f8dc72 0%,#D4A017 42%,#c08a0a 100%)",
               WebkitBackgroundClip:"text", WebkitTextFillColor:"transparent", backgroundClip:"text",
@@ -897,7 +897,7 @@ export default function Home() {
             {/* L3 — Tagline */}
             <p className="hero-sub hero-tagline" style={{
               fontSize:"clamp(14px,1.65vw,18px)", color:"#8aacbf",
-              margin:"0 0 clamp(24px, 4vh,5552px)", lineHeight:1.68, fontWeight:400,
+              margin:"0 0 clamp(44px, 24vh,100px)", lineHeight:1.68, fontWeight:400,
               ...fu(560),
             }}>
               Institutional-grade equity research on India's finest compounders.<br/>
@@ -911,7 +911,7 @@ export default function Home() {
             <div className="hero-tags-row" style={{
               display:"flex", justifyContent:"center", flexWrap:"wrap",
               gap:"clamp(8px,2vw,28px)",
-              marginBottom:"clamp(20px,4vh,48px)",
+              marginBottom:"clamp(20px,24vh,78px)",
               ...fu(680),
             }}>
               {["MOAT","QUALITY","GROWTH","VALUATION","COMPOUNDING"].map(tag => (
