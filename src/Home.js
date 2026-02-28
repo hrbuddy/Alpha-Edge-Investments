@@ -1,7 +1,6 @@
 import { Link } from "react-router-dom";
 import { useContext, useEffect, useRef, useState } from "react";
 import { ThemeContext } from "./App";
-import { STOCKS, STOCK_ROUTES } from "./dashboards/stocksDB";
 
 const NAVY  = "#0D1B2A";
 const GOLD  = "#D4A017";
@@ -64,32 +63,18 @@ const LIGHT_PAL = {
   sectionBg:       "#F5F0E8",
 };
 
-// ─── Active stock tiles — auto-generated from stocksDB ─────────────────────
+// ─── Home page shows 3 live + 6 coming-soon ────────────────────────────────
+//  Full universe (all stocks) lives at /research-universe
 const stocks = [
-  // Live dashboards — pulled from stocksDB
-  ...STOCK_ROUTES.map(({ path, stockId }) => {
-    const s = STOCKS[stockId];
-    // Derive target & cagr from sensitivity base case
-    const baseScenario = s.sensitivity?.scenarios?.find(sc => sc.label === "BASE CASE");
-    return {
-      name:   s.name,
-      ticker: `NSE: ${s.nse} · BSE: ${s.bse}`,
-      rating: s.rating,
-      target: baseScenario?.target || s.metrics.find(m => m.label === "Target")?.value || "—",
-      cagr:   baseScenario?.pe ? `${baseScenario.pe} P/E to FY30` : s.sensitivity?.conclusion?.match(/\d+–?\d*%/)?.[0] || "",
-      path,
-      active: true,
-    };
-  }),
-  // Coming soon — kept here manually (not in stocksDB yet)
-  { name:"Zomato Ltd",         ticker:"NSE: ZOMATO",     path:"#", active:false },
-  { name:"PB Fintech Ltd",     ticker:"NSE: POLICYBZR",  path:"#", active:false },
-  { name:"Trent Ltd",          ticker:"NSE: TRENT",      path:"#", active:false },
-  { name:"Persistent Systems", ticker:"NSE: PERSISTENT", path:"#", active:false },
-  { name:"Dixon Technologies", ticker:"NSE: DIXON",      path:"#", active:false },
-  { name:"Rail Vikas Nigam",   ticker:"NSE: RVNL",       path:"#", active:false },
-  { name:"Suzlon Energy",      ticker:"NSE: SUZLON",     path:"#", active:false },
-  { name:"HDFC Bank Ltd",      ticker:"NSE: HDFCBANK",   path:"#", active:false },
+  { name:"Info Edge (India) Ltd", ticker:"NSE: NAUKRI · BSE: 532777", rating:"BUY", target:"₹1,700 – 2,100",   cagr:"12–17% CAGR to FY30", path:"/info-edge",     active:true  },
+  { name:"Eicher Motors Ltd",     ticker:"NSE: EICHERMOT · BSE: 505200", rating:"BUY", target:"₹12,500 – 15,000", cagr:"14–16% CAGR to FY30", path:"/eicher-motors", active:true  },
+  { name:"MCX Ltd",               ticker:"NSE: MCX · BSE: 534091",    rating:"BUY", target:"₹5,150",           cagr:"Base · 21% CAGR",     path:"/mcx",           active:true  },
+  { name:"Zomato Ltd",            ticker:"NSE: ZOMATO",     path:"#", active:false },
+  { name:"PB Fintech Ltd",        ticker:"NSE: POLICYBZR",  path:"#", active:false },
+  { name:"Trent Ltd",             ticker:"NSE: TRENT",      path:"#", active:false },
+  { name:"Dixon Technologies",    ticker:"NSE: DIXON",      path:"#", active:false },
+  { name:"Rail Vikas Nigam",      ticker:"NSE: RVNL",       path:"#", active:false },
+  { name:"HDFC Bank Ltd",         ticker:"NSE: HDFCBANK",   path:"#", active:false },
 ];
 
 // ════════════════════════════════════════════════════════════════════════════
@@ -380,8 +365,8 @@ function StockTile({stock, delay=0, pal}) {
         <div
           onMouseEnter={()=>setHov(true)} onMouseLeave={()=>setHov(false)}
           style={{
-            background: stock.active ? (hov?"rgba(212,160,23,0.05)":pal.cardBg) : pal.inactiveBg,
-            border:`1px solid ${stock.active?(hov?GOLD:pal.cardBorder):pal.inactiveBorder}`,
+            background: stock.active ? (hov?"rgba(212,160,23,0.05)":pal.cardBg) : pal.cardBg,
+            border:`1px solid ${stock.active?(hov?GOLD:pal.cardBorder):pal.cardBorder}`,
             borderRadius:14, padding:"20px 18px", height:"100%", boxSizing:"border-box",
             transition:"all .25s cubic-bezier(.4,0,.2,1)",
             boxShadow:hov&&stock.active
@@ -391,7 +376,6 @@ function StockTile({stock, delay=0, pal}) {
             position:"relative", overflow:"hidden",
           }}
         >
-          {/* Top shimmer line on hover */}
           {stock.active && (
             <div style={{
               position:"absolute",top:0,left:0,right:0,height:1,
@@ -400,10 +384,10 @@ function StockTile({stock, delay=0, pal}) {
             }}/>
           )}
 
-          <div style={{fontSize:9,color:stock.active?GOLD:"rgba(212,160,23,0.35)",letterSpacing:2.5,fontWeight:700,marginBottom:9,fontFamily:"'DM Sans',sans-serif"}}>
+          <div style={{fontSize:9,color:GOLD,letterSpacing:2.5,fontWeight:700,marginBottom:9,fontFamily:"'DM Sans',sans-serif"}}>
             ALPHA EDGE RESEARCH
           </div>
-          <div style={{fontSize:17,fontWeight:800,color:stock.active?pal.text:pal.muted,fontFamily:"'Playfair Display',serif",lineHeight:1.3,marginBottom:4}}>
+          <div style={{fontSize:17,fontWeight:800,color:pal.text,fontFamily:"'Playfair Display',serif",lineHeight:1.3,marginBottom:4}}>
             {stock.name}
           </div>
           <div style={{fontSize:11,color:pal.muted,letterSpacing:.3,fontFamily:"'DM Sans',sans-serif"}}>
@@ -419,7 +403,7 @@ function StockTile({stock, delay=0, pal}) {
                   <div style={{fontSize:17,fontWeight:800,color:GREEN,letterSpacing:1,fontFamily:"'DM Sans',sans-serif"}}>{stock.rating}</div>
                 </div>
                 <div style={{textAlign:"right"}}>
-                  <div style={{fontSize:9,color:pal.muted,letterSpacing:1,marginBottom:3,fontFamily:"'DM Sans',sans-serif"}}>FY30 TARGET</div>
+                  <div style={{fontSize:9,color:pal.muted,letterSpacing:1,marginBottom:3,fontFamily:"'DM Sans',sans-serif"}}>TARGET</div>
                   <div style={{fontSize:13,fontWeight:800,color:pal.text,fontFamily:"'DM Sans',sans-serif"}}>{stock.target}</div>
                 </div>
               </div>
@@ -436,21 +420,202 @@ function StockTile({stock, delay=0, pal}) {
             </>
           ) : (
             <>
-              <div style={{height:1,background:pal.inactiveDivider,margin:"14px 0"}}/>
+              <div style={{height:1,background:"rgba(212,160,23,0.10)",margin:"12px 0"}}/>
               <div style={{
-                padding:"8px 12px",
-                background:pal.inactiveBoxBg,
-                border:`1px solid ${pal.inactiveBoxBdr}`,
-                borderRadius:8,textAlign:"center",fontSize:10,
-                color:pal.inactiveLabel,letterSpacing:2,
+                display:"inline-block",
+                padding:"4px 10px",
+                background:"rgba(212,160,23,0.08)",
+                border:"1px solid rgba(212,160,23,0.2)",
+                borderRadius:999,fontSize:9,
+                color:"rgba(212,160,23,0.65)",letterSpacing:2,fontWeight:700,
                 fontFamily:"'DM Sans',sans-serif",
               }}>
-                RESEARCH IN PROGRESS
+                COMING SOON
               </div>
             </>
           )}
         </div>
       </Link>
+    </div>
+  );
+}
+
+// ─── Request a Stock tile ────────────────────────────────────────────────────
+function RequestStockTile({ pal, onOpen }) {
+  const [hov,setHov]=useState(false);
+  return (
+    <div
+      onMouseEnter={()=>setHov(true)} onMouseLeave={()=>setHov(false)}
+      onClick={onOpen}
+      style={{
+        background: hov?"rgba(212,160,23,0.05)":pal.cardBg,
+        border:`1px dashed ${hov?GOLD:"rgba(212,160,23,0.3)"}`,
+        borderRadius:14, padding:"28px 18px",
+        cursor:"pointer", textAlign:"center",
+        transition:"all .25s", boxSizing:"border-box",
+        display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",gap:10,
+      }}
+    >
+      <div style={{fontSize:28,opacity:hov?1:0.5,transition:"opacity .2s"}}>＋</div>
+      <div style={{fontSize:14,fontWeight:800,color:hov?GOLD:pal.muted,fontFamily:"'Playfair Display',serif",transition:"color .2s"}}>
+        Request a Stock
+      </div>
+      <div style={{fontSize:11,color:pal.muted,fontFamily:"'DM Sans',sans-serif",lineHeight:1.5}}>
+        Don't see a stock you're tracking?<br/>Tell us and we'll add it to our pipeline.
+      </div>
+    </div>
+  );
+}
+
+// ─── Request Stock Popup ─────────────────────────────────────────────────────
+function RequestStockPopup({ pal, isDark, onClose }) {
+  const [name,setName]=useState("");
+  const [ticker,setTicker]=useState("");
+  const [email,setEmail]=useState("");
+  const [submitted,setSubmitted]=useState(false);
+  const [err,setErr]=useState("");
+
+  function handleSubmit() {
+    if (!email.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      setErr("Please enter a valid email address."); return;
+    }
+    setSubmitted(true);
+  }
+
+  const inputStyle = {
+    width:"100%", boxSizing:"border-box",
+    background: isDark?"rgba(255,255,255,0.04)":"rgba(13,27,42,0.04)",
+    border:`1px solid rgba(212,160,23,0.2)`,
+    borderRadius:8, padding:"10px 14px",
+    color: isDark?"#c8dae8":"#0D1B2A",
+    fontSize:13, fontFamily:"'DM Sans',sans-serif",
+    outline:"none",
+  };
+
+  return (
+    <div style={{
+      position:"fixed",inset:0,zIndex:9999999,
+      background:"rgba(0,0,0,0.7)",backdropFilter:"blur(6px)",
+      display:"flex",alignItems:"center",justifyContent:"center",padding:16,
+    }} onClick={e=>e.target===e.currentTarget&&onClose()}>
+      <div style={{
+        background: isDark?"#0D1B2A":"#f5f0e8",
+        border:`1px solid rgba(212,160,23,0.25)`,
+        borderRadius:16, padding:"32px 28px",
+        width:"100%", maxWidth:420,
+        boxShadow:"0 24px 64px rgba(0,0,0,0.5)",
+      }}>
+        {submitted ? (
+          <div style={{textAlign:"center",padding:"20px 0"}}>
+            <div style={{fontSize:36,marginBottom:12}}>✅</div>
+            <div style={{fontSize:18,fontWeight:800,color:GOLD,fontFamily:"'Playfair Display',serif",marginBottom:8}}>
+              Request Received!
+            </div>
+            <div style={{fontSize:13,color:isDark?"#94a3b8":"#4a6070",fontFamily:"'DM Sans',sans-serif",lineHeight:1.6}}>
+              Thanks! We'll notify you at <strong style={{color:GOLD}}>{email}</strong> when we publish research on {name||"this stock"}.
+            </div>
+            <button onClick={onClose} style={{marginTop:24,padding:"10px 28px",background:GOLD,color:"#0D1B2A",border:"none",borderRadius:8,fontWeight:800,fontSize:12,letterSpacing:1.2,cursor:"pointer",fontFamily:"'DM Sans',sans-serif"}}>
+              CLOSE
+            </button>
+          </div>
+        ) : (
+          <>
+            <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:20}}>
+              <div style={{fontSize:18,fontWeight:800,color:GOLD,fontFamily:"'Playfair Display',serif"}}>
+                Request a Stock
+              </div>
+              <button onClick={onClose} style={{background:"none",border:"none",cursor:"pointer",fontSize:20,color:"rgba(212,160,23,0.5)",lineHeight:1,padding:4}}>×</button>
+            </div>
+            <div style={{display:"flex",flexDirection:"column",gap:14}}>
+              <div>
+                <div style={{fontSize:10,fontWeight:700,letterSpacing:1.2,color:"rgba(212,160,23,0.7)",fontFamily:"'DM Sans',sans-serif",marginBottom:6}}>STOCK NAME</div>
+                <input value={name} onChange={e=>setName(e.target.value)} placeholder="e.g. Zomato Ltd" style={inputStyle}/>
+              </div>
+              <div>
+                <div style={{fontSize:10,fontWeight:700,letterSpacing:1.2,color:"rgba(212,160,23,0.7)",fontFamily:"'DM Sans',sans-serif",marginBottom:6}}>NSE TICKER (optional)</div>
+                <input value={ticker} onChange={e=>setTicker(e.target.value)} placeholder="e.g. ZOMATO" style={inputStyle}/>
+              </div>
+              <div>
+                <div style={{fontSize:10,fontWeight:700,letterSpacing:1.2,color:"rgba(212,160,23,0.7)",fontFamily:"'DM Sans',sans-serif",marginBottom:6}}>YOUR EMAIL <span style={{color:"#C0392B"}}>*</span></div>
+                <input value={email} onChange={e=>{setEmail(e.target.value);setErr("");}} placeholder="you@example.com" type="email" style={{...inputStyle,...(err?{border:"1px solid #C0392B"}:{})}}/>
+                {err && <div style={{fontSize:11,color:"#C0392B",marginTop:4,fontFamily:"'DM Sans',sans-serif"}}>{err}</div>}
+              </div>
+              <button onClick={handleSubmit} style={{
+                marginTop:4, padding:"12px",background:GOLD,color:"#0D1B2A",
+                border:"none",borderRadius:8,fontWeight:800,fontSize:12,
+                letterSpacing:1.4,cursor:"pointer",fontFamily:"'DM Sans',sans-serif",
+                transition:"opacity .2s",
+              }}
+                onMouseEnter={e=>e.target.style.opacity=".88"}
+                onMouseLeave={e=>e.target.style.opacity="1"}
+              >
+                SUBMIT REQUEST →
+              </button>
+              <div style={{fontSize:10,color:"rgba(212,160,23,0.4)",textAlign:"center",fontFamily:"'DM Sans',sans-serif"}}>
+                We'll email you when research is published.
+              </div>
+            </div>
+          </>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// ─── Investment Disclaimer Popup ─────────────────────────────────────────────
+function DisclaimerPopup({ pal, isDark, onAccept }) {
+  return (
+    <div style={{
+      position:"fixed",inset:0,zIndex:9999998,
+      background:"rgba(0,0,0,0.82)",backdropFilter:"blur(8px)",
+      display:"flex",alignItems:"center",justifyContent:"center",padding:16,
+    }}>
+      <div style={{
+        background: isDark?"#0D1B2A":"#f5f0e8",
+        border:`1px solid rgba(212,160,23,0.3)`,
+        borderRadius:16, padding:"36px 28px",
+        width:"100%", maxWidth:480,
+        boxShadow:"0 24px 64px rgba(0,0,0,0.6)",
+        textAlign:"center",
+      }}>
+        <div style={{fontSize:32,marginBottom:12}}>⚠️</div>
+        <div style={{fontSize:20,fontWeight:800,color:GOLD,fontFamily:"'Playfair Display',serif",marginBottom:16,lineHeight:1.3}}>
+          Investment Disclaimer
+        </div>
+        <div style={{
+          background:"rgba(212,160,23,0.06)",border:"1px solid rgba(212,160,23,0.15)",
+          borderRadius:10,padding:"16px 18px",marginBottom:20,textAlign:"left",
+        }}>
+          {[
+            "Alpha Edge Research is NOT a SEBI-registered investment advisor.",
+            "All research, analysis, and content published here is strictly for educational and informational purposes only.",
+            "Nothing on this platform constitutes investment advice, a solicitation, or a recommendation to buy or sell any security.",
+            "Past performance does not guarantee future results. Investing in equities involves significant risk of loss.",
+            "Always consult a SEBI-registered financial advisor before making any investment decisions.",
+          ].map((pt,i)=>(
+            <div key={i} style={{display:"flex",gap:10,marginBottom:i<4?10:0,alignItems:"flex-start"}}>
+              <span style={{color:GOLD,fontWeight:700,flexShrink:0,fontFamily:"'DM Sans',sans-serif",fontSize:12}}>•</span>
+              <span style={{fontSize:12,color:isDark?"#c8dae8":"#2a3d52",fontFamily:"'DM Sans',sans-serif",lineHeight:1.6}}>{pt}</span>
+            </div>
+          ))}
+        </div>
+        <button
+          onClick={onAccept}
+          style={{
+            width:"100%",padding:"14px",background:GOLD,color:"#0D1B2A",
+            border:"none",borderRadius:8,fontWeight:800,fontSize:12,
+            letterSpacing:1.4,cursor:"pointer",fontFamily:"'DM Sans',sans-serif",
+            marginBottom:10,transition:"opacity .2s",
+          }}
+          onMouseEnter={e=>e.target.style.opacity=".88"}
+          onMouseLeave={e=>e.target.style.opacity="1"}
+        >
+          I UNDERSTAND & AGREE TO PROCEED
+        </button>
+        <div style={{fontSize:10,color:"rgba(212,160,23,0.45)",fontFamily:"'DM Sans',sans-serif"}}>
+          By proceeding, you confirm you have read and understood this disclaimer.
+        </div>
+      </div>
     </div>
   );
 }
@@ -570,16 +735,25 @@ export default function Home() {
   const isDark    = theme === "dark";
   const pal       = isDark ? DARK_PAL : LIGHT_PAL;
 
-  const [heroVis,  setHeroVis]  = useState(false);
-  const [scrolled, setScrolled] = useState(false);
-  const [stripRef, stripVis]    = useReveal(.18);
-  const [headRef,  headVis]     = useReveal(.12);
+  const [heroVis,      setHeroVis]      = useState(false);
+  const [scrolled,     setScrolled]     = useState(false);
+  const [stripRef,     stripVis]        = useReveal(.18);
+  const [headRef,      headVis]         = useReveal(.12);
+  const [requestOpen,  setRequestOpen]  = useState(false);
+  const [disclaimer,   setDisclaimer]   = useState(false);
 
   useEffect(()=>{const t=setTimeout(()=>setHeroVis(true),120);return()=>clearTimeout(t);},[]);
   useEffect(()=>{
     const fn=()=>setScrolled(window.scrollY>55);
     window.addEventListener("scroll",fn,{passive:true});
     return()=>window.removeEventListener("scroll",fn);
+  },[]);
+
+  // Show disclaimer once, 15 seconds after mount
+  useEffect(()=>{
+    if (localStorage.getItem("ae_disclaimer_accepted")) return;
+    const t = setTimeout(()=>setDisclaimer(true), 15000);
+    return ()=>clearTimeout(t);
   },[]);
 
   const fu=(d=0)=>({
@@ -590,6 +764,16 @@ export default function Home() {
 
   return (
     <>
+      {/* Popups */}
+      {disclaimer && (
+        <DisclaimerPopup pal={pal} isDark={isDark} onAccept={()=>{
+          localStorage.setItem("ae_disclaimer_accepted","1");
+          setDisclaimer(false);
+        }}/>
+      )}
+      {requestOpen && (
+        <RequestStockPopup pal={pal} isDark={isDark} onClose={()=>setRequestOpen(false)}/>
+      )}
       <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,600;0,9..40,700;0,9..40,800;1,9..40,300&family=Playfair+Display:ital,wght@0,700;0,800;0,900;1,800&display=swap" rel="stylesheet"/>
       <style>{`
         @keyframes floatTag{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
@@ -788,7 +972,7 @@ export default function Home() {
           opacity:stripVis?1:0, transform:stripVis?"none":"translateY(14px)",
           transition:"opacity .7s,transform .7s",
         }}>
-          {[["10","Researched Companies"],["FY30","Projection Horizon"],["₹0","Paid Subscription"],["100%","Independent Research"]].map(([v,l]) => (
+          {[["∞","Growing Universe"],["FY30","Projection Horizon"],["₹0","Paid Subscription"],["100%","Independent Research"]].map(([v,l]) => (
             <div key={l} className="stat-item" style={{textAlign:"center"}}>
               <div style={{
                 fontSize:"clamp(20px,2.8vw,28px)",
@@ -835,31 +1019,58 @@ export default function Home() {
               fontFamily:"'Playfair Display',serif",
               margin:0, lineHeight:1.2,
             }}>
-              Our Research Universe
+              Featured Research
             </h2>
+            <p style={{fontSize:13,color:pal.muted,marginTop:10,marginBottom:0,fontFamily:"'DM Sans',sans-serif",lineHeight:1.65}}>
+              3 live dashboards · more always in the pipeline
+            </p>
             <div style={{width:44,height:2,background:GOLD,margin:"14px auto 0",borderRadius:2}}/>
           </div>
 
-          {/* Active dashboards — wider cards */}
+          {/* Active dashboards */}
           <div className="active-grid" style={{
             display:"grid",
             gridTemplateColumns:"repeat(auto-fit,minmax(min(100%,340px),1fr))",
-            gap:16, marginBottom:13,
+            gap:16, marginBottom:20,
           }}>
             {stocks.filter(s=>s.active).map((s,i) => (
               <StockTile key={s.name} stock={s} delay={i*100} pal={pal}/>
             ))}
           </div>
 
-          {/* Coming-soon — tighter grid */}
+          {/* Coming soon — strict 2-col grid (6 tiles) */}
           <div className="inactive-grid" style={{
             display:"grid",
-            gridTemplateColumns:"repeat(auto-fill,minmax(min(100%,228px),1fr))",
-            gap:11,
+            gridTemplateColumns:"repeat(3,1fr)",
+            gap:11, marginBottom:11,
           }}>
             {stocks.filter(s=>!s.active).map((s,i) => (
               <StockTile key={s.name} stock={s} delay={80+i*45} pal={pal}/>
             ))}
+          </div>
+
+          {/* Request a Stock */}
+          <div style={{marginTop:14}}>
+            <RequestStockTile pal={pal} onOpen={()=>setRequestOpen(true)}/>
+          </div>
+
+          {/* CTA to full universe */}
+          <div style={{textAlign:"center", marginTop:36}}>
+            <p style={{fontSize:13,color:pal.muted,marginBottom:16,fontFamily:"'DM Sans',sans-serif"}}>
+              Our universe is always growing — view all live reports and the full pipeline.
+            </p>
+            <Link to="/research-universe" style={{
+              display:"inline-block",
+              background:"transparent",
+              border:`1px solid ${GOLD}`,
+              color:GOLD,
+              padding:"12px 38px", borderRadius:999,
+              fontWeight:800, fontSize:11, letterSpacing:"0.18em",
+              textDecoration:"none", fontFamily:"'DM Sans',sans-serif",
+              transition:"all .2s",
+            }}>
+              EXPLORE FULL RESEARCH UNIVERSE →
+            </Link>
           </div>
         </section>
 

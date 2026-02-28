@@ -7,6 +7,7 @@ import SignUp from "./SignUp";
 import AboutUs from "./AboutUs";
 import TermsConditions from "./TermsConditions";
 import InvestmentPhilosophy from "./InvestmentPhilosophy";
+import ResearchUniverse from "./ResearchUniverse";
 import { AuthProvider } from "./AuthContext";
 
 // ── New scalable dashboard system ──
@@ -39,7 +40,8 @@ function App() {
             <Route path="/signup"     element={<SignUp />} />
             <Route path="/about"      element={<AboutUs />} />
             <Route path="/terms"      element={<TermsConditions />} />
-            <Route path="/philosophy" element={<InvestmentPhilosophy />} />
+            <Route path="/philosophy"         element={<InvestmentPhilosophy />} />
+            <Route path="/research-universe" element={<ResearchUniverse />} />
 
             {/* Auto-generated stock routes — add new stocks in stocksDB.js only */}
             {STOCK_ROUTES.map(({ path, stockId }) => (

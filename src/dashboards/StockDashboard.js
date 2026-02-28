@@ -244,18 +244,8 @@ export default function StockDashboard({ stock }) {
     }}>
       <style>{GLOBAL_STYLES}</style>
 
-      {/* Back button */}
-      <Link to="/" style={{
-        position: "fixed", top: 20, left: 28, zIndex: 10000,
-        color: GOLD, textDecoration: "none", fontWeight: 700,
-        background: "rgba(13,27,42,0.95)", padding: "8px 18px",
-        borderRadius: 8, fontSize: 13, boxShadow: "0 4px 12px rgba(0,0,0,0.3)",
-      }}>
-        ← Back to Alpha Edge Home
-      </Link>
-
       {/* ══ HEADER ══════════════════════════════════════════════════════════ */}
-      <div style={{ padding: "72px 22px 0", borderBottom: `1px solid rgba(212,160,23,0.2)` }}>
+      <div style={{ padding: "112px 22px 0", borderBottom: `1px solid rgba(212,160,23,0.2)` }}>
 
         {/* Identity row */}
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: 8 }}>

@@ -492,6 +492,130 @@ export const STOCKS = {
       },
     },
   
+  // ─────────────────────────────────────────────
+  //  YATHARTH HOSPITAL & TRAUMA CARE SERVICES
+  // ─────────────────────────────────────────────
+  "YATHARTH": {
+    id:          "YATHARTH",
+    name:        "Yatharth Hospital & Trauma Care Services Ltd",
+    nse:         "YATHARTH",
+    bse:         "543950",
+    indices:     "BSE SmallCap · BSE Healthcare",
+    sector:      "Healthcare / Hospitals",
+    rating:      "BUY",
+    description: "Delhi-NCR's fastest-growing listed super-specialty hospital chain with 7 hospitals and 2,550+ beds. Scaled from ₹136 Cr revenue (FY20) to ₹860 Cr (FY25) — a 45% CAGR — and is on track to cross ₹1,200 Cr in FY26. Near-debt-free (₹12 Cr borrowings) with ₹600 Cr QIP deployed for acquisitions. Plans to nearly double capacity to ~5,000 beds within 3–4 years. Trades at ~42x TTM P/E vs Max (71x), Apollo (61x), Medanta (63x) — a 30–60% discount to peers.",
+
+    // ── Header metric tiles ──
+    metrics: [
+      { label: "CMP",        value: "₹700",       sub: "Feb 26, 2026"                    },
+      { label: "Market Cap", value: "₹6,800 Cr",  sub: "9.6 Cr shares",    color: "GOLD"   },
+      { label: "Target",     value: "₹850–950",   sub: "21–36% upside · 12M", color: "GREEN"  },
+      { label: "P/E (TTM)",  value: "~42x",       sub: "FY27E ~31x",       color: "TEAL"   },
+      { label: "ARPOB",      value: "₹33,744",    sub: "Q3 FY26 · +10% YoY", color: "BLUE"   },
+      { label: "Quality",    value: "6.5/10",     sub: "High-Growth Compounder", color: "ORANGE" },
+    ],
+
+    // ── Investment thesis ──
+    thesis: [
+      { t: "Fastest-Growing Listed Hospital Chain",     d: "45% revenue CAGR over 5 years — 3.4x the industry average of 13.4%. Q3 FY26: 46% YoY revenue growth, 49% PAT growth. Revenue on track to cross ₹1,200 Cr in FY26." },
+      { t: "Bed Doubling at Disciplined Pace",          d: "Expanding from 2,550+ to ~5,000 beds over 3–4 years. New hospitals (Delhi, Faridabad Sec-20) contributed ₹27.9 Cr in Q1, Agra (250 beds) added Feb 2026. Management's acquisition track record: Faridabad Sec-6 went from 0% to 55% occupancy in 18 months." },
+      { t: "Near-Debt-Free + ARPOB Growth Story",       d: "Borrowings fell from ₹267 Cr (FY23) to ₹12 Cr (FY25) via QIP. ARPOB growing 10% YoY to ₹33,744 (Q3 FY26) driven by super-specialty mix shift — oncology now ~10% of revenue vs 4% in FY24." },
+      { t: "Steep Valuation Discount to Peers at FY28E",d: "At CMP ₹700, FY28E P/E is only ~18x vs sector norms of 50–71x. EV/EBITDA at just 13x FY28E estimates. 4-analyst consensus target ₹935 (+34%). As new hospitals break even and ROE normalises to 18–22% by FY28, re-rating becomes highly probable." },
+    ],
+
+    // ── Financial data — Historical FY20–FY25 from doc; projections FY26E–FY29E from doc Section 9.1
+    // CFO: FY21–FY23 from Nuvama research; FY24 = -3 Cr (doc); FY25 = 150 Cr (doc)
+    // Capex: FY22–FY24 from Nuvama; FY25 = 420 Cr (doc investing outflows); FY26E–FY27E from Nuvama
+    // ROCE: FY22–FY23 from Equitymaster; FY24–FY25 from doc (14%)
+    finData: [
+      { yr:"FY20",  rev:136,  opm:28, opProfit:38,  cfo:10,   pat:-2,  capex:15,  fcff:-5,   cfoPatPct:null, roce:-1,  type:"H" },
+      { yr:"FY21",  rev:215,  opm:32, opProfit:68,  cfo:45,   pat:20,  capex:5,   fcff:40,   cfoPatPct:225,  roce:15,  type:"H" },
+      { yr:"FY22",  rev:375,  opm:30, opProfit:112, cfo:60,   pat:44,  capex:71,  fcff:-11,  cfoPatPct:136,  roce:26,  type:"H" },
+      { yr:"FY23",  rev:478,  opm:28, opProfit:135, cfo:64,   pat:66,  capex:23,  fcff:41,   cfoPatPct:97,   roce:27,  type:"H" },
+      { yr:"FY24",  rev:635,  opm:29, opProfit:182, cfo:-3,   pat:114, capex:155, fcff:-158, cfoPatPct:null, roce:14,  type:"H" },
+      { yr:"FY25",  rev:860,  opm:26, opProfit:225, cfo:150,  pat:131, capex:420, fcff:-270, cfoPatPct:115,  roce:14,  type:"H" },
+      { yr:"FY26E", rev:1120, opm:24, opProfit:269, cfo:205,  pat:151, capex:150, fcff:55,   cfoPatPct:136,  roce:11,  type:"P" },
+      { yr:"FY27E", rev:1500, opm:25, opProfit:375, cfo:295,  pat:220, capex:200, fcff:95,   cfoPatPct:134,  roce:14,  type:"P" },
+      { yr:"FY28E", rev:2000, opm:26, opProfit:520, cfo:430,  pat:321, capex:200, fcff:230,  cfoPatPct:134,  roce:18,  type:"P" },
+      { yr:"FY29E", rev:2500, opm:27, opProfit:675, cfo:555,  pat:433, capex:200, fcff:355,  cfoPatPct:128,  roce:22,  type:"P" },
+    ],
+
+    // ── Segment revenue: Inpatient vs Outpatient (₹ Cr)
+    // From Nuvama research data; IP/OP proportioned to match doc total revenue
+    segmentKeys: ["ip", "op"],
+    segmentLabels: { ip: "Inpatient", op: "Outpatient / Pharmacy" },
+    segData: [
+      { yr:"FY21",  ip:187, op:28,  total:215  },
+      { yr:"FY22",  ip:327, op:48,  total:375  },
+      { yr:"FY23",  ip:416, op:62,  total:478  },
+      { yr:"FY24",  ip:556, op:79,  total:635  },
+      { yr:"FY25",  ip:756, op:104, total:860  },
+      { yr:"FY26E", ip:1016,op:104, total:1120 },
+      { yr:"FY27E", ip:1356,op:144, total:1500 },
+      { yr:"FY28E", ip:1816,op:184, total:2000 },
+      { yr:"FY29E", ip:2272,op:228, total:2500 },
+    ],
+
+    // ── Porter's 5 Forces — single business "YATHARTH"
+    porterKeys: ["yatharth"],
+    porterLabels: { yatharth: "Yatharth" },
+    porterData: [
+      { force: "New Entrants",   yatharth: 5.5 },   // Max, Fortis expanding in NCR — moderate barrier (capital + licenses + ramp time)
+      { force: "Buyer Power",    yatharth: 4.5 },   // NCR patients have Apollo, Max, Medanta options — moderate power
+      { force: "Supplier Power", yatharth: 5.0 },   // Star doctors are mobile and have negotiating power
+      { force: "Substitutes",    yatharth: 7.0 },   // No substitute for emergency/super-specialty care; insurance limits shopping
+      { force: "Rivalry",        yatharth: 4.0 },   // Intense in core NCR; Tier-2 suburbs (Greater Noida, Faridabad) less contested
+    ],
+    porterNarrative: [
+      { force: "Threat of New Entrants",     lines: ["MODERATE — Building a hospital requires ₹500–1,000 Cr, 3–5 years to license and ramp. However, Max, Medanta, Fortis are all actively expanding in NCR. Yatharth partially mitigates by targeting Tier-2 NCR suburbs (Greater Noida ext., Faridabad) with less large-chain competition."] },
+      { force: "Bargaining Power of Buyers", lines: ["MODERATE-HIGH — Delhi-NCR patients have Apollo, Max, Fortis, Medanta all within reach. Insurance-linked patients follow TPA empanelments. Yatharth's ARPOB at ₹33,744 vs Max's ₹73,000 shows pricing gap — but this also signals significant upside as mix improves."] },
+      { force: "Supplier Power",             lines: ["MODERATE — Senior specialist doctors ('star doctors') are mobile and can demand high salaries or move to competitors. Management is actively recruiting star doctors for newer units. Commodity supplies (drugs, devices) have multiple vendors — no concentration risk."] },
+      { force: "Threat of Substitutes",      lines: ["LOW-MODERATE — Emergency trauma and super-specialty procedures (oncology, bone marrow transplant, robotics) have no substitutes. Routine procedures face some competition from standalone clinics. Insurance coverage reduces price sensitivity for insured patients."] },
+      { force: "Competitive Rivalry",        lines: ["HIGH in Core NCR — Apollo, Max, Fortis, Medanta all expanding. Medanta launching Noida hospital directly. MODERATE in Tier-2 suburbs — Faridabad Sec-6 and Sec-20, Greater Noida ext. have far less large-chain competition, where Yatharth is building its growth base."] },
+    ],
+    porterConclusion: "Yatharth does NOT have a wide moat — it operates in a competitive geography. Its edge is execution speed (45% CAGR), targeting under-served NCR suburbs, and a near-debt-free balance sheet that lets it acquire opportunistically. The moat will widen as brand recognition, doctor networks, and occupancy scale over FY27–29.",
+
+    // ── Quality scorecard ──
+    qualityData: [
+      { param: "Longevity",         score: 7,   full: "Founded 2008, listed 2023. 17 years ops, COVID survived. PAT positive every year ex-FY20." },
+      { param: "Predictable CF",    score: 5,   full: "CFO highly volatile — negative FY24 due to govt receivables. FY25 recovery to ₹150 Cr. High debtor days (128 in FY25) are structural concern." },
+      { param: "ROCE",              score: 5,   full: "Declined sharply: 27% (FY23) → 14% (FY25) due to front-loaded capex + QIP equity dilution. Should normalise to 18–22% by FY28 as earnings catch up." },
+      { param: "Revenue Resilience",score: 8.5, full: "45% 5-year CAGR — 3.4x industry. No year of revenue decline. Q3 FY26 strongest quarter in company history (+46% YoY)." },
+      { param: "EPS Stability",     score: 6,   full: "FY22 EPS dipped to ₹6.74 (from ₹11.09) due to new equity at IPO. FY25 EPS ₹13.55 (+1.6% on FY24) muted by dilution. FY27E ₹22.9 = 69% jump." },
+      { param: "CFO/PAT",           score: 5.5, full: "Strong in FY23 (97%) and FY25 (115%) but negative FY24 due to receivables. Improving but still CGHS billing risk." },
+      { param: "Margins",           score: 7,   full: "Core ops 28–29% EBITDA (at par with Max). Consolidated 26% FY25, temporarily 23% Q3 FY26 as new hospitals drag. Should recover to 26–28% by FY27." },
+      { param: "Reinvestment",      score: 7.5, full: "Aggressive but disciplined: ₹420 Cr capex FY25, all for capacity that is already ramping. Acquisition payback: Faridabad Sec-6 went 0%→55% occupancy in 18 months." },
+    ],
+    qualitySummary: {
+      consolidated: "6.5/10",
+      standalone:   "6.5/10",
+      insight:      "Yatharth is a high-growth compounder in a capital-intensive sector with no structural moat yet. The quality score is temporarily depressed by capex-cycle ROCE dilution and volatile CFO. If execution on bed ramp and ARPOB growth continues (strong Q3 FY26 suggests it will), quality score should rise to 7.5+ by FY28 as earnings catch up with capacity investment.",
+    },
+
+    // ── Sensitivity matrix — directly from doc Section 9.3 (FY27E EPS basis) ──
+    sensitivity: {
+      cmp: 700,
+      peColumns: [
+        { label: "25x (Bear)",    key: "pe25" },
+        { label: "30x",           key: "pe30" },
+        { label: "35x (Base)",    key: "pe35" },
+        { label: "40x (Bull)",    key: "pe40" },
+      ],
+      rows: [
+        { label: "Bear ₹18.0",  pe25: 450,  pe30: 540,  pe35: 630,  pe40: 720  },
+        { label: "Base ₹22.9",  pe25: 573,  pe30: 687,  pe35: 802,  pe40: 916  },
+        { label: "Bull ₹26.0",  pe25: 650,  pe30: 780,  pe35: 910,  pe40: 1040 },
+      ],
+      scenarios: [
+        { label: "BEAR",      color: "RED",   rev: "₹1,500 Cr", opm: "23%", eps: "₹18.0", pe: "25x",    target: "₹450",   desc: "New hospital breakevens delayed. Occupancy ramp disappoints. CGHS receivables worsen. Government pushes back on pricing." },
+        { label: "BASE CASE", color: "BLUE",  rev: "₹1,500 Cr", opm: "25%", eps: "₹22.9", pe: "35x",    target: "₹802",   desc: "FY27E base case per report. Delhi & Faridabad Sec-20 break even in guided 12–15 months. ARPOB grows 8–10% annually. Consensus target ₹935." },
+        { label: "BULL",      color: "GREEN", rev: "₹1,600 Cr", opm: "27%", eps: "₹26.0", pe: "40x",    target: "₹1,040", desc: "All new hospitals at 60%+ occupancy by Q2 FY27. ARPOB pushes to ₹38,000+. Further acquisition announced. Peer re-rating lifts multiple." },
+      ],
+      conclusion: "12-Month Target: ₹850–950 (BUY). Base Case FY27E at 35x EPS ₹22.9 = ₹802; Bull Case ₹1,040. On FY28E EPS ₹33.4 at 28x = ₹935 (4-analyst consensus). Bear case ₹450 represents -36% downside — key risk is execution failure on new hospital ramp and prolonged CGHS receivable issues.",
+    },
+  },
+
+
   };
   
   
@@ -504,4 +628,5 @@ export const STOCKS = {
     { path: "/eicher-motors", stockId: "EICHERMOT" },
     { path: "/igil",          stockId: "IGIL"      },
     { path: "/mcx",           stockId: "MCX"       },
+  { path: "/yatharth",      stockId: "YATHARTH"  },
   ];

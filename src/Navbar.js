@@ -10,7 +10,7 @@ const NAVY = "#0D1B2A";
 // ── Search items: dynamically built from stocksDB active routes + static pages ──
 const STATIC_PAGES = [
   { name:"Home",                 ticker:"Page", path:"/",           type:"page", active:true },
-  { name:"Research Universe",    ticker:"Page", path:"/#universe",  type:"page", active:true },
+  { name:"Research Universe",    ticker:"Page", path:"/research-universe",  type:"page", active:true },
   { name:"Investment Philosophy",ticker:"Page", path:"/philosophy", type:"page", active:true },
   { name:"About Us",             ticker:"Page", path:"/about",      type:"page", active:true },
   { name:"Sign Up",              ticker:"Page", path:"/signup",     type:"page", active:true },
@@ -33,7 +33,7 @@ const SEARCH_ITEMS = [
 // ── Static nav links (non-stock pages) ──
 const PAGE_NAV_LINKS = [
   { label:"Home",                  path:"/"           },
-  { label:"Research Universe",     path:"/#universe"  },
+  { label:"Research Universe",     path:"/research-universe"  },
   { label:"Investment Philosophy", path:"/philosophy" },
   { label:"About Us",              path:"/about"      },
   { label:"Terms & Conditions",    path:"/terms"      },
