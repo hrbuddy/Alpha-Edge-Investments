@@ -11,6 +11,7 @@ import ResearchUniverse from "./ResearchUniverse";
 import MacroBoard from "./MacroBoard";
 import MomentumDashboard from "./MomentumDashboard";
 import { AuthProvider } from "./AuthContext";
+import { StockModalProvider } from "./StockModal";
 
 // ── New scalable dashboard system ──
 import { STOCKS, STOCK_ROUTES } from "./dashboards/stocksDB";
@@ -36,27 +37,30 @@ function App() {
     <ThemeContext.Provider value={{ theme, toggleTheme }}>
       <AuthProvider>
         <Router>
-          <Navbar />
-          <Routes>
-            <Route path="/"           element={<Home />} />
-            <Route path="/signup"     element={<SignUp />} />
-            <Route path="/about"      element={<AboutUs />} />
-            <Route path="/terms"      element={<TermsConditions />} />
-            <Route path="/philosophy"         element={<InvestmentPhilosophy />} />
-            <Route path="/research-universe" element={<ResearchUniverse />} />
-            <Route path="/macro"             element={<MacroBoard />} />
-            <Route path="/momentum" element={<MomentumDashboard />} />
+          {/* StockModalProvider must be inside Router so it can useNavigate */}
+          <StockModalProvider>
+            <Navbar />
+            <Routes>
+              <Route path="/"                  element={<Home />} />
+              <Route path="/signup"            element={<SignUp />} />
+              <Route path="/about"             element={<AboutUs />} />
+              <Route path="/terms"             element={<TermsConditions />} />
+              <Route path="/philosophy"        element={<InvestmentPhilosophy />} />
+              <Route path="/research-universe" element={<ResearchUniverse />} />
+              <Route path="/macro"             element={<MacroBoard />} />
+              <Route path="/momentum"          element={<MomentumDashboard />} />
 
-            {/* Auto-generated stock routes — add new stocks in stocksDB.js only */}
-            {STOCK_ROUTES.map(({ path, stockId }) => (
-              <Route
-                key={stockId}
-                path={path}
-                element={<StockDashboard stock={STOCKS[stockId]} />}
-              />
-            ))}
-          </Routes>
-          <Footer />
+              {/* Auto-generated stock routes */}
+              {STOCK_ROUTES.map(({ path, stockId }) => (
+                <Route
+                  key={stockId}
+                  path={path}
+                  element={<StockDashboard stock={STOCKS[stockId]} />}
+                />
+              ))}
+            </Routes>
+            <Footer />
+          </StockModalProvider>
         </Router>
       </AuthProvider>
     </ThemeContext.Provider>

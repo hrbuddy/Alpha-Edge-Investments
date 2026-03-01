@@ -12,6 +12,7 @@
  */
 
 import { useState, useEffect, useMemo } from "react";
+import { useStockModal } from "./StockModal";
 import { Link } from "react-router-dom";
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip,
@@ -119,6 +120,7 @@ function HorizonPills({ horizon, setHorizon }) {
 
 // ── Winners & Losers Banner ───────────────────────────────────────────────────
 function WinnersLosersBanner({ data, horizon, setHorizon }) {
+  const { openModal } = useStockModal();
   const [expanded, setExpanded] = useState(false);
   const meta      = HORIZON_META[horizon];
   const allScores = data?.[meta.field] ?? [];
@@ -140,7 +142,8 @@ function WinnersLosersBanner({ data, horizon, setHorizon }) {
         <span style={{ fontSize:9, fontWeight:800, color:isWinner ? GREEN : RED, minWidth:22 }}>
           #{s.rank}
         </span>
-        <span className="wl-ticker" style={{ fontSize:13, fontWeight:800, color:"#e2e8f0", fontFamily:"'DM Sans',sans-serif" }}>
+        <span className="wl-ticker sm-ticker-link" onClick={() => openModal(s.ticker)}
+          style={{ fontSize:13, fontWeight:800, color:"#e2e8f0", fontFamily:"'DM Sans',sans-serif" }}>
           {s.ticker}
         </span>
       </div>
@@ -220,6 +223,7 @@ function WinnersLosersBanner({ data, horizon, setHorizon }) {
 
 // ── Horizon Section ───────────────────────────────────────────────────────────
 function HorizonSection({ data, horizonKey }) {
+  const { openModal } = useStockModal();
   const meta     = HORIZON_META[horizonKey];
   const scores   = useMemo(() => data?.[meta.field] ?? [], [data, meta.field]);
   const top20    = scores.slice(0, 20);
@@ -291,7 +295,9 @@ function HorizonSection({ data, horizonKey }) {
                 tickLine={false} axisLine={{ stroke:"rgba(212,160,23,0.1)" }}/>
               <YAxis type="category" dataKey="ticker" width={88}
                 tick={{ fill:SUB, fontSize:8.5, fontFamily:"'DM Sans',sans-serif", fontWeight:600 }}
-                tickLine={false} axisLine={false}/>
+                tickLine={false} axisLine={false}
+                onClick={(data) => data?.value && openModal(data.value)}
+                style={{ cursor:"pointer" }}/>
               <ReferenceLine x={0} stroke="rgba(212,160,23,0.2)" strokeWidth={1}/>
               <Tooltip content={<RetTooltip/>} cursor={{ fill:"rgba(212,160,23,0.04)" }} isAnimationActive={false}/>
               <Bar dataKey="ret" radius={[0,3,3,0]} maxBarSize={13} isAnimationActive={false}
@@ -314,6 +320,7 @@ function HorizonSection({ data, horizonKey }) {
 
 // ── History View ──────────────────────────────────────────────────────────────
 function HistoryView({ history, horizon }) {
+  const { openModal } = useStockModal();
   const meta   = HORIZON_META[horizon];
   const months = useMemo(() =>
     history.map(h => ({
@@ -361,7 +368,8 @@ function HistoryView({ history, horizon }) {
               .sort((a, b) => b.appearances - a.appearances)
               .map(({ ticker, appearances }) => (
                 <tr key={ticker} style={{ borderBottom:"1px solid rgba(255,255,255,0.03)" }}>
-                  <td style={{ padding:"7px 12px", fontWeight:700, color:"#e2e8f0", fontFamily:"'DM Sans',sans-serif", position:"sticky", left:0, background:"#080F1A", whiteSpace:"nowrap" }}>{ticker}</td>
+                  <td onClick={() => openModal(ticker)} className="sm-ticker-link"
+                    style={{ padding:"7px 12px", fontWeight:700, color:"#e2e8f0", fontFamily:"'DM Sans',sans-serif", position:"sticky", left:0, background:"#080F1A", whiteSpace:"nowrap" }}>{ticker}</td>
                   {months.map(m => (
                     <td key={m.month} style={{ padding:"7px 6px", textAlign:"center", background:m.topSet.has(ticker) ? "rgba(212,160,23,0.14)" : "transparent", borderRadius:4 }}>
                       {m.topSet.has(ticker)

@@ -25,32 +25,39 @@ const LIGHT_PAL = {
   chip:"rgba(13,27,42,0.04)", pillBg:"rgba(13,27,42,0.06)",
 };
 
-// ── FIX E: Visually distinct color palette — no two adjacent colors are similar ──
+// ── Section 1: Global Markets ─────────────────────────────────────────────
+// Removed: Sensex, Bank Nifty (India-specific, moved to section 2)
+// Added: MSCI China (FXI ETF proxy)
+// All colors unique within this section
 const GLOBAL = [
-  { id:"nifty50",   label:"Nifty 50",   symbol:"^NSEI",    color:"#D4A017", benchmark:true  },
-  { id:"sensex",    label:"Sensex",     symbol:"^BSESN",   color:"#00BCD4"  },
-  { id:"banknifty", label:"Bank Nifty", symbol:"^NSEBANK", color:"#4CAF50"  },
-  { id:"msciworld", label:"MSCI World", symbol:"URTH",     color:"#7C4DFF"  },
-  { id:"msciem",    label:"MSCI EM",    symbol:"EEM",      color:"#FF6D00"  },
-  { id:"sp500",     label:"S&P 500",    symbol:"^GSPC",    color:"#F44336"  },
-  { id:"nasdaq",    label:"Nasdaq 100", symbol:"^NDX",     color:"#00E5FF"  },
-  { id:"gold",      label:"Gold",       symbol:"GC=F",     color:"#FFD600"  },
+  { id:"nifty50",   label:"Nifty 50",    symbol:"^NSEI",  color:"#00BFA5", benchmark:true },  // teal — distinct from Gold below
+  { id:"msciworld", label:"MSCI World",  symbol:"URTH",   color:"#7C4DFF" },
+  { id:"msciem",    label:"MSCI EM",     symbol:"EEM",    color:"#FF6D00" },
+  { id:"mscichina", label:"MSCI China",  symbol:"FXI",    color:"#E91E63" },
+  { id:"sp500",     label:"S&P 500",     symbol:"^GSPC",  color:"#F44336" },
+  { id:"nasdaq",    label:"Nasdaq 100",  symbol:"^NDX",   color:"#00E5FF" },
+  { id:"gold",      label:"Gold",        symbol:"GC=F",   color:"#FFD600" },
 ];
 
-const INDIA = [
+// ── Section 2: Nifty Broad Indices ────────────────────────────────────────
+const NIFTY_INDICES = [
   { id:"nifty50",   label:"Nifty 50",       symbol:"^NSEI",        color:"#D4A017", benchmark:true },
-  { id:"sensex",    label:"Sensex",          symbol:"^BSESN",       color:"#00BCD4"  },
-  { id:"nifty500",  label:"Nifty 500",       symbol:"^CNX500",      color:"#8BC34A"  },
-  { id:"midcap",    label:"Nifty Midcap",    symbol:"^CNXMIDCAP",   color:"#CE93D8"  }, // soft purple
-  { id:"smallcap",  label:"Nifty Smallcap",  symbol:"^CNXSMALLCAP", color:"#FF4081"  },
-  { id:"banknifty", label:"Bank Nifty",      symbol:"^NSEBANK",     color:"#2196F3"  },
-  { id:"niftyit",   label:"Nifty IT",        symbol:"^CNXIT",       color:"#00E5FF"  },
-  { id:"auto",      label:"Nifty Auto",      symbol:"^CNXAUTO",     color:"#FF6D00"  },
-  { id:"pharma",    label:"Nifty Pharma",    symbol:"^CNXPHARMA",   color:"#4CAF50"  },
-  { id:"fmcg",      label:"Nifty FMCG",      symbol:"^CNXFMCG",     color:"#F06292"  },
-  { id:"metal",     label:"Nifty Metal",     symbol:"^CNXMETAL",    color:"#9C27B0"  },
-  { id:"realty",    label:"Nifty Realty",    symbol:"^CNXREALTY",   color:"#F44336"  },
-  { id:"energy",    label:"Nifty Energy",    symbol:"^CNXENERGY",   color:"#FF9800"  },
+  { id:"sensex",    label:"Sensex",         symbol:"^BSESN",       color:"#4CAF50" },
+  { id:"banknifty", label:"Bank Nifty",     symbol:"^NSEBANK",     color:"#2196F3" },
+  { id:"nifty500",  label:"Nifty 500",      symbol:"^CNX500",      color:"#CE93D8" },
+  { id:"midcap",    label:"Nifty Midcap",   symbol:"^CNXMIDCAP",   color:"#FF6D00" },
+  { id:"smallcap",  label:"Nifty Smallcap", symbol:"^CNXSMALLCAP", color:"#FF4081" },
+];
+
+// ── Section 3: Nifty Sectoral Indices ─────────────────────────────────────
+const NIFTY_SECTORS = [
+  { id:"niftyit",  label:"Nifty IT",     symbol:"^CNXIT",     color:"#00E5FF" },
+  { id:"auto",     label:"Nifty Auto",   symbol:"^CNXAUTO",   color:"#FF9800" },
+  { id:"pharma",   label:"Nifty Pharma", symbol:"^CNXPHARMA", color:"#8BC34A" },
+  { id:"fmcg",     label:"Nifty FMCG",   symbol:"^CNXFMCG",   color:"#F06292" },
+  { id:"metal",    label:"Nifty Metal",  symbol:"^CNXMETAL",  color:"#9C27B0" },
+  { id:"realty",   label:"Nifty Realty", symbol:"^CNXREALTY", color:"#26C6DA" },
+  { id:"energy",   label:"Nifty Energy", symbol:"^CNXENERGY", color:"#FF5722" },
 ];
 
 const PERIODS = ["YTD","1Y","3Y","5Y","CUSTOM"];
@@ -221,8 +228,8 @@ function ChartPanel({ eyebrow, title, accentColor, indices, defaultActive, pal, 
   // FIX G: module-level raw data cache per symbol (shared across renders/panels)
   const rawCache = useRef({});
 
-  // FIX D: Initialise active from defaultActive prop, not all indices
-  const [active,    setActive]    = useState(() => new Set(defaultActive));
+  // All indices active by default — user can toggle off individually
+  const [active,    setActive]    = useState(() => new Set(indices.map(i => i.id)));
   const [startYear, setStartYear] = useState(2020);
   const [mode,      setMode]      = useState("pct");
   // FIX C: bar period can be CUSTOM (driven by slider)
@@ -342,7 +349,6 @@ function ChartPanel({ eyebrow, title, accentColor, indices, defaultActive, pal, 
     [barData, barPeriod]
   );
 
-  const barH  = Math.max(320, sorted.length * 34);
   const fmtY  = v => mode==="pct" ? `${v>=0?"+":""}${v.toFixed(0)}%` : `₹${v.toFixed(0)}`;
   const fmtX  = ts => new Date(ts).toLocaleDateString("en-IN",{ month:"short", year:"2-digit" });
   const ref0  = mode==="pct" ? 0 : 100;
@@ -351,7 +357,7 @@ function ChartPanel({ eyebrow, title, accentColor, indices, defaultActive, pal, 
   const periodLabel = (p) => p === "CUSTOM" ? `From ${startYear}` : p;
 
   return (
-    <section style={{
+    <section className="mb-section-pad" style={{
       marginBottom: 48,
       background:   isDark ? "rgba(255,255,255,0.008)" : "rgba(13,27,42,0.02)",
       border:       `1px solid ${pal.border}`,
@@ -404,21 +410,23 @@ function ChartPanel({ eyebrow, title, accentColor, indices, defaultActive, pal, 
         {/* ── LEFT: Line chart ── */}
         <div style={{ minWidth:0, display:"flex", flexDirection:"column" }}>
           {/* Toggle chips */}
-          <div style={{ display:"flex", flexWrap:"wrap", gap:6, marginBottom:12 }}>
+          <div className="mb-chips-gap" style={{ display:"flex", flexWrap:"wrap", gap:6, marginBottom:12 }}>
             {indices.map(idx => {
               const on = active.has(idx.id);
               return (
-                <button key={idx.id} onClick={()=>toggle(idx.id)} style={{
-                  padding:"4px 12px", borderRadius:999,
-                  border:`1px solid ${on ? idx.color : pal.muted+"66"}`,
-                  background: on ? idx.color+"22" : "transparent",
-                  color:  on ? idx.color : pal.muted,
-                  fontSize:10, fontWeight:700, letterSpacing:"0.5px",
-                  cursor:"pointer", fontFamily:"'DM Sans',sans-serif",
-                  whiteSpace:"nowrap", transition:"all .15s",
-                  boxShadow: on && idx.benchmark ? `0 0 0 1.5px ${idx.color}55` : "none",
-                }}>
-                  <span style={{ marginRight:5, fontSize:8 }}>●</span>{idx.label}
+                <button key={idx.id} onClick={()=>toggle(idx.id)}
+                  className={`mb-chip${on?" mb-chip-on":""}`}
+                  style={{
+                    padding:"4px 12px", borderRadius:999,
+                    border:`1px solid ${on ? idx.color : pal.muted+"66"}`,
+                    background: on ? idx.color+"22" : "transparent",
+                    color:  on ? idx.color : pal.muted,
+                    fontSize:10, fontWeight:700, letterSpacing:"0.5px",
+                    cursor:"pointer", fontFamily:"'DM Sans',sans-serif",
+                    whiteSpace:"nowrap", transition:"all .15s",
+                    boxShadow: on && idx.benchmark ? `0 0 0 1.5px ${idx.color}55` : "none",
+                  }}>
+                  <span className="mb-chip-dot" style={{ marginRight:5, fontSize:8 }}>●</span>{idx.label}
                   {idx.benchmark && <span style={{ marginLeft:5, opacity:.65, fontSize:9 }}>★</span>}
                 </button>
               );
@@ -436,8 +444,9 @@ function ChartPanel({ eyebrow, title, accentColor, indices, defaultActive, pal, 
                 </div>
               </Cover>
             )}
-            <ResponsiveContainer width="100%" height={300}>
-              <LineChart data={tsData} margin={{ top:4, right:16, left:0, bottom:4 }}>
+            <div className="mb-lc-inner">
+              <ResponsiveContainer width="100%" height="100%">
+                <LineChart data={tsData} margin={{ top:4, right:16, left:0, bottom:4 }}>
                 <CartesianGrid strokeDasharray="3 3" stroke={pal.gridLine} vertical={false}/>
                 <XAxis dataKey="ts" type="number" domain={["dataMin","dataMax"]} scale="time"
                   tickFormatter={fmtX}
@@ -456,6 +465,7 @@ function ChartPanel({ eyebrow, title, accentColor, indices, defaultActive, pal, 
                 ))}
               </LineChart>
             </ResponsiveContainer>
+            </div>
             <div style={{ fontSize:9, color:pal.muted, textAlign:"right", paddingRight:14, paddingBottom:6, fontFamily:"'DM Sans',sans-serif" }}>
               {mode==="pct" ? "Normalised to 0% at start year" : "₹100 invested at start year"} · Yahoo Finance
             </div>
@@ -490,11 +500,11 @@ function ChartPanel({ eyebrow, title, accentColor, indices, defaultActive, pal, 
               </Cover>
             )}
             {!barErr && sorted.length > 0 && (
-              <ResponsiveContainer width="100%" height={barH}>
+              <div className="mb-bc-inner">
+              <ResponsiveContainer width="100%" height="100%">
                 <BarChart
                   data={sorted}
                   layout="vertical"
-                  // FIX F: left margin large enough to fit longest label ("Nifty Smallcap" ~100px)
                   margin={{ top:4, right:60, left:0, bottom:4 }}
                 >
                   <CartesianGrid strokeDasharray="3 3" stroke={pal.gridLine} horizontal={false}/>
@@ -520,6 +530,7 @@ function ChartPanel({ eyebrow, title, accentColor, indices, defaultActive, pal, 
                   </Bar>
                 </BarChart>
               </ResponsiveContainer>
+              </div>
             )}
             <div style={{ fontSize:9, color:pal.muted, textAlign:"right", paddingRight:14, paddingBottom:6, fontFamily:"'DM Sans',sans-serif" }}>
               {barPeriod==="CUSTOM" ? `Cumulative from ${startYear} · ` : "3Y & 5Y are cumulative · "}Cached daily · Source: Yahoo Finance
@@ -560,12 +571,34 @@ export default function MacroBoard() {
           grid-template-columns: 1.15fr 0.85fr;
           gap: 20px;
           align-items: stretch;
-          /* FIX B: prevent overflow */
           min-width: 0;
           overflow: hidden;
         }
         @media(max-width:960px){
           .mb-two-col { grid-template-columns: 1fr !important; }
+        }
+        /* ── Line chart height ── */
+        .mb-lc-inner { height: 300px; }
+        /* ── Bar chart height — sized to content on desktop ── */
+        .mb-bc-inner { height: 340px; overflow-y: auto; }
+        /* ── Mobile overrides ── */
+        @media(max-width:640px){
+          /* Stretch charts to fill screen width */
+          .mb-lc-inner { height: 420px; }
+          .mb-bc-inner { height: 380px; }
+          /* Compact legend chips to fit 2 rows */
+          .mb-chip {
+            padding: 3px 7px !important;
+            font-size: 9px !important;
+            letter-spacing: 0 !important;
+            border-radius: 6px !important;
+          }
+          /* Hide ● dot on mobile — color border is enough */
+          .mb-chip-dot { display: none !important; }
+          /* Tighten chip gap */
+          .mb-chips-gap { gap: 4px !important; }
+          /* Reduce section padding */
+          .mb-section-pad { padding: 16px 12px 16px !important; }
         }
         .mb-slider { -webkit-appearance:none; appearance:none; background:transparent; width:100%; }
         .mb-slider::-webkit-slider-runnable-track {
@@ -609,7 +642,7 @@ export default function MacroBoard() {
 
         <div style={{ maxWidth:1520, margin:"0 auto", padding:"40px 20px 80px" }}>
 
-          {/* Global */}
+          {/* Section 1 — Global */}
           <ChartPanel
             eyebrow="SECTION 1  ·  GLOBAL MARKETS"
             title="Global Index Performance"
@@ -620,19 +653,30 @@ export default function MacroBoard() {
             isDark={isDark}
           />
 
-          {/* India — FIX D: default is nifty50, banknifty, midcap */}
+          {/* Section 2 — Nifty Broad Indices */}
           <ChartPanel
-            eyebrow="SECTION 2  ·  INDIA MARKETS"
-            title="India Index Performance"
+            eyebrow="SECTION 2  ·  NIFTY BROAD INDICES"
+            title="Nifty Index Performance"
             accentColor={GOLD}
-            indices={INDIA}
+            indices={NIFTY_INDICES}
             defaultActive={["nifty50","banknifty","midcap"]}
             pal={pal}
             isDark={isDark}
           />
 
+          {/* Section 3 — Nifty Sectors */}
+          <ChartPanel
+            eyebrow="SECTION 3  ·  NIFTY SECTORAL INDICES"
+            title="Sector Performance"
+            accentColor="#4CAF50"
+            indices={NIFTY_SECTORS}
+            defaultActive={["niftyit","auto","pharma","energy"]}
+            pal={pal}
+            isDark={isDark}
+          />
+
           <div style={{ fontSize:11, color:pal.muted, textAlign:"center", lineHeight:1.8 }}>
-            ⚠️ MSCI World = URTH ETF proxy · MSCI EM = EEM ETF proxy · ~15 min delay on US data · Not investment advice.
+            ⚠️ MSCI World = URTH ETF · MSCI EM = EEM ETF · MSCI China = FXI ETF · ~15 min delay on US data · Not investment advice.
           </div>
 
         </div>

@@ -39,7 +39,7 @@ export default function AboutUs() {
         {/* ── HERO BANNER ── */}
         <section style={{ background: isDark ? "rgba(255,255,255,0.015)" : "rgba(13,27,42,0.04)", borderBottom:`1px solid ${pal.border}`, padding:"56px 24px 52px", textAlign:"center" }}>
           <div style={{ maxWidth:720, margin:"0 auto" }}>
-            <div style={{ fontSize:9, letterSpacing:"0.38em", color:GOLD, fontWeight:700, marginBottom:14, ...fu(0) }}>ABOUT ALPHA EDGE</div>
+            <div style={{ fontSize:9, letterSpacing:"0.38em", color:GOLD, fontWeight:700, marginBottom:14, ...fu(0) }}>ABOUT VANTAGE CAPITAL</div>
             <h1 style={{ fontSize:"clamp(28px,4.5vw,46px)", fontWeight:900, fontFamily:"'Playfair Display',serif", margin:"0 0 18px", lineHeight:1.15, color:pal.text, ...fu(80) }}>
               Independent Research for the<br/>
               <span style={{ background:"linear-gradient(135deg,#f8dc72,#D4A017)", WebkitBackgroundClip:"text", WebkitTextFillColor:"transparent", backgroundClip:"text" }}>
@@ -59,7 +59,7 @@ export default function AboutUs() {
             <div style={{ fontSize:9, letterSpacing:"0.38em", color:GOLD, fontWeight:700, marginBottom:8 }}>OUR STORY</div>
             <div className="about-divider"/>
             <p style={{ fontSize:"clamp(14px,1.6vw,16px)", color:pal.sub, lineHeight:1.9, marginBottom:18 }}>
-              Alpha Edge Investments was born from a simple frustration: institutional-quality equity research in India has historically been locked behind expensive subscriptions, accessible only to fund managers and HNIs. Meanwhile, the retail investor — the person with genuine long-term conviction — was left with noise, tips, and broker-sponsored "buy" calls.
+               Vantage Capital Investments was born from a simple frustration: institutional-quality equity research in India has historically been locked behind expensive subscriptions, accessible only to fund managers and HNIs. Meanwhile, the retail investor — the person with genuine long-term conviction — was left with noise, tips, and broker-sponsored "buy" calls.
             </p>
             <p style={{ fontSize:"clamp(14px,1.6vw,16px)", color:pal.sub, lineHeight:1.9, marginBottom:18 }}>
               We set out to change that. Every report we publish is written the way we would want to read it — detailed, honest, and anchored to fundamentals. We do not receive fees from companies we cover. We do not run a SEBI-registered advisory. We write because we love the craft of analysis, and we publish because we believe in democratising access to good investment thinking.
@@ -139,7 +139,7 @@ export default function AboutUs() {
             <div style={{ background:"rgba(212,160,23,0.04)", border:"1px solid rgba(212,160,23,0.14)", borderRadius:14, padding:"22px 24px" }}>
               <div style={{ fontSize:10, fontWeight:700, color:GOLD, letterSpacing:"1.5px", marginBottom:10 }}>IMPORTANT DISCLAIMER</div>
               <p style={{ fontSize:12, color:pal.muted, lineHeight:1.8, margin:"0 0 10px" }}>
-                Alpha Edge Investments is not registered with the Securities and Exchange Board of India (SEBI) as an investment advisor. Nothing on this website constitutes investment advice, a solicitation to buy or sell securities, or a recommendation of any kind. All content is for educational and informational purposes only.
+                Vantage Capital Investments is not registered with the Securities and Exchange Board of India (SEBI) as an investment advisor. Nothing on this website constitutes investment advice, a solicitation to buy or sell securities, or a recommendation of any kind. All content is for educational and informational purposes only.
               </p>
               <p style={{ fontSize:12, color:pal.muted, lineHeight:1.8, margin:0 }}>
                 Past analysis does not guarantee future performance. Equity investments carry risk. Please consult a SEBI-registered investment advisor before making any investment decision. By using this website, you acknowledge that you have read, understood, and agree to our{" "}

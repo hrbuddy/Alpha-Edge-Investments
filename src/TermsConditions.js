@@ -9,11 +9,11 @@ const SECTIONS = [
   {
     id:"1",
     title:"Nature of Content & No Investment Advice",
-    body:`Alpha Edge Investments ("Alpha Edge", "we", "us", "our") publishes equity research reports, analysis, dashboards, and commentary exclusively for educational and informational purposes.
+    body:`Vantage Capital Investments ("Vantage Capital", "we", "us", "our") publishes equity research reports, analysis, dashboards, and commentary exclusively for educational and informational purposes.
 
 Nothing on this website — including but not limited to stock reports, price targets, ratings such as "BUY", financial models, or commentary — constitutes investment advice, a recommendation to buy or sell any security, or a solicitation of any kind.
 
-Alpha Edge is not registered with the Securities and Exchange Board of India (SEBI) as an investment advisor, portfolio manager, research analyst, or stockbroker. We operate as an independent research and education platform only.`,
+Vantage Capital is not registered with the Securities and Exchange Board of India (SEBI) as an investment advisor, portfolio manager, research analyst, or stockbroker. We operate as an independent research and education platform only.`,
   },
   {
     id:"2",
@@ -26,7 +26,7 @@ Alpha Edge is not registered with the Securities and Exchange Board of India (SE
 
 • You understand that equity investments carry risk including the loss of principal. Past analysis, past coverage, or past price targets published on this site do not imply future performance of any security.
 
-• You will not hold Alpha Edge Investments, its authors, or contributors liable for any losses, damages, or investment outcomes arising from your use of this website.`,
+• You will not hold Vantage Capital Investments, its authors, or contributors liable for any losses, damages, or investment outcomes arising from your use of this website.`,
   },
   {
     id:"3",
@@ -40,7 +40,7 @@ You should always verify data from primary sources (company filings, BSE/NSE dis
   {
     id:"4",
     title:"Conflicts of Interest & Independence",
-    body:`Alpha Edge Investments maintains strict editorial independence:
+    body:`Vantage Capital Investments maintains strict editorial independence:
 
 • We do not accept fees, payments, advertising revenue, or commissions from any company we cover or plan to cover.
 
@@ -53,16 +53,16 @@ You should always verify data from primary sources (company filings, BSE/NSE dis
   {
     id:"5",
     title:"Intellectual Property",
-    body:`All content on this website — including reports, analysis, dashboards, graphics, written commentary, and design elements — is the intellectual property of Alpha Edge Investments and is protected under applicable copyright and intellectual property laws.
+    body:`All content on this website — including reports, analysis, dashboards, graphics, written commentary, and design elements — is the intellectual property of Vantage Capital Investments and is protected under applicable copyright and intellectual property laws.
 
-You may share links to our content or quote brief excerpts (not exceeding 150 words) with proper attribution to Alpha Edge Investments. You may not reproduce, republish, distribute, or commercially exploit our content without prior written consent.
+You may share links to our content or quote brief excerpts (not exceeding 150 words) with proper attribution to Vantage Capital Investments. You may not reproduce, republish, distribute, or commercially exploit our content without prior written consent.
 
-Our brand name, logo, and marks are proprietary to Alpha Edge Investments and may not be used without written permission.`,
+Our brand name, logo, and marks are proprietary to Vantage Capital Investments and may not be used without written permission.`,
   },
   {
     id:"6",
     title:"Privacy & Data",
-    body:`When you sign up for access to Alpha Edge Investments, we collect your name and email address. We use this information only to provide you access to our research and to notify you when new reports are published.
+    body:`When you sign up for access to Vantage Capital Investments, we collect your name and email address. We use this information only to provide you access to our research and to notify you when new reports are published.
 
 We do not sell, rent, or share your personal information with third parties for commercial purposes. We do not run advertising on this website.
 
@@ -73,14 +73,14 @@ You may request deletion of your account and data at any time by contacting us.`
   {
     id:"7",
     title:"Limitation of Liability",
-    body:`To the fullest extent permitted by applicable law, Alpha Edge Investments and its authors, contributors, and affiliates shall not be liable for any direct, indirect, incidental, consequential, or special damages arising from:
+    body:`To the fullest extent permitted by applicable law, Vantage Capital Investments and its authors, contributors, and affiliates shall not be liable for any direct, indirect, incidental, consequential, or special damages arising from:
 
 • Your use of, or inability to use, this website or its content;
 • Any investment decision made in reliance on content published here;
 • Any errors, inaccuracies, or omissions in our content;
 • Any interruption, suspension, or discontinuation of this website.
 
-This limitation applies regardless of the theory of liability — whether in contract, tort, negligence, or otherwise — even if Alpha Edge has been advised of the possibility of such damages.`,
+This limitation applies regardless of the theory of liability — whether in contract, tort, negligence, or otherwise — even if Vantage Capital has been advised of the possibility of such damages.`,
   },
   {
     id:"8",
@@ -153,7 +153,7 @@ export default function TermsConditions() {
           <div style={{ background:"rgba(212,160,23,0.05)", border:"1px solid rgba(212,160,23,0.18)", borderRadius:12, padding:"18px 20px", ...fu(0) }}>
             <div style={{ fontSize:10, fontWeight:800, color:GOLD, letterSpacing:"1.4px", marginBottom:8 }}>⚠️ KEY POINT</div>
             <p style={{ fontSize:13, color:pal.sub, lineHeight:1.75, margin:0 }}>
-              Alpha Edge Investments is <strong style={{color:pal.text}}>not a SEBI-registered investment advisor</strong>. Nothing on this site is investment advice. All content is for educational and informational purposes only. You are solely responsible for your own investment decisions.
+              Vantage Capital Investments is <strong style={{color:pal.text}}>not a SEBI-registered investment advisor</strong>. Nothing on this site is investment advice. All content is for educational and informational purposes only. You are solely responsible for your own investment decisions.
             </p>
           </div>
 
