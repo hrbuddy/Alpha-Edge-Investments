@@ -120,11 +120,6 @@ function lsAddToWishlist(ticker) {
   }
   return current;
 }
-function lsRemoveFromWishlist(ticker) {
-  const updated = lsGetWishlist().filter(t => t !== ticker);
-  lsSetWishlist(updated);
-  return updated;
-}
 
 // ─── Firestore fetchers ───────────────────────────────────────────────────────
 async function fetchLatestMomentum() {
@@ -357,7 +352,7 @@ function SparkLine({ points, positive }) {
   );
   const color = positive ? GREEN : RED;
   return (
-    <ResponsiveContainer width="100%" height={56}>
+    <ResponsiveContainer width="100%" height={44}>
       <AreaChart data={points} margin={{ top: 2, right: 0, left: 0, bottom: 2 }}>
         <defs>
           <linearGradient id={`fcGrad_${positive ? "g" : "r"}`} x1="0" y1="0" x2="0" y2="1">
@@ -443,7 +438,7 @@ function NewsItem({ item }) {
 }
 
 // ─── Single card content ───────────────────────────────────────────────────────
-function CardContent({ item, isTop }) {
+function CardContent({ item, isTop, onSwipeLeft, onSwipeRight, onOpenStock }) {
   const [priceData, setPriceData] = useState(null);
   const [news,      setNews]      = useState(null);
   const [loaded,    setLoaded]    = useState(false);
@@ -512,7 +507,7 @@ function CardContent({ item, isTop }) {
               )}
             </div>
 
-            <div style={{ fontSize: 28, fontWeight: 900, color: "#f0f6ff", lineHeight: 1, fontFamily: "'Playfair Display',serif", letterSpacing: "-0.5px" }}>
+            <div style={{ fontSize: 24, fontWeight: 900, color: "#f0f6ff", lineHeight: 1, fontFamily: "'Playfair Display',serif", letterSpacing: "-0.5px" }}>
               {item.ticker}
             </div>
             {sector && (
@@ -605,14 +600,28 @@ function CardContent({ item, isTop }) {
         {news?.length === 0 && (
           <div style={{ fontSize: 10, color: "rgba(255,255,255,0.2)" }}>No recent news found.</div>
         )}
-        {news?.map((n, i) => <NewsItem key={i} item={n} />)}
+        {news?.slice(0, 1).map((n, i) => <NewsItem key={i} item={n} />)}
       </div>
 
-      {/* ── Footer ── */}
-      <div style={{ padding: "10px 20px 18px", flex: 0 }}>
-        <div style={{ fontSize: 9, color: "rgba(255,255,255,0.15)", textAlign: "center", letterSpacing: "0.04em" }}>
-          Swipe ← skip · Swipe → explore
-        </div>
+      {/* ── In-card action buttons ── */}
+      <div style={{ padding: "10px 20px 16px", flex: 0, display: "flex", justifyContent: "center", alignItems: "center", gap: 32 }}>
+        <button
+          className="fc-btn-left"
+          onClick={e => { e.stopPropagation(); onSwipeLeft(); }}
+          style={{ width: 56, height: 56, borderRadius: "50%", background: "rgba(231,76,60,0.12)", border: "2px solid rgba(231,76,60,0.45)", color: "#E74C3C", fontSize: 22, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", transition: "all .15s", boxShadow: "0 4px 16px rgba(231,76,60,0.18)", flexShrink: 0 }}>
+          ✕
+        </button>
+        <button
+          onClick={e => { e.stopPropagation(); onOpenStock(); }}
+          style={{ width: 40, height: 40, borderRadius: "50%", background: "rgba(212,160,23,0.12)", border: "1px solid rgba(212,160,23,0.35)", color: "#D4A017", fontSize: 16, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", transition: "all .15s", flexShrink: 0 }}>
+          ★
+        </button>
+        <button
+          className="fc-btn-right"
+          onClick={e => { e.stopPropagation(); onSwipeRight(); }}
+          style={{ width: 56, height: 56, borderRadius: "50%", background: "rgba(39,174,96,0.12)", border: "2px solid rgba(39,174,96,0.45)", color: "#27AE60", fontSize: 22, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", transition: "all .15s", boxShadow: "0 4px 16px rgba(39,174,96,0.18)", flexShrink: 0 }}>
+          ♥
+        </button>
       </div>
 
     </div>
@@ -718,89 +727,12 @@ function EmptyState({ onReset }) {
   );
 }
 
-// ─── Wishlist View ────────────────────────────────────────────────────────────
-function WishlistView({ wishlist, deck, onRemove, onOpenModal }) {
-  if (wishlist.length === 0) return (
-    <div style={{ display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center", padding:"60px 28px", textAlign:"center", fontFamily:"'DM Sans',sans-serif" }}>
-      <div style={{ fontSize:48, marginBottom:16 }}>🃏</div>
-      <div style={{ fontSize:9, color:GOLD, fontWeight:800, letterSpacing:"0.2em", marginBottom:10 }}>YOUR WATCHLIST</div>
-      <h3 style={{ fontSize:20, fontWeight:900, color:"#f0f6ff", fontFamily:"'Playfair Display',serif", margin:"0 0 10px" }}>Nothing saved yet</h3>
-      <p style={{ fontSize:13, color:"rgba(255,255,255,0.35)", lineHeight:1.7, margin:0 }}>
-        Swipe right on any stock card to add it here.
-      </p>
-    </div>
-  );
-
-  return (
-    <div style={{ padding:"16px 16px 80px", fontFamily:"'DM Sans',sans-serif" }}>
-      <div style={{ fontSize:9, color:GOLD, fontWeight:800, letterSpacing:"0.2em", marginBottom:16 }}>
-        YOUR WATCHLIST · {wishlist.length} {wishlist.length === 1 ? "STOCK" : "STOCKS"}
-      </div>
-      <div style={{ display:"flex", flexDirection:"column", gap:10 }}>
-        {wishlist.map(ticker => {
-          const researchPath = getResearchPath(ticker);
-          const sector = getSector(ticker);
-          return (
-            <div key={ticker} style={{
-              background: CARD_BG,
-              border: "1px solid rgba(212,160,23,0.18)",
-              borderLeft: `3px solid ${GOLD}`,
-              borderRadius:14, padding:"14px 16px",
-              display:"flex", alignItems:"center", justifyContent:"space-between", gap:12,
-            }}>
-              <div
-                onClick={() => {
-                  const deckItem = deck?.find(d => d.ticker === ticker);
-                  onOpenModal(ticker, deckItem ? {
-                    momentumScore: deckItem.norm_score,
-                    rank: deckItem.rank,
-                    total: deckItem.total,
-                  } : null);
-                }}
-                style={{ flex:1, minWidth:0, cursor:"pointer" }}
-              >
-                <div style={{ fontSize:17, fontWeight:900, color:"#f0f6ff", fontFamily:"'Playfair Display',serif" }}>{ticker}</div>
-                {sector && <div style={{ fontSize:10, color:"rgba(212,160,23,0.5)", fontWeight:700, letterSpacing:"0.08em", marginTop:2 }}>{sector.toUpperCase()}</div>}
-              </div>
-              <div style={{ display:"flex", gap:8, alignItems:"center", flexShrink:0 }}>
-                {researchPath && (
-                  <a href={researchPath} style={{
-                    fontSize:10, fontWeight:800, color:NAVY,
-                    background:GOLD, padding:"5px 12px", borderRadius:999,
-                    textDecoration:"none", letterSpacing:"0.5px",
-                  }}>RESEARCH →</a>
-                )}
-                <button onClick={() => onRemove(ticker)} style={{
-                  width:32, height:32, borderRadius:"50%",
-                  background:"rgba(231,76,60,0.1)",
-                  border:"1px solid rgba(231,76,60,0.3)",
-                  color:RED, fontSize:16, cursor:"pointer",
-                  display:"flex", alignItems:"center", justifyContent:"center",
-                }}>♥</button>
-              </div>
-            </div>
-          );
-        })}
-      </div>
-    </div>
-  );
-}
-
 // ─── Main FlashCard component ─────────────────────────────────────────────────
 export default function FlashCard() {
-  const navigate      = useNavigate();
   const { openModal } = useStockModal();
   const { user }      = useAuth();
 
-  // Tab: "swipe" | "wishlist"
-  const [activeTab,    setActiveTab]    = useState("swipe");
-  // Scroll to top whenever we switch tabs
-  function switchTab(tab) {
-    setActiveTab(tab);
-    if (tab === "swipe") {
-      setTimeout(() => { window.scrollTo({ top: 0 }); }, 50);
-    }
-  }
+
 
   // State
   const [deck,         setDeck]         = useState([]);
@@ -808,12 +740,12 @@ export default function FlashCard() {
   const [loading,      setLoading]      = useState(true);
   const [error,        setError]        = useState(false);
   const [rightSwipes,  setRightSwipes]  = useState([]);
-  const [wishlist,     setWishlist]     = useState(() => lsGetWishlist()); // hydrate from localStorage
   const [showGate,     setShowGate]     = useState(false);
   const [gateShown,    setGateShown]    = useState(false);
-  const [swipeDir,     setSwipeDir]     = useState(null);
-  const [score,        setScore]        = useState({ seen: 0, liked: 0 });
-  const [deckDate,     setDeckDate]     = useState("");
+  // Show swipe hint on first session visit
+  const [showHint, setShowHint] = useState(() => {
+    try { return !sessionStorage.getItem('fc_hint_seen'); } catch { return true; }
+  });
 
   const cardRefs = useRef([]);
   const pageRef  = useRef(null);
@@ -830,7 +762,6 @@ export default function FlashCard() {
         .sort(() => Math.random() - 0.5);
       setDeck(shuffled);
       setCurrentIndex(shuffled.length - 1);
-      setDeckDate(result.date);
       setLoading(false);
 
       // ── Eagerly warm cache for top 5 cards so news is instant ──
@@ -847,13 +778,11 @@ export default function FlashCard() {
 
   // ── Swipe handler ──────────────────────────────────────────────
   const handleSwipe = useCallback((direction, ticker, index) => {
-    setSwipeDir(direction);
-    setTimeout(() => setSwipeDir(null), 400);
-
-    setScore(prev => ({
-      seen:  prev.seen + 1,
-      liked: direction === "right" ? prev.liked + 1 : prev.liked,
-    }));
+    // Dismiss first-visit hint on first swipe
+    if (showHint) {
+      setShowHint(false);
+      try { sessionStorage.setItem('fc_hint_seen', '1'); } catch {}
+    }
 
     const nextIndex = index - 1;
     setCurrentIndex(nextIndex);
@@ -868,8 +797,7 @@ export default function FlashCard() {
 
     if (direction === "right") {
       // ── Save to persistent wishlist immediately ──
-      const updated = lsAddToWishlist(ticker);
-      setWishlist(updated);
+      lsAddToWishlist(ticker);
 
       const newRights = [...rightSwipes, ticker];
       setRightSwipes(newRights);
@@ -889,19 +817,19 @@ export default function FlashCard() {
         total: swipedItem.total,
       } : null);
     }
-  }, [rightSwipes, user, gateShown, openModal, deck]);
+  }, [rightSwipes, user, gateShown, openModal, deck, showHint, setShowHint]);
 
-  // ── Remove from wishlist ────────────────────────────────────────
-  function handleRemoveFromWishlist(ticker) {
-    const updated = lsRemoveFromWishlist(ticker);
-    setWishlist(updated);
-  }
 
-  // ── Programmatic swipe ──────────────────────────────────────────
-  function doSwipe(direction) {
-    if (currentIndex < 0 || showGate) return;
-    const ref = cardRefs.current[currentIndex];
+
+  // ── Swipe triggered from in-card buttons ────────────────────────
+  function handleSwipeButton(direction, index) {
+    const ref = cardRefs.current[index];
     if (ref?.swipe) ref.swipe(direction);
+    // Dismiss first-visit hint on first button tap too
+    if (showHint) {
+      setShowHint(false);
+      try { sessionStorage.setItem('fc_hint_seen', '1'); } catch {}
+    }
   }
 
   // ── Dismiss gate ────────────────────────────────────────────────
@@ -947,81 +875,49 @@ export default function FlashCard() {
         @keyframes fcPulseR { 0%,100%{box-shadow:0 0 0 0 rgba(39,174,96,0)} 50%{box-shadow:0 0 0 12px rgba(39,174,96,0.15)} }
         .fc-btn-left:active  { transform:scale(0.9); }
         .fc-btn-right:active { transform:scale(0.9); }
+        @keyframes hintLeft  { 0%,100%{transform:translateX(0)} 50%{transform:translateX(-8px)} }
+        @keyframes hintRight { 0%,100%{transform:translateX(0)} 50%{transform:translateX(8px)} }
       `}</style>
 
-      <div ref={pageRef} style={{ background: SURFACE, minHeight: "100vh", display: "flex", flexDirection: "column", paddingTop: 72, fontFamily: "'DM Sans',sans-serif", overflow: "hidden", position: "relative" }}>
+      <div ref={pageRef} style={{ background: SURFACE, minHeight: "100vh", display: "flex", flexDirection: "column", paddingTop: 100, fontFamily: "'DM Sans',sans-serif", overflow: "hidden", position: "relative" }}>
 
-        {/* ── Top bar ── */}
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "12px 20px 0", flex: 0 }}>
-          <button onClick={() => navigate(-1)} style={{ background: "none", border: "none", color: "rgba(255,255,255,0.4)", fontSize: 20, cursor: "pointer", padding: 4 }}>←</button>
-
-          <div style={{ textAlign: "center" }}>
-            <div style={{ fontSize: 9, color: GOLD, fontWeight: 800, letterSpacing: "0.2em" }}>DISCOVER</div>
-            {deckDate && (
-              <div style={{ fontSize: 10, color: "rgba(255,255,255,0.3)" }}>
-                {new Date(deckDate).toLocaleDateString("en-IN", { month: "short", year: "numeric" })}
-              </div>
-            )}
-          </div>
-
-          <div style={{ display: "flex", gap: 12, alignItems: "center" }}>
-            <div style={{ fontSize: 14, fontWeight: 800, color: RED }}>✕ {score.seen - score.liked}</div>
-            <div style={{ fontSize: 14, fontWeight: 800, color: GREEN }}>♥ {score.liked}</div>
-          </div>
-        </div>
-
-        {/* ── Tabs ── */}
-        <div style={{ display: "flex", margin: "10px 16px 0", background: "rgba(255,255,255,0.04)", borderRadius: 10, padding: 3, gap: 3 }}>
-          {[["swipe","⚡ Pick Your Card"],["wishlist",`❤️ Saved${wishlist.length > 0 ? ` (${wishlist.length})` : ""}`]].map(([key, label]) => (
-            <button key={key} onClick={() => switchTab(key)} style={{
-              flex: 1, padding: "8px 0", borderRadius: 8, border: "none", cursor: "pointer",
-              background: activeTab === key ? "rgba(212,160,23,0.18)" : "transparent",
-              color: activeTab === key ? GOLD : "rgba(255,255,255,0.35)",
-              fontSize: 11, fontWeight: 800, letterSpacing: "0.5px",
-              fontFamily: "'DM Sans',sans-serif", transition: "all .15s",
-              borderBottom: activeTab === key ? `2px solid ${GOLD}` : "2px solid transparent",
-            }}>{label}</button>
-          ))}
-        </div>
-
-        {/* ── Tab content ── */}
-        {activeTab === "wishlist" ? (
-          <div style={{ flex: 1, overflowY: "auto" }}>
-            <WishlistView
-              wishlist={wishlist}
-              deck={deck}
-              onRemove={handleRemoveFromWishlist}
-              onOpenModal={openModal}
-            />
-          </div>
-        ) : (
-          <>
+        {/* ── Swipe deck ── */}
+        <>
             {/* ── Card stack ── */}
-            <div style={{ flex: 1, position: "relative", display: "flex", alignItems: "center", justifyContent: "center", padding: "8px 16px", overflow: "hidden" }}>
+            <div style={{ flex: 1, position: "relative", display: "flex", alignItems: "flex-start", justifyContent: "center", padding: "2px 12px 0", overflow: "hidden" }}>
 
-              {swipeDir === "left" && (
-                <div style={{ position: "absolute", inset: 0, zIndex: 100, display: "flex", alignItems: "center", justifyContent: "flex-start", paddingLeft: 32, pointerEvents: "none", animation: "fcPulseL .35s ease" }}>
-                  <div style={{ padding: "8px 18px", background: "rgba(231,76,60,0.2)", border: "2px solid rgba(231,76,60,0.6)", borderRadius: 10 }}>
-                    <span style={{ fontSize: 22, fontWeight: 900, color: RED, letterSpacing: "0.08em" }}>NOPE</span>
+
+
+              {/* ── First-visit swipe hint ── */}
+              {showHint && !isDone && !showGate && (
+                <div style={{ position:"absolute", inset:0, zIndex:200, pointerEvents:"none", display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center", gap:16 }}>
+                  {/* Dim overlay */}
+                  <div style={{ position:"absolute", inset:0, background:"rgba(0,0,0,0.45)", borderRadius:22 }}/>
+                  {/* Arrows */}
+                  <div style={{ position:"relative", zIndex:1, display:"flex", alignItems:"center", gap:40 }}>
+                    <div style={{ textAlign:"center" }}>
+                      <div style={{ fontSize:36, animation:"hintLeft 1s ease-in-out infinite" }}>👈</div>
+                      <div style={{ fontSize:10, fontWeight:800, color:"#E74C3C", letterSpacing:"0.06em", fontFamily:"'DM Sans',sans-serif", marginTop:6 }}>SKIP</div>
+                    </div>
+                    <div style={{ textAlign:"center" }}>
+                      <div style={{ fontSize:36, animation:"hintRight 1s ease-in-out infinite" }}>👉</div>
+                      <div style={{ fontSize:10, fontWeight:800, color:"#27AE60", letterSpacing:"0.06em", fontFamily:"'DM Sans',sans-serif", marginTop:6 }}>LIKE</div>
+                    </div>
                   </div>
-                </div>
-              )}
-              {swipeDir === "right" && (
-                <div style={{ position: "absolute", inset: 0, zIndex: 100, display: "flex", alignItems: "center", justifyContent: "flex-end", paddingRight: 32, pointerEvents: "none", animation: "fcPulseR .35s ease" }}>
-                  <div style={{ padding: "8px 18px", background: "rgba(39,174,96,0.2)", border: "2px solid rgba(39,174,96,0.6)", borderRadius: 10 }}>
-                    <span style={{ fontSize: 22, fontWeight: 900, color: GREEN, letterSpacing: "0.08em" }}>SAVED ♥</span>
+                  <div style={{ position:"relative", zIndex:1, padding:"8px 20px", borderRadius:20, background:"rgba(212,160,23,0.15)", border:"1px solid rgba(212,160,23,0.4)" }}>
+                    <span style={{ fontSize:10, fontWeight:800, color:"#D4A017", letterSpacing:"0.1em", fontFamily:"'DM Sans',sans-serif" }}>SWIPE OR TAP BUTTONS BELOW</span>
                   </div>
                 </div>
               )}
 
               {isDone ? (
-                <EmptyState onReset={() => { setCurrentIndex(deck.length - 1); setScore({ seen: 0, liked: 0 }); setRightSwipes([]); setGateShown(false); }}/>
+                <EmptyState onReset={() => { setCurrentIndex(deck.length - 1); setRightSwipes([]); setGateShown(false); }}/>
               ) : showGate ? (
-                <div style={{ width: "100%", maxWidth: 380, height: "100%", maxHeight: 580 }}>
+                <div style={{ width: "100%", maxWidth: 380, height: "100%", maxHeight: 470 }}>
                   <GateCard savedTickers={rightSwipes} onDismiss={handleGateDismiss}/>
                 </div>
               ) : (
-                <div style={{ position: "relative", width: "100%", maxWidth: 380, height: 560 }}>
+                <div style={{ position: "relative", width: "100%", maxWidth: 380, height: 450 }}>
                   {deck.map((item, i) => {
                     const offset = currentIndex - i;
                     if (offset < 0 || offset > 4) return null;
@@ -1039,7 +935,7 @@ export default function FlashCard() {
                         onSwipe={dir => handleSwipe(dir, item.ticker, i)}
                         ref={el => { cardRefs.current[i] = el; }}
                       >
-                        <CardContent item={item} isTop={isTopCard || offset === 1}/>
+                        <CardContent item={item} isTop={isTopCard || offset === 1} onSwipeLeft={() => handleSwipeButton("left", i)} onSwipeRight={() => handleSwipeButton("right", i)} onOpenStock={() => openModal(item.ticker, item ? { momentumScore: item.norm_score, rank: item.rank, total: item.total } : null)}/>
                       </SwipeCard>
                     );
                   })}
@@ -1047,16 +943,6 @@ export default function FlashCard() {
               )}
             </div>
 
-            {/* ── Action buttons ── */}
-            {!isDone && !showGate && (
-              <div style={{ display: "flex", justifyContent: "center", alignItems: "center", gap: 40, padding: "12px 0 20px", flex: 0 }}>
-                <button className="fc-btn-left" onClick={() => doSwipe("left")} style={{ width: 64, height: 64, borderRadius: "50%", background: "rgba(231,76,60,0.1)", border: "2px solid rgba(231,76,60,0.4)", color: RED, fontSize: 26, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", transition: "all .15s", boxShadow: "0 4px 20px rgba(231,76,60,0.15)" }}>✕</button>
-                {currentIndex >= 0 && (
-                  <button onClick={() => openModal(deck[currentIndex]?.ticker, deck[currentIndex] ? { momentumScore: deck[currentIndex].norm_score, rank: deck[currentIndex].rank, total: deck[currentIndex].total } : null)} style={{ width: 46, height: 46, borderRadius: "50%", background: "rgba(212,160,23,0.1)", border: "1px solid rgba(212,160,23,0.3)", color: GOLD, fontSize: 18, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", transition: "all .15s" }}>★</button>
-                )}
-                <button className="fc-btn-right" onClick={() => doSwipe("right")} style={{ width: 64, height: 64, borderRadius: "50%", background: "rgba(39,174,96,0.1)", border: "2px solid rgba(39,174,96,0.4)", color: GREEN, fontSize: 26, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", transition: "all .15s", boxShadow: "0 4px 20px rgba(39,174,96,0.15)" }}>♥</button>
-              </div>
-            )}
 
             {/* ── Progress bar ── */}
             {deck.length > 0 && !isDone && (
@@ -1071,7 +957,6 @@ export default function FlashCard() {
               </div>
             )}
           </>
-        )}
       </div>
     </>
   );

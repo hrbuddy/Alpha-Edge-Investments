@@ -1,4 +1,5 @@
 import { Link, useNavigate, useLocation } from "react-router-dom";
+import { lsGetWishlist } from "./FlashCard";
 import { useContext, useState, useRef, useEffect } from "react";
 import { ThemeContext } from "./App";
 import { useAuth } from "./AuthContext";
@@ -44,7 +45,7 @@ const PAGE_NAV_LINKS = [
 // Mobile quick-nav destinations — Home, Stocks, Momentum, Macro, Discover
 // Borders only appear when the user is ON that tab (handled via useLocation below)
 const MOBILE_QUICK_NAV = [
-  { label:"Home",      icon:"🏠", path:"/",                  active:true,  highlight:false },
+  { label:"Home",      icon:"🏡", path:"/",                  active:true,  highlight:false },
   { label:"Stocks",    icon:"📈", path:"/research-universe", active:true,  highlight:false },
   { label:"Momentum",  icon:"🚀", path:"/momentum",          active:true,  highlight:true  },
   { label:"Macro",     icon:"📊", path:"/macro",             active:true,  highlight:false },
@@ -59,6 +60,16 @@ export default function Navbar() {
   const isDark                 = theme === "dark";
 
   const [searchOpen,        setSearchOpen]        = useState(false);
+  const [wishlistCount,     setWishlistCount]     = useState(() => { try { return lsGetWishlist().length; } catch { return 0; } });
+  const [wishlistOpen,      setWishlistOpen]      = useState(false);
+  const [wishlistItems,     setWishlistItems]     = useState([]);
+
+  // Refresh wishlist count on focus (user may have swiped in another tab)
+  useEffect(() => {
+    const refresh = () => { try { setWishlistCount(lsGetWishlist().length); } catch {} };
+    window.addEventListener('focus', refresh);
+    return () => window.removeEventListener('focus', refresh);
+  }, []);
   const [searchQuery,       setSearchQuery]        = useState("");
   const [menuOpen,          setMenuOpen]           = useState(false);
   const [stocksOpen,        setStocksOpen]         = useState(false);
@@ -111,9 +122,11 @@ export default function Navbar() {
   );
 
   function handleSelect(item) {
-    if (item.active && item.path) navigate(item.path);
+    if (!item.active) return;
+    if (item.path) navigate(item.path);
     setSearchOpen(false);
     setSearchQuery("");
+    setMenuOpen(false);
   }
   function closeSearch() { setSearchOpen(false); setSearchQuery(""); }
 
@@ -177,8 +190,8 @@ export default function Navbar() {
         /* ── Mobile Quick-Nav strip — hidden on desktop ── */
         .mob-qnav {
           display: none;
-          gap: 6px;
-          padding: 7px 10px 8px;
+          gap: 4px;
+          padding: 4px 8px 5px;
           border-top: 1px solid rgba(212,160,23,0.08);
         }
         .mob-qnav-item {
@@ -186,17 +199,17 @@ export default function Navbar() {
           display: flex;
           flex-direction: column;
           align-items: center;
-          gap: 3px;
-          padding: 6px 4px 5px;
-          border-radius: 9px;
+          gap: 2px;
+          padding: 4px 3px 3px;
+          border-radius: 7px;
           text-decoration: none;
           transition: background .18s;
           -webkit-tap-highlight-color: transparent;
         }
         .mob-qnav-item:active { opacity: 0.7; }
-        .mob-qnav-icon { font-size: 17px; line-height: 1; }
+        .mob-qnav-icon { font-size: 14px; line-height: 1; }
         .mob-qnav-label {
-          font-size: 8px; font-weight: 800; letter-spacing: 0.7px;
+          font-size: 7px; font-weight: 800; letter-spacing: 0.6px;
           font-family: 'DM Sans', sans-serif; white-space: nowrap;
         }
 
@@ -206,7 +219,7 @@ export default function Navbar() {
           On desktop, the nav is 58px + 38px ribbon = 96px, same as current paddingTop.
         */
         @media(max-width:640px){
-          .ae-page-root { padding-top: 116px !important; }
+          .ae-page-root { padding-top: 104px !important; }
           .mob-qnav { display: flex !important; }
         }
 
@@ -318,6 +331,24 @@ export default function Navbar() {
           {/* RIGHT CONTROLS */}
           <div style={{ display:"flex", alignItems:"center", gap:4 }}>
 
+            {/* Wishlist — mobile only, before search */}
+            <button onClick={() => {
+                const tickers = lsGetWishlist();
+                setWishlistItems(tickers);
+                setWishlistOpen(true);
+              }} className="hamburger-btn"
+              style={{ alignItems:"center", justifyContent:"center", position:"relative", borderRadius:8, padding:"6px 8px", background:"none", border:"none", color:GOLD, cursor:"pointer" }}
+              title="Saved stocks">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke={GOLD} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+              </svg>
+              {wishlistCount > 0 && (
+                <span style={{ position:"absolute", top:2, right:2, minWidth:16, height:16, borderRadius:8, background:GOLD, color:"#0D1B2A", fontSize:9, fontWeight:900, display:"flex", alignItems:"center", justifyContent:"center", padding:"0 3px", lineHeight:1 }}>
+                  {wishlistCount}
+                </span>
+              )}
+            </button>
+
             {/* Search */}
             <div ref={searchRef} style={{ position:"relative" }}>
               <button className="nav-btn" onClick={() => setSearchOpen(o => !o)} style={{ borderRadius:8, padding:"6px 10px", cursor:"pointer", display:"flex", alignItems:"center", gap:5, transition:"background .2s" }}>
@@ -369,7 +400,7 @@ export default function Navbar() {
               <Link
                 key={item.label}
                 to={item.active ? item.path : "#"}
-                onClick={e => { if (!item.active) e.preventDefault(); }}
+                onClick={e => { if (!item.active) e.preventDefault(); setMenuOpen(false); }}
                 className="mob-qnav-item"
                 style={{
                   background:   isCurrentRoute ? "rgba(212,160,23,0.16)" : "transparent",
@@ -438,7 +469,7 @@ export default function Navbar() {
 
         {/* ── MOBILE DRAWER ── */}
         {menuOpen && (
-          <div className="mobile-menu" style={{ borderTop:`1px solid rgba(212,160,23,0.10)`, background:ribbonBg, padding:"4px 0 8px", animation:"menuSlide .25s ease forwards" }}>
+          <div className="mobile-menu" style={{ borderTop:`1px solid rgba(212,160,23,0.10)`, background:ribbonBg, padding:"4px 0 8px", boxShadow:"0 8px 32px rgba(0,0,0,0.5)", animation:"menuSlide .25s ease forwards" }}>
 
             {PAGE_NAV_LINKS.map(l => (
               <Link key={l.label} to={l.path} className="nav-link" onClick={() => setMenuOpen(false)}
@@ -499,6 +530,39 @@ export default function Navbar() {
           </div>
         )}
       </nav>
+    {/* ── Wishlist sheet ── */}
+    {wishlistOpen && (
+      <>
+        <div onClick={() => setWishlistOpen(false)} style={{ position:"fixed", inset:0, zIndex:200000, background:"rgba(0,0,0,0.55)" }}/>
+        <div style={{ position:"fixed", bottom:0, left:0, right:0, zIndex:200001, background:"#0a1526", borderRadius:"20px 20px 0 0", border:"1px solid rgba(212,160,23,0.2)", maxHeight:"70vh", display:"flex", flexDirection:"column", fontFamily:"'DM Sans',sans-serif" }}>
+          <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", padding:"16px 20px 12px", borderBottom:"1px solid rgba(212,160,23,0.1)" }}>
+            <div style={{ fontSize:11, fontWeight:800, color:"#D4A017", letterSpacing:"0.15em" }}>❤️ SAVED STOCKS · {wishlistItems.length}</div>
+            <button onClick={() => setWishlistOpen(false)} style={{ background:"none", border:"none", color:"rgba(255,255,255,0.4)", fontSize:20, cursor:"pointer", padding:"0 4px" }}>×</button>
+          </div>
+          <div style={{ overflowY:"auto", flex:1 }}>
+            {wishlistItems.length === 0 ? (
+              <div style={{ padding:"40px 20px", textAlign:"center", color:"rgba(255,255,255,0.25)", fontSize:13 }}>No saved stocks yet. Swipe right on Discover to save.</div>
+            ) : wishlistItems.map(ticker => {
+              const route = STOCK_ROUTES.find(r => STOCKS[r.stockId]?.nse === ticker || r.stockId === ticker);
+              const stock = route ? STOCKS[route.stockId] : null;
+              return (
+                <div key={ticker} style={{ display:"flex", alignItems:"center", justifyContent:"space-between", padding:"14px 20px", borderBottom:"1px solid rgba(255,255,255,0.04)", cursor: route ? "pointer" : "default" }}
+                  onClick={() => { if (route) { navigate(route.path); setWishlistOpen(false); } }}>
+                  <div>
+                    <div style={{ fontSize:14, fontWeight:700, color:"#e2e8f0" }}>{stock?.name || ticker}</div>
+                    <div style={{ fontSize:10, color:"rgba(212,160,23,0.6)", marginTop:2, letterSpacing:"0.05em" }}>NSE: {ticker}</div>
+                  </div>
+                  {route
+                    ? <span style={{ fontSize:10, fontWeight:800, color:"#D4A017", background:"rgba(212,160,23,0.1)", border:"1px solid rgba(212,160,23,0.25)", padding:"5px 12px", borderRadius:999, letterSpacing:"0.08em" }}>VIEW →</span>
+                    : <span style={{ fontSize:10, color:"rgba(255,255,255,0.2)", letterSpacing:"0.05em" }}>No report</span>
+                  }
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </>
+    )}
     </>
   );
 }

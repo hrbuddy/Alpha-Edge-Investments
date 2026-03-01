@@ -34,7 +34,7 @@ export default function AboutUs() {
         .principle-card{ transition:all .25s ease; }
       `}</style>
 
-      <div style={{ background: pal.bg, minHeight:"100vh", paddingTop:92, fontFamily:"'DM Sans',sans-serif", color:pal.text }}>
+      <div style={{ background: pal.bg, minHeight:"100vh", paddingTop:92, fontFamily:"'DM Sans',sans-serif", color:pal.text }} className="ae-page-root">
 
         {/* ── HERO BANNER ── */}
         <section style={{ background: isDark ? "rgba(255,255,255,0.015)" : "rgba(13,27,42,0.04)", borderBottom:`1px solid ${pal.border}`, padding:"56px 24px 52px", textAlign:"center" }}>

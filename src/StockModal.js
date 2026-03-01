@@ -13,7 +13,7 @@
  */
 
 import { createContext, useContext, useState, useEffect, useCallback, useRef } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { doc, getDoc } from "firebase/firestore";
 import { db } from "./firebase";
 import {
@@ -520,13 +520,19 @@ function StockSheet({ ticker, extraData, onClose }) {
 // ── Provider — wraps the whole app ───────────────────────────────────────────
 export function StockModalProvider({ children }) {
   const [ticker,    setTicker]    = useState(null);
-  const [extraData, setExtraData] = useState(null); // e.g. { momentumScore, rank, total }
+  const [extraData, setExtraData] = useState(null);
+  const location = useLocation();
 
   const openModal  = useCallback((t, extra = null) => {
     setTicker(t?.trim()?.toUpperCase() ?? null);
     setExtraData(extra ?? null);
   }, []);
   const closeModal = useCallback(() => { setTicker(null); setExtraData(null); }, []);
+
+  // Auto-close whenever the user navigates to a different page
+  useEffect(() => {
+    closeModal();
+  }, [location.pathname]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <StockModalContext.Provider value={{ openModal, closeModal }}>

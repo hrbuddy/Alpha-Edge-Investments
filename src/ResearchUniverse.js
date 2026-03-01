@@ -218,7 +218,7 @@ export default function ResearchUniverse() {
         }
       `}</style>
 
-      <div style={{
+      <div className="ae-page-root" style={{
         background: pal.bg, minHeight: "100vh",
         color: pal.text, fontFamily: "'DM Sans',sans-serif",
         paddingTop: 92,
