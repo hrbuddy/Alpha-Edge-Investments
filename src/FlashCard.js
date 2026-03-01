@@ -832,6 +832,16 @@ export default function FlashCard() {
       setCurrentIndex(shuffled.length - 1);
       setDeckDate(result.date);
       setLoading(false);
+
+      // ── Eagerly warm cache for top 5 cards so news is instant ──
+      // Stagger requests by 400ms each to avoid proxy rate limits
+      const top5 = shuffled.slice(-5).map(s => s.ticker);
+      top5.forEach((ticker, i) => {
+        setTimeout(() => {
+          fetchNews(ticker).catch(() => {});
+          fetchPrice(ticker).catch(() => {});
+        }, i * 400);
+      });
     }).catch(() => { setError(true); setLoading(false); });
   }, []);
 
@@ -845,7 +855,16 @@ export default function FlashCard() {
       liked: direction === "right" ? prev.liked + 1 : prev.liked,
     }));
 
-    setCurrentIndex(index - 1);
+    const nextIndex = index - 1;
+    setCurrentIndex(nextIndex);
+
+    // Prefetch news for the card after next so it's ready
+    if (nextIndex > 1) {
+      const upcoming = deck[nextIndex - 2]?.ticker;
+      if (upcoming) {
+        setTimeout(() => { fetchNews(upcoming).catch(() => {}); }, 200);
+      }
+    }
 
     if (direction === "right") {
       // ── Save to persistent wishlist immediately ──
@@ -898,7 +917,7 @@ export default function FlashCard() {
     return (
       <div style={{ background: SURFACE, minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", flexDirection: "column", gap: 16, paddingTop: 72 }}>
         <div style={{ width: 36, height: 36, border: "2px solid rgba(212,160,23,0.2)", borderTop: `2px solid ${GOLD}`, borderRadius: "50%", animation: "fcSpin 0.8s linear infinite" }}/>
-        <div style={{ fontSize: 11, color: GOLD, letterSpacing: "0.15em", fontFamily: "'DM Sans',sans-serif" }}>LOADING MOMENTUM DATA…</div>
+        <div style={{ fontSize: 11, color: GOLD, letterSpacing: "0.15em", fontFamily: "'DM Sans',sans-serif" }}>LOADING CARDS…</div>
         <style>{`@keyframes fcSpin { to { transform:rotate(360deg); } }`}</style>
       </div>
     );
@@ -953,7 +972,7 @@ export default function FlashCard() {
 
         {/* ── Tabs ── */}
         <div style={{ display: "flex", margin: "10px 16px 0", background: "rgba(255,255,255,0.04)", borderRadius: 10, padding: 3, gap: 3 }}>
-          {[["swipe","⚡ Pick Your List"],["wishlist",`❤️ Saved${wishlist.length > 0 ? ` (${wishlist.length})` : ""}`]].map(([key, label]) => (
+          {[["swipe","⚡ Pick Your Card"],["wishlist",`❤️ Saved${wishlist.length > 0 ? ` (${wishlist.length})` : ""}`]].map(([key, label]) => (
             <button key={key} onClick={() => switchTab(key)} style={{
               flex: 1, padding: "8px 0", borderRadius: 8, border: "none", cursor: "pointer",
               background: activeTab === key ? "rgba(212,160,23,0.18)" : "transparent",
