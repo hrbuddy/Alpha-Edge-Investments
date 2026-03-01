@@ -890,7 +890,7 @@ export default function FlashCard() {
 
               {/* ── First-visit swipe hint ── */}
               {showHint && !isDone && !showGate && (
-                <div style={{ position:"absolute", inset:0, zIndex:200, pointerEvents:"none", display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"flex-end", gap:16, paddingBottom:"280px" }}>
+                <div style={{ position:"absolute", inset:0, zIndex:200, pointerEvents:"none", display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"flex-end", gap:16, paddingBottom:"220px" }}>
                   {/* Dim overlay */}
                   <div style={{ position:"absolute", inset:0, background:"rgba(0,0,0,0.45)", borderRadius:22 }}/>
                   {/* Arrows */}
