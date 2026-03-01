@@ -35,9 +35,8 @@ const SEARCH_ITEMS = [
 const PAGE_NAV_LINKS = [
   { label:"Home",                  path:"/"                   },
   { label:"Research Universe",     path:"/research-universe"  },
-  { label:"🚀 Momentum",            path:"/momentum"           },
+  { label:"Momentum",            path:"/momentum"           },
   { label:"Macro Dashboard",       path:"/macro"              },
-  { label:"⚡ Discover",           path:"/discover"           },
   { label:"Investment Philosophy", path:"/philosophy"         },
   { label:"About Us",              path:"/about"              },
   { label:"Terms & Conditions",    path:"/terms"              },
@@ -46,7 +45,7 @@ const PAGE_NAV_LINKS = [
 // Mobile quick-nav destinations — Home, Stocks, Momentum, Macro, Discover
 // Borders only appear when the user is ON that tab (handled via useLocation below)
 const MOBILE_QUICK_NAV = [
-  { label:"Home",      icon:"🏡", path:"/",                  active:true,  highlight:false },
+  { label:"Home",      icon:"🏠", path:"/",                  active:true,  highlight:false },
   { label:"Stocks",    icon:"📈", path:"/research-universe", active:true,  highlight:false },
   { label:"Momentum",  icon:"🚀", path:"/momentum",          active:true,  highlight:true  },
   { label:"Macro",     icon:"📊", path:"/macro",             active:true,  highlight:false },
@@ -144,7 +143,7 @@ export default function Navbar() {
       {filtered.length === 0 ? (
         <div style={{ padding:"16px", textAlign:"center", fontSize:12, color:"rgba(212,160,23,0.35)", fontFamily:"'DM Sans',sans-serif" }}>No results</div>
       ) : filtered.map(item => (
-        <div key={item.name} className="search-result-item" onClick={() => handleSelect(item)}>
+        <div key={item.name} className="search-result-item" onMouseDown={e => e.stopPropagation()} onClick={() => handleSelect(item)}>
           <div>
             <div style={{ fontSize:13, fontWeight:700, color:item.active ? (isDark ? "#c8dae8" : "#0D1B2A") : "#3a5068", fontFamily:"'DM Sans',sans-serif" }}>
               {item.name}
@@ -283,7 +282,7 @@ export default function Navbar() {
           )}
           {searchOpen && (
             <div className="mobile-search-results" style={{ background:ribbonBg }}>
-              <ResultsList />
+              {ResultsList()}
             </div>
           )}
 
@@ -364,7 +363,7 @@ export default function Navbar() {
                     <input ref={inputRef} value={searchQuery} onChange={e => setSearchQuery(e.target.value)} placeholder="Search stocks & pages…" style={{ background:"transparent", border:"none", outline:"none", color:inputText, fontSize:13, width:"100%", fontFamily:"'DM Sans',sans-serif" }}/>
                     {searchQuery && <button onClick={() => setSearchQuery("")} style={{ background:"none", border:"none", cursor:"pointer", color:"rgba(212,160,23,0.4)", fontSize:14, padding:0, lineHeight:1 }}>×</button>}
                   </div>
-                  <ResultsList />
+                  {ResultsList()}
                 </div>
               )}
             </div>
@@ -551,12 +550,12 @@ export default function Navbar() {
                 <div key={ticker} style={{ display:"flex", alignItems:"center", justifyContent:"space-between", padding:"14px 20px", borderBottom:"1px solid rgba(255,255,255,0.04)", cursor:"pointer" }}
                   onClick={() => { openModal(ticker); setWishlistOpen(false); }}>
                   <div>
-                    <div style={{ fontSize:14, fontWeight:700, color:"#e2e8f0", textDecoration:"underline", textDecorationColor:"rgba(212,160,23,0.3)", textUnderlineOffset:"3px" }}>{stock?.name || ticker}</div>
+                    <div style={{ fontSize:14, fontWeight:700, color:"#e2e8f0" }}>{stock?.name || ticker}</div>
                     <div style={{ fontSize:10, color:"rgba(212,160,23,0.6)", marginTop:2, letterSpacing:"0.05em" }}>NSE: {ticker}</div>
                   </div>
                   {route
                     ? <span style={{ fontSize:10, fontWeight:800, color:"#D4A017", background:"rgba(212,160,23,0.1)", border:"1px solid rgba(212,160,23,0.25)", padding:"5px 12px", borderRadius:999, letterSpacing:"0.08em" }}>RESEARCH →</span>
-                    : <span style={{ fontSize:10, fontWeight:800, color:"#D4A017", background:"rgba(212,160,23,0.08)", border:"1px solid rgba(212,160,23,0.2)", padding:"5px 12px", borderRadius:999, letterSpacing:"0.08em" }}>CHART →</span>
+                    : <span style={{ fontSize:10, fontWeight:700, color:"rgba(255,255,255,0.35)", background:"rgba(255,255,255,0.05)", border:"1px solid rgba(255,255,255,0.1)", padding:"5px 12px", borderRadius:999, letterSpacing:"0.06em" }}>CHART →</span>
                   }
                 </div>
               );

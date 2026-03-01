@@ -248,7 +248,7 @@ function StockSheet({ ticker, extraData, onClose }) {
           borderTop: `2px solid ${GOLD}`,
           borderRadius: "20px 20px 0 0",
           padding: "0 0 env(safe-area-inset-bottom)",
-          maxHeight: "92vh",
+          maxHeight: "calc(100vh - 100px)",
           overflowY: "auto",
           animation: "smSlideUp .28s cubic-bezier(.22,1,.36,1)",
           boxShadow: "0 -16px 60px rgba(0,0,0,0.7)",
