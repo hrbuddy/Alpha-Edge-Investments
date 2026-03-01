@@ -229,7 +229,7 @@ function ChartPanel({ eyebrow, title, accentColor, indices, defaultActive, pal, 
   const rawCache = useRef({});
 
   // All indices active by default — user can toggle off individually
-  const [active,    setActive]    = useState(() => new Set(indices.map(i => i.id)));
+  const [active,    setActive]    = useState(() => new Set(indices.slice(0, 2).map(i => i.id)));
   const [startYear, setStartYear] = useState(2020);
   const [mode,      setMode]      = useState("pct");
   // FIX C: bar period can be CUSTOM (driven by slider)
@@ -624,7 +624,7 @@ export default function MacroBoard() {
         }
       `}</style>
 
-      <div style={{ background:pal.bg, minHeight:"100vh", paddingTop:92, color:pal.text, fontFamily:"'DM Sans',sans-serif" }}>
+      <div style={{ background:pal.bg, minHeight:"100vh", paddingTop:92, color:pal.text, fontFamily:"'DM Sans',sans-serif" }} className="ae-page-root">
 
         {/* Header */}
         <section style={{ background:isDark?"rgba(255,255,255,0.015)":"rgba(13,27,42,0.04)", borderBottom:`1px solid ${pal.border}`, padding:"48px 24px 44px", textAlign:"center" }}>

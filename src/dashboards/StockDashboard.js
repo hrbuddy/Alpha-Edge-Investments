@@ -86,6 +86,11 @@ const GLOBAL_STYLES = `
   }
   .ae-tab-wrapper.at-end::after { opacity: 0; }
 
+  /* Mobile: navbar = 58px top bar + ~58px quick-nav strip = ~116px total */
+  @media (max-width: 640px) {
+    .ae-sd-root { padding-top: 120px !important; }
+  }
+
   @media (max-width: 600px) {
     .ae-metric-grid {
       display: grid;
@@ -236,16 +241,17 @@ export default function StockDashboard({ stock }) {
   }));
 
   return (
-    <div style={{
+    <div className="ae-sd-root" style={{
       background: `linear-gradient(135deg, ${NAVY} 0%, #0a1628 100%)`,
       minHeight: "100vh",
       color: "#e2e8f0",
       fontFamily: "'DM Sans', sans-serif",
+      paddingTop: 96,
     }}>
       <style>{GLOBAL_STYLES}</style>
 
       {/* ══ HEADER ══════════════════════════════════════════════════════════ */}
-      <div style={{ padding: "112px 22px 0", borderBottom: `1px solid rgba(212,160,23,0.2)` }}>
+      <div style={{ padding: "20px 22px 0", borderBottom: `1px solid rgba(212,160,23,0.2)` }}>
 
         {/* Identity row */}
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: 8 }}>

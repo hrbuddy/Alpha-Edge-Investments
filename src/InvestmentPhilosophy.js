@@ -120,7 +120,7 @@ The market is a voting machine in the short run and a weighing machine in the lo
         .quote-block{ border-left:3px solid rgba(212,160,23,0.4); }
       `}</style>
 
-      <div style={{ background:pal.bg, minHeight:"100vh", paddingTop:92, fontFamily:"'DM Sans',sans-serif", color:pal.text }}>
+      <div style={{ background:pal.bg, minHeight:"100vh", paddingTop:92, fontFamily:"'DM Sans',sans-serif", color:pal.text }} className="ae-page-root">
 
         {/* HERO */}
         <section style={{ background:pal.headerBg, borderBottom:`1px solid ${pal.border}`, padding:"56px 24px 52px", textAlign:"center" }}>
