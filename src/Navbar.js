@@ -1,4 +1,4 @@
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useContext, useState, useRef, useEffect } from "react";
 import { ThemeContext } from "./App";
 import { useAuth } from "./AuthContext";
@@ -39,19 +39,20 @@ const PAGE_NAV_LINKS = [
   { label:"Terms & Conditions",    path:"/terms"              },
 ];
 
-// Mobile quick-nav destinations
-// "coming soon" items are greyed out and non-clickable
+// Mobile quick-nav destinations — Home, Stocks, Momentum, Macro
+// Borders only appear when the user is ON that tab (handled via useLocation below)
 const MOBILE_QUICK_NAV = [
-  { label:"Stocks",     icon:"📈", path:"/research-universe", active:true,  highlight:false },
-  { label:"Momentum",   icon:"⚡", path:"/momentum",          active:true,  highlight:true  },
-  { label:"Macro",      icon:"📊", path:"/macro",             active:true,  highlight:false },
-  { label:"Portfolios", icon:"💼", path:"#",                  active:false, highlight:false },
+  { label:"Home",      icon:"🏠", path:"/",                  active:true,  highlight:false },
+  { label:"Stocks",    icon:"📈", path:"/research-universe", active:true,  highlight:false },
+  { label:"Momentum",  icon:"⚡", path:"/momentum",          active:true,  highlight:true  },
+  { label:"Macro",     icon:"📊", path:"/macro",             active:true,  highlight:false },
 ];
 
 export default function Navbar() {
   const { theme, toggleTheme } = useContext(ThemeContext);
   const { user, signOut }      = useAuth();
   const navigate               = useNavigate();
+  const location               = useLocation();
   const isDark                 = theme === "dark";
 
   const [searchOpen,        setSearchOpen]        = useState(false);
@@ -100,7 +101,6 @@ export default function Navbar() {
   const inputText = isDark ? "#c8dae8"               : "#0D1B2A";
   const inputBg   = isDark ? "rgba(212,160,23,0.08)" : "rgba(212,160,23,0.1)";
   const qnavBg    = isDark ? "rgba(10,21,36,0.96)"  : "rgba(242,236,224,0.96)";
-  const qnavItemBg = isDark ? "rgba(212,160,23,0.07)" : "rgba(212,160,23,0.08)";
 
   const filtered = SEARCH_ITEMS.filter(s =>
     s.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -360,31 +360,35 @@ export default function Navbar() {
 
         {/* ── MOBILE QUICK-NAV STRIP — only shows on mobile (≤640px) ── */}
         <div className="mob-qnav" style={{ background:qnavBg }}>
-          {MOBILE_QUICK_NAV.map(item => (
-            <Link
-              key={item.label}
-              to={item.active ? item.path : "#"}
-              onClick={e => { if (!item.active) e.preventDefault(); }}
-              className="mob-qnav-item"
-              style={{
-                background:   item.highlight ? "rgba(212,160,23,0.16)" : item.active ? qnavItemBg : "transparent",
-                border:       `1px solid ${item.highlight ? "rgba(212,160,23,0.45)" : item.active ? "rgba(212,160,23,0.18)" : "rgba(255,255,255,0.04)"}`,
-                opacity:      item.active ? 1 : 0.38,
-                cursor:       item.active ? "pointer" : "default",
-                position:     "relative",
-              }}
-            >
-              {item.highlight && (
-                <span style={{ position:"absolute", top:-4, right:-4, width:8, height:8, borderRadius:"50%", background:"#27AE60", border:"1.5px solid " + (isDark ? "#0a1628" : "#F5F0E8"), boxShadow:"0 0 6px #27AE60" }}/>
-              )}
-              <span className="mob-qnav-icon">{item.icon}</span>
-              <span className="mob-qnav-label" style={{ color: item.highlight ? GOLD : item.active ? GOLD : textCol, fontWeight: item.highlight ? 800 : 700 }}>
-                {item.label}
-                {!item.active && <span style={{ fontSize:6, marginLeft:3, opacity:.7 }}>SOON</span>}
-                {item.highlight && <span style={{ fontSize:6, marginLeft:3, color:"#27AE60", letterSpacing:"0.5px" }}>NEW</span>}
-              </span>
-            </Link>
-          ))}
+          {MOBILE_QUICK_NAV.map(item => {
+            const isCurrentRoute = location.pathname === item.path;
+            return (
+              <Link
+                key={item.label}
+                to={item.active ? item.path : "#"}
+                onClick={e => { if (!item.active) e.preventDefault(); }}
+                className="mob-qnav-item"
+                style={{
+                  background:   isCurrentRoute ? "rgba(212,160,23,0.16)" : "transparent",
+                  border:       isCurrentRoute
+                    ? `1px solid rgba(212,160,23,0.55)`
+                    : "1px solid transparent",
+                  opacity:      item.active ? 1 : 0.38,
+                  cursor:       item.active ? "pointer" : "default",
+                  position:     "relative",
+                }}
+              >
+                {item.highlight && !isCurrentRoute && (
+                  <span style={{ position:"absolute", top:-4, right:-4, width:8, height:8, borderRadius:"50%", background:"#27AE60", border:"1.5px solid " + (isDark ? "#0a1628" : "#F5F0E8"), boxShadow:"0 0 6px #27AE60" }}/>
+                )}
+                <span className="mob-qnav-icon">{item.icon}</span>
+                <span className="mob-qnav-label" style={{ color: isCurrentRoute ? GOLD : item.highlight ? "rgba(212,160,23,0.75)" : item.active ? GOLD : textCol, fontWeight: isCurrentRoute ? 800 : item.highlight ? 800 : 700 }}>
+                  {item.label}
+                  {item.highlight && !isCurrentRoute && <span style={{ fontSize:6, marginLeft:3, color:"#27AE60", letterSpacing:"0.5px" }}>NEW</span>}
+                </span>
+              </Link>
+            );
+          })}
         </div>
 
         {/* ── SECONDARY RIBBON (desktop only) ── */}

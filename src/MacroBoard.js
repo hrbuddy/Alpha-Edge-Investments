@@ -4,6 +4,8 @@ import {
   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip,
   ResponsiveContainer, BarChart, Bar, Cell, ReferenceLine,
 } from "recharts";
+import { doc, getDoc } from "firebase/firestore";
+import { db } from "./firebase";
 
 const NAVY = "#0D1B2A";
 const GOLD = "#D4A017";
@@ -54,6 +56,18 @@ const INDIA = [
 const PERIODS = ["YTD","1Y","3Y","5Y","CUSTOM"];
 const YEAR_MIN = 2015;
 const NOW_YEAR = new Date().getFullYear();
+
+// ── Firestore cache — primary source (written daily by macro_fetch.py) ──────
+async function fetchFromFirestore(id) {
+  try {
+    const snap = await getDoc(doc(db, "macro_data", id));
+    if (snap.exists()) {
+      const pts = snap.data().points ?? [];
+      if (pts.length > 10) return pts; // only trust if has real data
+    }
+  } catch {}
+  return null;
+}
 
 // ── localStorage cache — 6-hour TTL for speed ────────────────────────────────
 const LS_TTL = 6 * 60 * 60 * 1000;
@@ -225,12 +239,29 @@ function ChartPanel({ eyebrow, title, accentColor, indices, defaultActive, pal, 
   const [rawData, setRawData] = useState({});
   const [tsData,  setTsData]  = useState([]);
 
-  // Fetch raw data for ALL indices once on mount
+  // Fetch raw data for ALL indices — Firestore first, then localStorage, then Yahoo
   const fetchAll = useCallback(async () => {
     try {
       const results = await Promise.allSettled(
         indices.map(async idx => {
           if (rawCache.current[idx.symbol]) return { id: idx.id, pts: rawCache.current[idx.symbol] };
+
+          // 1. Try Firestore (fast, always fresh — written by Python daily)
+          const fsPts = await fetchFromFirestore(idx.id);
+          if (fsPts) {
+            rawCache.current[idx.symbol] = fsPts;
+            lsSet(`ae_yf_v2_${idx.symbol}`, fsPts); // warm localStorage too
+            return { id: idx.id, pts: fsPts };
+          }
+
+          // 2. Try localStorage (6-hr TTL)
+          const lsPts = lsGet(`ae_yf_v2_${idx.symbol}`);
+          if (lsPts) {
+            rawCache.current[idx.symbol] = lsPts;
+            return { id: idx.id, pts: lsPts };
+          }
+
+          // 3. Fall back to Yahoo Finance (slow — only if Firestore not populated yet)
           const pts = await fetchYF(idx.symbol);
           rawCache.current[idx.symbol] = pts;
           return { id: idx.id, pts };
@@ -491,7 +522,7 @@ function ChartPanel({ eyebrow, title, accentColor, indices, defaultActive, pal, 
               </ResponsiveContainer>
             )}
             <div style={{ fontSize:9, color:pal.muted, textAlign:"right", paddingRight:14, paddingBottom:6, fontFamily:"'DM Sans',sans-serif" }}>
-              {barPeriod==="CUSTOM" ? `Cumulative from ${startYear} · ` : "3Y & 5Y are cumulative · "}Source: Yahoo Finance
+              {barPeriod==="CUSTOM" ? `Cumulative from ${startYear} · ` : "3Y & 5Y are cumulative · "}Cached daily · Source: Yahoo Finance
             </div>
           </div>
         </div>
