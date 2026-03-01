@@ -171,25 +171,58 @@ async function fetchNews(ticker) {
   const cached = lsGetNews(ticker);
   if (cached) return cached;
 
-  const q       = `${ticker}.NS`;
-  const yfUrl   = `https://query1.finance.yahoo.com/v1/finance/search?q=${encodeURIComponent(q)}&newsCount=3&enableFuzzyQuery=false&enableNavLinks=false&enableCb=false`;
-  const proxy   = `https://api.allorigins.win/get?url=${encodeURIComponent(yfUrl)}`;
+  // Try Google News RSS first (more reliable than Yahoo Finance)
+  const stockName = Object.values(
+    (typeof STOCKS !== "undefined" ? STOCKS : {})
+  ).find(s => s.nse === ticker)?.name ?? ticker;
+
+  const googleQuery = encodeURIComponent(`${stockName} NSE stock`);
+  const rssUrl  = `https://news.google.com/rss/search?q=${googleQuery}&hl=en-IN&gl=IN&ceid=IN:en`;
+  const proxy   = `https://api.allorigins.win/get?url=${encodeURIComponent(rssUrl)}`;
 
   try {
     const res  = await fetch(proxy, { cache: "no-store" });
     const json = await res.json();
-    const data = JSON.parse(json.contents);
-    const news = (data?.news ?? []).slice(0, 3).map(n => ({
+    const xml  = json.contents ?? "";
+    const parser = new DOMParser();
+    const doc    = parser.parseFromString(xml, "text/xml");
+    const items  = Array.from(doc.querySelectorAll("item")).slice(0, 3);
+    if (items.length > 0) {
+      const news = items.map(item => {
+        const rawTitle = item.querySelector("title")?.textContent ?? "";
+        // Google News titles often end with " - Publisher"
+        const titleParts = rawTitle.split(" - ");
+        const publisher  = titleParts.length > 1 ? titleParts[titleParts.length - 1] : "Google News";
+        const title      = titleParts.slice(0, -1).join(" - ") || rawTitle;
+        const link       = item.querySelector("link")?.textContent
+                         ?? item.querySelector("guid")?.textContent ?? "#";
+        const pubDate    = item.querySelector("pubDate")?.textContent;
+        const time       = pubDate ? Math.floor(new Date(pubDate).getTime() / 1000) : null;
+        return { title, publisher, link, time };
+      });
+      lsSetNews(ticker, news);
+      return news;
+    }
+  } catch { /* fall through */ }
+
+  // Fallback: Yahoo Finance via allorigins
+  try {
+    const q     = `${ticker}.NS`;
+    const yfUrl = `https://query1.finance.yahoo.com/v1/finance/search?q=${encodeURIComponent(q)}&newsCount=3&enableFuzzyQuery=false&enableNavLinks=false&enableCb=false`;
+    const proxy2 = `https://api.allorigins.win/get?url=${encodeURIComponent(yfUrl)}`;
+    const res2   = await fetch(proxy2, { cache: "no-store" });
+    const json2  = await res2.json();
+    const data   = JSON.parse(json2.contents);
+    const news   = (data?.news ?? []).slice(0, 3).map(n => ({
       title:     n.title,
       publisher: n.publisher,
       link:      n.link,
       time:      n.providerPublishTime,
     }));
-    lsSetNews(ticker, news);
-    return news;
-  } catch {
-    return [];
-  }
+    if (news.length > 0) { lsSetNews(ticker, news); return news; }
+  } catch { /* ignore */ }
+
+  return [];
 }
 
 
@@ -276,26 +309,36 @@ const SwipeCard = forwardRef(({ index, isTop, scale, yOffset, zIndex, onSwipe, c
       {/* Live swipe hint overlays while dragging */}
       {isTop && drag.x > 20 && (
         <div style={{
-          position:"absolute", top:24, left:20, zIndex:10,
-          padding:"6px 14px", borderRadius:8,
-          background:"rgba(39,174,96,0.25)",
-          border:"2px solid rgba(39,174,96,0.7)",
-          opacity: swipeRatio, transition:"opacity .1s",
+          position:"absolute", inset:0, zIndex:10,
+          display:"flex", alignItems:"center", justifyContent:"center",
           pointerEvents:"none",
+          opacity: swipeRatio, transition:"opacity .1s",
         }}>
-          <span style={{ fontSize:18, fontWeight:900, color:"#27AE60", letterSpacing:"0.08em", fontFamily:"'DM Sans',sans-serif" }}>LIKE ♥</span>
+          <div style={{
+            padding:"14px 28px", borderRadius:16,
+            background:"rgba(39,174,96,0.2)",
+            border:"3px solid rgba(39,174,96,0.8)",
+            transform:`rotate(-8deg)`,
+          }}>
+            <span style={{ fontSize:42, fontWeight:900, color:"#27AE60", letterSpacing:"0.06em", fontFamily:"'DM Sans',sans-serif", textShadow:"0 2px 12px rgba(39,174,96,0.5)" }}>LIKE ♥</span>
+          </div>
         </div>
       )}
       {isTop && drag.x < -20 && (
         <div style={{
-          position:"absolute", top:24, right:20, zIndex:10,
-          padding:"6px 14px", borderRadius:8,
-          background:"rgba(231,76,60,0.25)",
-          border:"2px solid rgba(231,76,60,0.7)",
-          opacity: swipeRatio, transition:"opacity .1s",
+          position:"absolute", inset:0, zIndex:10,
+          display:"flex", alignItems:"center", justifyContent:"center",
           pointerEvents:"none",
+          opacity: swipeRatio, transition:"opacity .1s",
         }}>
-          <span style={{ fontSize:18, fontWeight:900, color:"#E74C3C", letterSpacing:"0.08em", fontFamily:"'DM Sans',sans-serif" }}>NOPE ✕</span>
+          <div style={{
+            padding:"14px 28px", borderRadius:16,
+            background:"rgba(231,76,60,0.2)",
+            border:"3px solid rgba(231,76,60,0.8)",
+            transform:`rotate(8deg)`,
+          }}>
+            <span style={{ fontSize:42, fontWeight:900, color:"#E74C3C", letterSpacing:"0.06em", fontFamily:"'DM Sans',sans-serif", textShadow:"0 2px 12px rgba(231,76,60,0.5)" }}>NOPE ✕</span>
+          </div>
         </div>
       )}
       {children}
@@ -539,7 +582,7 @@ function CardContent({ item, isTop }) {
           </div>
           <div>
             <div style={{ fontSize: 8, color: "rgba(255,255,255,0.3)", fontWeight: 700, letterSpacing: "0.06em", marginBottom: 2 }}>
-              UNIVERSE RANK
+              MOMENTUM RANK
             </div>
             <div style={{ fontSize: 13, fontWeight: 800, color: "#c8dae8" }}>
               #{item.rank} / {item.total}
@@ -676,7 +719,7 @@ function EmptyState({ onReset }) {
 }
 
 // ─── Wishlist View ────────────────────────────────────────────────────────────
-function WishlistView({ wishlist, onRemove, onOpenModal }) {
+function WishlistView({ wishlist, deck, onRemove, onOpenModal }) {
   if (wishlist.length === 0) return (
     <div style={{ display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center", padding:"60px 28px", textAlign:"center", fontFamily:"'DM Sans',sans-serif" }}>
       <div style={{ fontSize:48, marginBottom:16 }}>🃏</div>
@@ -706,7 +749,14 @@ function WishlistView({ wishlist, onRemove, onOpenModal }) {
               display:"flex", alignItems:"center", justifyContent:"space-between", gap:12,
             }}>
               <div
-                onClick={() => onOpenModal(ticker)}
+                onClick={() => {
+                  const deckItem = deck?.find(d => d.ticker === ticker);
+                  onOpenModal(ticker, deckItem ? {
+                    momentumScore: deckItem.norm_score,
+                    rank: deckItem.rank,
+                    total: deckItem.total,
+                  } : null);
+                }}
                 style={{ flex:1, minWidth:0, cursor:"pointer" }}
               >
                 <div style={{ fontSize:17, fontWeight:900, color:"#f0f6ff", fontFamily:"'Playfair Display',serif" }}>{ticker}</div>
@@ -744,6 +794,13 @@ export default function FlashCard() {
 
   // Tab: "swipe" | "wishlist"
   const [activeTab,    setActiveTab]    = useState("swipe");
+  // Scroll to top whenever we switch tabs
+  function switchTab(tab) {
+    setActiveTab(tab);
+    if (tab === "swipe") {
+      setTimeout(() => { window.scrollTo({ top: 0 }); }, 50);
+    }
+  }
 
   // State
   const [deck,         setDeck]         = useState([]);
@@ -759,6 +816,7 @@ export default function FlashCard() {
   const [deckDate,     setDeckDate]     = useState("");
 
   const cardRefs = useRef([]);
+  const pageRef  = useRef(null);
 
   // ── Load deck ──────────────────────────────────────────────────
   useEffect(() => {
@@ -766,11 +824,12 @@ export default function FlashCard() {
     fetchLatestMomentum().then(result => {
       if (!result?.scores?.length) { setError(true); setLoading(false); return; }
       const total  = result.scores.length;
-      const sorted = [...result.scores]
-        .sort((a, b) => a.rank - b.rank)
-        .map(s => ({ ...s, total }));
-      setDeck(sorted);
-      setCurrentIndex(sorted.length - 1);
+      // Randomize deck order so worst performers aren't always shown first
+      const shuffled = [...result.scores]
+        .map(s => ({ ...s, total }))
+        .sort(() => Math.random() - 0.5);
+      setDeck(shuffled);
+      setCurrentIndex(shuffled.length - 1);
       setDeckDate(result.date);
       setLoading(false);
     }).catch(() => { setError(true); setLoading(false); });
@@ -804,9 +863,14 @@ export default function FlashCard() {
       }
 
       // Open stock modal (shows chart + news)
-      openModal(ticker);
+      const swipedItem = deck[index];
+      openModal(ticker, swipedItem ? {
+        momentumScore: swipedItem.norm_score,
+        rank: swipedItem.rank,
+        total: swipedItem.total,
+      } : null);
     }
-  }, [rightSwipes, user, gateShown, openModal]);
+  }, [rightSwipes, user, gateShown, openModal, deck]);
 
   // ── Remove from wishlist ────────────────────────────────────────
   function handleRemoveFromWishlist(ticker) {
@@ -866,7 +930,7 @@ export default function FlashCard() {
         .fc-btn-right:active { transform:scale(0.9); }
       `}</style>
 
-      <div style={{ background: SURFACE, minHeight: "100vh", display: "flex", flexDirection: "column", paddingTop: 64, fontFamily: "'DM Sans',sans-serif", overflow: "hidden", position: "relative" }}>
+      <div ref={pageRef} style={{ background: SURFACE, minHeight: "100vh", display: "flex", flexDirection: "column", paddingTop: 72, fontFamily: "'DM Sans',sans-serif", overflow: "hidden", position: "relative" }}>
 
         {/* ── Top bar ── */}
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "12px 20px 0", flex: 0 }}>
@@ -889,8 +953,8 @@ export default function FlashCard() {
 
         {/* ── Tabs ── */}
         <div style={{ display: "flex", margin: "10px 16px 0", background: "rgba(255,255,255,0.04)", borderRadius: 10, padding: 3, gap: 3 }}>
-          {[["swipe","🃏 Discover"],["wishlist",`♥ Saved${wishlist.length > 0 ? ` (${wishlist.length})` : ""}`]].map(([key, label]) => (
-            <button key={key} onClick={() => setActiveTab(key)} style={{
+          {[["swipe","⚡ Pick Your List"],["wishlist",`❤️ Saved${wishlist.length > 0 ? ` (${wishlist.length})` : ""}`]].map(([key, label]) => (
+            <button key={key} onClick={() => switchTab(key)} style={{
               flex: 1, padding: "8px 0", borderRadius: 8, border: "none", cursor: "pointer",
               background: activeTab === key ? "rgba(212,160,23,0.18)" : "transparent",
               color: activeTab === key ? GOLD : "rgba(255,255,255,0.35)",
@@ -906,6 +970,7 @@ export default function FlashCard() {
           <div style={{ flex: 1, overflowY: "auto" }}>
             <WishlistView
               wishlist={wishlist}
+              deck={deck}
               onRemove={handleRemoveFromWishlist}
               onOpenModal={openModal}
             />
@@ -968,7 +1033,7 @@ export default function FlashCard() {
               <div style={{ display: "flex", justifyContent: "center", alignItems: "center", gap: 40, padding: "12px 0 20px", flex: 0 }}>
                 <button className="fc-btn-left" onClick={() => doSwipe("left")} style={{ width: 64, height: 64, borderRadius: "50%", background: "rgba(231,76,60,0.1)", border: "2px solid rgba(231,76,60,0.4)", color: RED, fontSize: 26, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", transition: "all .15s", boxShadow: "0 4px 20px rgba(231,76,60,0.15)" }}>✕</button>
                 {currentIndex >= 0 && (
-                  <button onClick={() => openModal(deck[currentIndex]?.ticker)} style={{ width: 46, height: 46, borderRadius: "50%", background: "rgba(212,160,23,0.1)", border: "1px solid rgba(212,160,23,0.3)", color: GOLD, fontSize: 18, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", transition: "all .15s" }}>★</button>
+                  <button onClick={() => openModal(deck[currentIndex]?.ticker, deck[currentIndex] ? { momentumScore: deck[currentIndex].norm_score, rank: deck[currentIndex].rank, total: deck[currentIndex].total } : null)} style={{ width: 46, height: 46, borderRadius: "50%", background: "rgba(212,160,23,0.1)", border: "1px solid rgba(212,160,23,0.3)", color: GOLD, fontSize: 18, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", transition: "all .15s" }}>★</button>
                 )}
                 <button className="fc-btn-right" onClick={() => doSwipe("right")} style={{ width: 64, height: 64, borderRadius: "50%", background: "rgba(39,174,96,0.1)", border: "2px solid rgba(39,174,96,0.4)", color: GREEN, fontSize: 26, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", transition: "all .15s", boxShadow: "0 4px 20px rgba(39,174,96,0.15)" }}>♥</button>
               </div>

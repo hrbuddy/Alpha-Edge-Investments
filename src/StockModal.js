@@ -86,6 +86,16 @@ function fmtDate(ts) {
   });
 }
 
+
+function momentumLabel(score) {
+  if (score == null) return null;
+  if (score >= 0.6)  return { text: "STRONG",   color: "#27AE60" };
+  if (score >= 0.2)  return { text: "POSITIVE",  color: "#2ECC71" };
+  if (score >= -0.2) return { text: "NEUTRAL",   color: "#F39C12" };
+  if (score >= -0.6) return { text: "WEAK",      color: "#E67E22" };
+  return               { text: "NEGATIVE",  color: "#E74C3C" };
+}
+
 // ── Look up if ticker has a full research page ───────────────────────────────
 function getResearchPath(ticker) {
   const entry = STOCK_ROUTES.find(({ stockId }) => {
@@ -154,7 +164,7 @@ async function fetchNewsForModal(ticker) {
 }
 
 // ── The modal sheet itself ───────────────────────────────────────────────────
-function StockSheet({ ticker, onClose }) {
+function StockSheet({ ticker, extraData, onClose }) {
   const navigate              = useNavigate();
   const [pts, setPts]         = useState(null);
   const [loading, setLoading] = useState(true);
@@ -163,10 +173,12 @@ function StockSheet({ ticker, onClose }) {
   const [news, setNews]       = useState(null);   // null = loading, [] = none found
   const sheetRef              = useRef(null);
 
-  // Fetch price data
+  // Fetch price data + scroll sheet to top on open
   useEffect(() => {
     if (!ticker) return;
     setLoading(true); setError(false); setPts(null);
+    // Scroll the sheet back to top whenever a new ticker opens
+    if (sheetRef.current) sheetRef.current.scrollTop = 0;
     fetchStockData(ticker).then(data => {
       if (data) setPts(data);
       else setError(true);
@@ -243,12 +255,32 @@ function StockSheet({ ticker, onClose }) {
           fontFamily: "'DM Sans',sans-serif",
         }}
       >
-        {/* Drag handle */}
-        <div style={{ display:"flex", justifyContent:"center", paddingTop:12, paddingBottom:4 }}>
-          <div style={{ width:40, height:4, borderRadius:2, background:"rgba(255,255,255,0.12)" }}/>
+        {/* ── Sticky top bar: drag handle + close button always visible ── */}
+        <div style={{
+          position:"sticky", top:0, zIndex:10,
+          background:"#080F1A",
+          borderBottom:"1px solid rgba(255,255,255,0.04)",
+          display:"flex", alignItems:"center", justifyContent:"space-between",
+          padding:"10px 20px 8px",
+        }}>
+          {/* Drag handle centered */}
+          <div style={{ flex:1 }}/>
+          <div style={{ width:40, height:4, borderRadius:2, background:"rgba(255,255,255,0.14)", flex:0 }}/>
+          <div style={{ flex:1, display:"flex", justifyContent:"flex-end" }}>
+            <button
+              onClick={onClose}
+              style={{
+                background:"rgba(255,255,255,0.09)", border:"1px solid rgba(255,255,255,0.12)",
+                borderRadius:"50%", width:36, height:36,
+                color:"#e2e8f0", fontSize:20, cursor:"pointer",
+                display:"flex", alignItems:"center", justifyContent:"center",
+                boxShadow:"0 2px 8px rgba(0,0,0,0.4)",
+              }}
+            >×</button>
+          </div>
         </div>
 
-        <div style={{ padding: "12px 20px 32px", maxWidth: 860, margin: "0 auto" }}>
+        <div style={{ padding: "16px 20px 32px", maxWidth: 860, margin: "0 auto" }}>
 
           {/* ── Header row ── */}
           <div style={{ display:"flex", alignItems:"flex-start", justifyContent:"space-between", marginBottom:16 }}>
@@ -273,18 +305,6 @@ function StockSheet({ ticker, onClose }) {
                 </div>
               )}
             </div>
-
-            {/* Close button */}
-            <button
-              onClick={onClose}
-              style={{
-                background:"rgba(255,255,255,0.07)", border:"none",
-                borderRadius:"50%", width:36, height:36,
-                color:"#e2e8f0", fontSize:18, cursor:"pointer",
-                display:"flex", alignItems:"center", justifyContent:"center",
-                flexShrink:0, marginLeft:12,
-              }}
-            >×</button>
           </div>
 
           {/* ── Period tabs ── */}
@@ -374,6 +394,28 @@ function StockSheet({ ticker, onClose }) {
               ))}
             </div>
           )}
+
+          {/* ── Momentum Score (if opened from FlashCard) ── */}
+          {extraData?.momentumScore != null && (() => {
+            const score = extraData.momentumScore;
+            const pct = ((score + 1) / 2) * 100;
+            const ml = momentumLabel(score);
+            return (
+              <div style={{ marginTop:14, padding:"14px 16px", background:"rgba(255,255,255,0.03)", border:"1px solid rgba(255,255,255,0.06)", borderRadius:14 }}>
+                <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:8 }}>
+                  <span style={{ fontSize:9, fontWeight:800, letterSpacing:"1px", color:"rgba(255,255,255,0.35)" }}>MOMENTUM RANK</span>
+                  <span style={{ fontSize:9, fontWeight:800, color: ml.color, letterSpacing:"0.8px" }}>#{extraData.rank} / {extraData.total}</span>
+                </div>
+                <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:6 }}>
+                  <span style={{ fontSize:9, fontWeight:700, color:"rgba(255,255,255,0.35)", letterSpacing:"0.8px" }}>MOMENTUM SCORE</span>
+                  <span style={{ fontSize:12, fontWeight:900, color: ml.color }}>{ml.text} · {pct.toFixed(0)}/100</span>
+                </div>
+                <div style={{ position:"relative", height:6, borderRadius:3, background:"rgba(255,255,255,0.08)", overflow:"hidden" }}>
+                  <div style={{ position:"absolute", left:0, top:0, height:"100%", width:`${Math.max(3, pct)}%`, borderRadius:3, background:`linear-gradient(90deg, ${ml.color}88, ${ml.color})` }}/>
+                </div>
+              </div>
+            );
+          })()}
 
           {/* ── Latest News ── */}
           <div style={{ marginTop: 18 }}>
@@ -477,10 +519,14 @@ function StockSheet({ ticker, onClose }) {
 
 // ── Provider — wraps the whole app ───────────────────────────────────────────
 export function StockModalProvider({ children }) {
-  const [ticker, setTicker] = useState(null);
+  const [ticker,    setTicker]    = useState(null);
+  const [extraData, setExtraData] = useState(null); // e.g. { momentumScore, rank, total }
 
-  const openModal  = useCallback((t) => setTicker(t?.trim()?.toUpperCase() ?? null), []);
-  const closeModal = useCallback(() => setTicker(null), []);
+  const openModal  = useCallback((t, extra = null) => {
+    setTicker(t?.trim()?.toUpperCase() ?? null);
+    setExtraData(extra ?? null);
+  }, []);
+  const closeModal = useCallback(() => { setTicker(null); setExtraData(null); }, []);
 
   return (
     <StockModalContext.Provider value={{ openModal, closeModal }}>
@@ -502,7 +548,7 @@ export function StockModalProvider({ children }) {
       {children}
 
       {ticker && (
-        <StockSheet ticker={ticker} onClose={closeModal} />
+        <StockSheet ticker={ticker} extraData={extraData} onClose={closeModal} />
       )}
     </StockModalContext.Provider>
   );

@@ -33,9 +33,9 @@ const SEARCH_ITEMS = [
 const PAGE_NAV_LINKS = [
   { label:"Home",                  path:"/"                   },
   { label:"Research Universe",     path:"/research-universe"  },
-  { label:"Momentum",              path:"/momentum"           },
+  { label:"🔼 Momentum",           path:"/momentum"           },
   { label:"Macro Dashboard",       path:"/macro"              },
-  { label:"Discover",              path:"/discover"           },
+  { label:"⚡ Discover",           path:"/discover"           },
   { label:"Investment Philosophy", path:"/philosophy"         },
   { label:"About Us",              path:"/about"              },
   { label:"Terms & Conditions",    path:"/terms"              },
@@ -46,9 +46,9 @@ const PAGE_NAV_LINKS = [
 const MOBILE_QUICK_NAV = [
   { label:"Home",      icon:"🏠", path:"/",                  active:true,  highlight:false },
   { label:"Stocks",    icon:"📈", path:"/research-universe", active:true,  highlight:false },
-  { label:"Momentum",  icon:"⚡", path:"/momentum",          active:true,  highlight:true  },
+  { label:"Momentum",  icon:"🔼", path:"/momentum",          active:true,  highlight:true  },
   { label:"Macro",     icon:"📊", path:"/macro",             active:true,  highlight:false },
-  { label:"Discover",  icon:"🃏", path:"/discover",          active:true,  highlight:true  },
+  { label:"Discover",  icon:"⚡", path:"/discover",          active:true,  highlight:true  },
 ];
 
 export default function Navbar() {
