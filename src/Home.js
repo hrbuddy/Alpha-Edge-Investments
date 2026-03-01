@@ -448,7 +448,7 @@ function StockTile({stock, delay=0, pal}) {
           )}
 
           <div style={{fontSize:9,color:GOLD,letterSpacing:2.5,fontWeight:700,marginBottom:9,fontFamily:"'DM Sans',sans-serif"}}>
-            ALPHA EDGE RESEARCH
+            VANTAGE CAPITAL INVESTMENTS
           </div>
           <div style={{fontSize:17,fontWeight:800,color:pal.text,fontFamily:"'Playfair Display',serif",lineHeight:1.3,marginBottom:4}}>
             {stock.name}
@@ -650,7 +650,7 @@ function DisclaimerPopup({ pal, isDark, onAccept }) {
           borderRadius:10,padding:"16px 18px",marginBottom:20,textAlign:"left",
         }}>
           {[
-            "Alpha Edge Research is NOT a SEBI-registered investment advisor.",
+            "Vantage Capital Investments is NOT a SEBI-registered investment advisor.",
             "All research, analysis, and content published here is strictly for educational and informational purposes only.",
             "Nothing on this platform constitutes investment advice, a solicitation, or a recommendation to buy or sell any security.",
             "Past performance does not guarantee future results. Investing in equities involves significant risk of loss.",

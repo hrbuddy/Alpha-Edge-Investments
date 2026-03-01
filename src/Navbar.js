@@ -32,19 +32,19 @@ const SEARCH_ITEMS = [
 const PAGE_NAV_LINKS = [
   { label:"Home",                  path:"/"                   },
   { label:"Research Universe",     path:"/research-universe"  },
+  { label:"Momentum",              path:"/momentum"           },
+  { label:"Macro Dashboard",       path:"/macro"              },
   { label:"Investment Philosophy", path:"/philosophy"         },
   { label:"About Us",              path:"/about"              },
-  { label:"Macro Board",           path:"/macro"              },
-  { label:"Momentum",              path:"/momentum"           },
   { label:"Terms & Conditions",    path:"/terms"              },
 ];
 
 // Mobile quick-nav destinations
 // "coming soon" items are greyed out and non-clickable
 const MOBILE_QUICK_NAV = [
-  { label:"Macro",      icon:"📊", path:"/macro",             active:true,  highlight:false },
-  { label:"Momentum",   icon:"⚡", path:"/momentum",          active:true,  highlight:true  },
   { label:"Stocks",     icon:"📈", path:"/research-universe", active:true,  highlight:false },
+  { label:"Momentum",   icon:"⚡", path:"/momentum",          active:true,  highlight:true  },
+  { label:"Macro",      icon:"📊", path:"/macro",             active:true,  highlight:false },
   { label:"Portfolios", icon:"💼", path:"#",                  active:false, highlight:false },
 ];
 
@@ -307,7 +307,7 @@ export default function Navbar() {
               </g>
             </svg>
             <div>
-              <div className="logo-wordmark" style={{ fontSize:20, fontWeight:800, letterSpacing:"0.4px", color:GOLD, fontFamily:"'Playfair Display',serif", lineHeight:1 }}>ALPHA EDGE</div>
+              <div className="logo-wordmark" style={{ fontSize:20, fontWeight:800, letterSpacing:"0.4px", color:GOLD, fontFamily:"'Playfair Display',serif", lineHeight:1 }}>VANTAGE CAPITAL</div>
               <div className="logo-sub" style={{ fontSize:10.5, letterSpacing:"3px", color:"rgba(212,160,23,0.42)", fontFamily:"'DM Sans',sans-serif", fontWeight:700, marginTop:2, textTransform:"uppercase" }}>INVESTMENTS</div>
             </div>
           </Link>
