@@ -8,6 +8,8 @@ import AboutUs from "./AboutUs";
 import TermsConditions from "./TermsConditions";
 import InvestmentPhilosophy from "./InvestmentPhilosophy";
 import ResearchUniverse from "./ResearchUniverse";
+import MacroBoard from "./MacroBoard";
+import MomentumDashboard from "./MomentumDashboard";
 import { AuthProvider } from "./AuthContext";
 
 // ── New scalable dashboard system ──
@@ -42,6 +44,8 @@ function App() {
             <Route path="/terms"      element={<TermsConditions />} />
             <Route path="/philosophy"         element={<InvestmentPhilosophy />} />
             <Route path="/research-universe" element={<ResearchUniverse />} />
+            <Route path="/macro"             element={<MacroBoard />} />
+            <Route path="/momentum" element={<MomentumDashboard />} />
 
             {/* Auto-generated stock routes — add new stocks in stocksDB.js only */}
             {STOCK_ROUTES.map(({ path, stockId }) => (

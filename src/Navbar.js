@@ -7,18 +7,18 @@ import { STOCKS, STOCK_ROUTES } from "./dashboards/stocksDB";
 const GOLD = "#D4A017";
 const NAVY = "#0D1B2A";
 
-// ── Search items: dynamically built from stocksDB active routes + static pages ──
 const STATIC_PAGES = [
-  { name:"Home",                 ticker:"Page", path:"/",           type:"page", active:true },
-  { name:"Research Universe",    ticker:"Page", path:"/research-universe",  type:"page", active:true },
-  { name:"Investment Philosophy",ticker:"Page", path:"/philosophy", type:"page", active:true },
-  { name:"About Us",             ticker:"Page", path:"/about",      type:"page", active:true },
-  { name:"Sign Up",              ticker:"Page", path:"/signup",     type:"page", active:true },
-  { name:"Terms & Conditions",   ticker:"Page", path:"/terms",      type:"page", active:true },
+  { name:"Home",                 ticker:"Page", path:"/",                    type:"page", active:true },
+  { name:"Research Universe",    ticker:"Page", path:"/research-universe",   type:"page", active:true },
+  { name:"Investment Philosophy",ticker:"Page", path:"/philosophy",          type:"page", active:true },
+  { name:"About Us",             ticker:"Page", path:"/about",               type:"page", active:true },
+  { name:"Sign Up",              ticker:"Page", path:"/signup",              type:"page", active:true },
+  { name:"Terms & Conditions",   ticker:"Page", path:"/terms",              type:"page", active:true },
+  { name:"Macro Board",          ticker:"Page", path:"/macro",               type:"page", active:true },
+  { name:"Momentum Dashboard",    ticker:"Page", path:"/momentum",           type:"page", active:true },
 ];
 
 const SEARCH_ITEMS = [
-  // Active stocks from stocksDB
   ...STOCK_ROUTES.map(({ path, stockId }) => ({
     name:   STOCKS[stockId].name,
     ticker: `NSE: ${STOCKS[stockId].nse}`,
@@ -26,17 +26,26 @@ const SEARCH_ITEMS = [
     type:   "stock",
     active: true,
   })),
-  // Static pages
   ...STATIC_PAGES,
 ];
 
-// ── Static nav links (non-stock pages) ──
 const PAGE_NAV_LINKS = [
-  { label:"Home",                  path:"/"           },
+  { label:"Home",                  path:"/"                   },
   { label:"Research Universe",     path:"/research-universe"  },
-  { label:"Investment Philosophy", path:"/philosophy" },
-  { label:"About Us",              path:"/about"      },
-  { label:"Terms & Conditions",    path:"/terms"      },
+  { label:"Investment Philosophy", path:"/philosophy"         },
+  { label:"About Us",              path:"/about"              },
+  { label:"Macro Board",           path:"/macro"              },
+  { label:"Momentum",              path:"/momentum"           },
+  { label:"Terms & Conditions",    path:"/terms"              },
+];
+
+// Mobile quick-nav destinations
+// "coming soon" items are greyed out and non-clickable
+const MOBILE_QUICK_NAV = [
+  { label:"Macro",      icon:"📊", path:"/macro",             active:true,  highlight:false },
+  { label:"Momentum",   icon:"⚡", path:"/momentum",          active:true,  highlight:true  },
+  { label:"Stocks",     icon:"📈", path:"/research-universe", active:true,  highlight:false },
+  { label:"Portfolios", icon:"💼", path:"#",                  active:false, highlight:false },
 ];
 
 export default function Navbar() {
@@ -45,11 +54,11 @@ export default function Navbar() {
   const navigate               = useNavigate();
   const isDark                 = theme === "dark";
 
-  const [searchOpen,  setSearchOpen]  = useState(false);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [menuOpen,    setMenuOpen]    = useState(false);
-  const [stocksOpen,  setStocksOpen]  = useState(false);
-  const [mobileStocksOpen, setMobileStocksOpen] = useState(false);
+  const [searchOpen,        setSearchOpen]        = useState(false);
+  const [searchQuery,       setSearchQuery]        = useState("");
+  const [menuOpen,          setMenuOpen]           = useState(false);
+  const [stocksOpen,        setStocksOpen]         = useState(false);
+  const [mobileStocksOpen,  setMobileStocksOpen]   = useState(false);
   const stocksRef  = useRef(null);
   const menuRef    = useRef(null);
   const searchRef      = useRef(null);
@@ -83,14 +92,15 @@ export default function Navbar() {
     return () => { document.removeEventListener("mousedown", fn); document.removeEventListener("touchstart", fn); };
   }, [menuOpen]);
 
-  // Theme-aware colours
-  const navBg     = isDark ? "rgba(10,21,36,0.97)"      : "rgba(245,240,232,0.97)";
-  const borderCol = isDark ? "rgba(212,160,23,0.14)"     : "rgba(212,160,23,0.25)";
-  const ribbonBg  = isDark ? "rgba(8,17,30,0.99)"        : "rgba(238,233,222,0.99)";
-  const dropBg    = isDark ? "rgba(10,21,36,0.98)"       : "rgba(245,240,232,0.98)";
-  const textCol   = isDark ? "rgba(212,160,23,0.82)"     : "rgba(120,80,0,0.85)";
-  const inputText = isDark ? "#c8dae8"                   : "#0D1B2A";
-  const inputBg   = isDark ? "rgba(212,160,23,0.08)"     : "rgba(212,160,23,0.1)";
+  const navBg     = isDark ? "rgba(10,21,36,0.97)"  : "rgba(245,240,232,0.97)";
+  const borderCol = isDark ? "rgba(212,160,23,0.14)" : "rgba(212,160,23,0.25)";
+  const ribbonBg  = isDark ? "rgba(8,17,30,0.99)"   : "rgba(238,233,222,0.99)";
+  const dropBg    = isDark ? "rgba(10,21,36,0.98)"  : "rgba(245,240,232,0.98)";
+  const textCol   = isDark ? "rgba(212,160,23,0.82)" : "rgba(120,80,0,0.85)";
+  const inputText = isDark ? "#c8dae8"               : "#0D1B2A";
+  const inputBg   = isDark ? "rgba(212,160,23,0.08)" : "rgba(212,160,23,0.1)";
+  const qnavBg    = isDark ? "rgba(10,21,36,0.96)"  : "rgba(242,236,224,0.96)";
+  const qnavItemBg = isDark ? "rgba(212,160,23,0.07)" : "rgba(212,160,23,0.08)";
 
   const filtered = SEARCH_ITEMS.filter(s =>
     s.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -102,7 +112,6 @@ export default function Navbar() {
     setSearchOpen(false);
     setSearchQuery("");
   }
-
   function closeSearch() { setSearchOpen(false); setSearchQuery(""); }
 
   const SearchSVG = ({ size = 13, op = 1 }) => (
@@ -148,7 +157,6 @@ export default function Navbar() {
         .orbit-ring-1{animation:spinOrbit1 9s linear infinite;transform-origin:50% 50%}
         .orbit-ring-2{animation:spinOrbit2 13s linear infinite;transform-origin:50% 50%}
 
-        /* ── Ribbon nav links — bigger, brighter ── */
         .nav-link{
           font-size:13px;font-weight:700;letter-spacing:1.4px;
           text-decoration:none;font-family:'DM Sans',sans-serif;
@@ -162,6 +170,42 @@ export default function Navbar() {
         .search-result-item:last-child{border-bottom:none;}
 
         .hamburger-line{display:block;width:20px;height:1.8px;border-radius:2px;transition:all .25s ease;}
+
+        /* ── Mobile Quick-Nav strip — hidden on desktop ── */
+        .mob-qnav {
+          display: none;
+          gap: 6px;
+          padding: 7px 10px 8px;
+          border-top: 1px solid rgba(212,160,23,0.08);
+        }
+        .mob-qnav-item {
+          flex: 1;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          gap: 3px;
+          padding: 6px 4px 5px;
+          border-radius: 9px;
+          text-decoration: none;
+          transition: background .18s;
+          -webkit-tap-highlight-color: transparent;
+        }
+        .mob-qnav-item:active { opacity: 0.7; }
+        .mob-qnav-icon { font-size: 17px; line-height: 1; }
+        .mob-qnav-label {
+          font-size: 8px; font-weight: 800; letter-spacing: 0.7px;
+          font-family: 'DM Sans', sans-serif; white-space: nowrap;
+        }
+
+        /*
+          .ae-page-root — apply this class to the root <div> of every page.
+          On mobile, the nav is taller (top row 58px + quick-nav strip ~52px = 110px).
+          On desktop, the nav is 58px + 38px ribbon = 96px, same as current paddingTop.
+        */
+        @media(max-width:640px){
+          .ae-page-root { padding-top: 116px !important; }
+          .mob-qnav { display: flex !important; }
+        }
 
         /* ── DESKTOP ── */
         @media(min-width:641px){
@@ -263,7 +307,7 @@ export default function Navbar() {
               </g>
             </svg>
             <div>
-              <div className="logo-wordmark" style={{ fontSize:20, fontWeight:800, letterSpacing:"0.4px", color:GOLD, fontFamily:"'Playfair Display',serif", lineHeight:1 }}>VANTAGE CAPITAL</div>
+              <div className="logo-wordmark" style={{ fontSize:20, fontWeight:800, letterSpacing:"0.4px", color:GOLD, fontFamily:"'Playfair Display',serif", lineHeight:1 }}>ALPHA EDGE</div>
               <div className="logo-sub" style={{ fontSize:10.5, letterSpacing:"3px", color:"rgba(212,160,23,0.42)", fontFamily:"'DM Sans',sans-serif", fontWeight:700, marginTop:2, textTransform:"uppercase" }}>INVESTMENTS</div>
             </div>
           </Link>
@@ -314,7 +358,36 @@ export default function Navbar() {
           </div>
         </div>
 
-        {/* ── SECONDARY RIBBON (desktop) ── */}
+        {/* ── MOBILE QUICK-NAV STRIP — only shows on mobile (≤640px) ── */}
+        <div className="mob-qnav" style={{ background:qnavBg }}>
+          {MOBILE_QUICK_NAV.map(item => (
+            <Link
+              key={item.label}
+              to={item.active ? item.path : "#"}
+              onClick={e => { if (!item.active) e.preventDefault(); }}
+              className="mob-qnav-item"
+              style={{
+                background:   item.highlight ? "rgba(212,160,23,0.16)" : item.active ? qnavItemBg : "transparent",
+                border:       `1px solid ${item.highlight ? "rgba(212,160,23,0.45)" : item.active ? "rgba(212,160,23,0.18)" : "rgba(255,255,255,0.04)"}`,
+                opacity:      item.active ? 1 : 0.38,
+                cursor:       item.active ? "pointer" : "default",
+                position:     "relative",
+              }}
+            >
+              {item.highlight && (
+                <span style={{ position:"absolute", top:-4, right:-4, width:8, height:8, borderRadius:"50%", background:"#27AE60", border:"1.5px solid " + (isDark ? "#0a1628" : "#F5F0E8"), boxShadow:"0 0 6px #27AE60" }}/>
+              )}
+              <span className="mob-qnav-icon">{item.icon}</span>
+              <span className="mob-qnav-label" style={{ color: item.highlight ? GOLD : item.active ? GOLD : textCol, fontWeight: item.highlight ? 800 : 700 }}>
+                {item.label}
+                {!item.active && <span style={{ fontSize:6, marginLeft:3, opacity:.7 }}>SOON</span>}
+                {item.highlight && <span style={{ fontSize:6, marginLeft:3, color:"#27AE60", letterSpacing:"0.5px" }}>NEW</span>}
+              </span>
+            </Link>
+          ))}
+        </div>
+
+        {/* ── SECONDARY RIBBON (desktop only) ── */}
         <div className="ribbon-links" style={{ borderTop:`1px solid rgba(212,160,23,0.08)`, padding:"0 24px", height:38, display:"flex", alignItems:"center", justifyContent:"center", gap:32, overflowX:"visible", background:"transparent", position:"relative", zIndex:200000 }}>
           {PAGE_NAV_LINKS.map(l => (
             <Link key={l.label} to={l.path} className="nav-link" style={{ color:textCol }}>
@@ -360,7 +433,6 @@ export default function Navbar() {
         {menuOpen && (
           <div className="mobile-menu" style={{ borderTop:`1px solid rgba(212,160,23,0.10)`, background:ribbonBg, padding:"4px 0 8px", animation:"menuSlide .25s ease forwards" }}>
 
-            {/* Static page links */}
             {PAGE_NAV_LINKS.map(l => (
               <Link key={l.label} to={l.path} className="nav-link" onClick={() => setMenuOpen(false)}
                 style={{ display:"block", padding:"13px 24px", fontSize:12, borderBottom:`1px solid rgba(212,160,23,0.06)`, letterSpacing:"1.6px", color:textCol }}>
@@ -368,7 +440,6 @@ export default function Navbar() {
               </Link>
             ))}
 
-            {/* All Stocks accordion */}
             <div>
               <button
                 onClick={() => setMobileStocksOpen(o => !o)}

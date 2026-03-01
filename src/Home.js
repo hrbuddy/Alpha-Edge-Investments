@@ -339,6 +339,69 @@ function CosmicCanvas() {
   return <canvas ref={canvasRef} style={{position:"absolute",inset:0,width:"100%",height:"100%",display:"block"}}/>;
 }
 
+// ─── Dashboard Card ─────────────────────────────────────────────────────────
+function DashboardCard({ card, pal, isDark }) {
+  const [hov, setHov] = useState(false);
+  return (
+    <Link to={card.path} style={{ textDecoration:"none" }}>
+      <div
+        onMouseEnter={() => setHov(true)}
+        onMouseLeave={() => setHov(false)}
+        style={{
+          background: hov ? `rgba(${card.color === "#D4A017" ? "212,160,23" : card.color === "#27AE60" ? "39,174,96" : "46,117,182"},0.07)` : pal.cardBg,
+          border: `1px solid ${hov ? card.color : pal.cardBorder}`,
+          borderRadius: 14, padding: "24px 20px",
+          transition: "all .25s cubic-bezier(.4,0,.2,1)",
+          boxShadow: hov ? `0 12px 32px rgba(0,0,0,.18), 0 0 0 1px ${card.color}22` : "0 4px 18px rgba(0,0,0,.1)",
+          cursor: "pointer", position: "relative", overflow: "hidden",
+          minHeight: 180,
+        }}
+      >
+        {/* Top accent line */}
+        <div style={{
+          position: "absolute", top: 0, left: 0, right: 0, height: 2,
+          background: card.color,
+          opacity: hov ? 1 : 0.35,
+          transition: "opacity .25s",
+        }}/>
+
+        {/* Badge */}
+        {card.badge && (
+          <div style={{
+            position: "absolute", top: 14, right: 14,
+            background: "#27AE60", color: "#fff",
+            fontSize: 8, fontWeight: 800, letterSpacing: "1.5px",
+            padding: "3px 8px", borderRadius: 999,
+            fontFamily: "'DM Sans',sans-serif",
+            boxShadow: "0 0 10px rgba(39,174,96,0.5)",
+          }}>
+            {card.badge}
+          </div>
+        )}
+
+        <div style={{ fontSize: 28, marginBottom: 12 }}>{card.icon}</div>
+        <div style={{ fontSize: 8, letterSpacing: "2px", color: card.color, fontWeight: 700, marginBottom: 6, fontFamily: "'DM Sans',sans-serif", opacity: 0.8 }}>
+          {card.label}
+        </div>
+        <div style={{ fontSize: 16, fontWeight: 800, color: pal.text, fontFamily: "'Playfair Display',serif", lineHeight: 1.25, marginBottom: 10 }}>
+          {card.title}
+        </div>
+        <p style={{ fontSize: 12, color: pal.muted, lineHeight: 1.7, margin: "0 0 16px", fontFamily: "'DM Sans',sans-serif" }}>
+          {card.desc}
+        </p>
+        <div style={{
+          display: "inline-flex", alignItems: "center", gap: 6,
+          fontSize: 10, fontWeight: 800, letterSpacing: "1.2px",
+          color: card.color, fontFamily: "'DM Sans',sans-serif",
+          opacity: hov ? 1 : 0.7, transition: "opacity .2s",
+        }}>
+          OPEN DASHBOARD <span style={{ transform: hov ? "translateX(3px)" : "none", transition: "transform .2s", display:"inline-block" }}>→</span>
+        </div>
+      </div>
+    </Link>
+  );
+}
+
 // ─── Scroll reveal ──────────────────────────────────────────────────────────
 function useReveal(threshold=.08) {
   const ref=useRef(null);
@@ -885,7 +948,7 @@ export default function Home() {
             <h2 className="hero-h1 hero-brand-investments" style={{
               fontSize:"clamp(52px,7.5vw,88px)",
               fontWeight:900, lineHeight:.93,
-              margin:"0 0 clamp(28px,23vh,98px)",
+              margin:"0 0 clamp(28px,23vh,198px)",
               fontFamily:"'Playfair Display',serif", letterSpacing:"-1.5px",
               background:"linear-gradient(135deg,#f8dc72 0%,#D4A017 42%,#c08a0a 100%)",
               WebkitBackgroundClip:"text", WebkitTextFillColor:"transparent", backgroundClip:"text",
@@ -897,7 +960,7 @@ export default function Home() {
             {/* L3 — Tagline */}
             <p className="hero-sub hero-tagline" style={{
               fontSize:"clamp(14px,1.65vw,18px)", color:"#8aacbf",
-              margin:"0 0 clamp(44px, 24vh,100px)", lineHeight:1.68, fontWeight:400,
+              margin:"0 0 clamp(44px, 24vh,40px)", lineHeight:1.68, fontWeight:400,
               ...fu(560),
             }}>
               Institutional-grade equity research on India's finest compounders.<br/>
@@ -911,7 +974,7 @@ export default function Home() {
             <div className="hero-tags-row" style={{
               display:"flex", justifyContent:"center", flexWrap:"wrap",
               gap:"clamp(8px,2vw,28px)",
-              marginBottom:"clamp(20px,24vh,98px)",
+              marginBottom:"clamp(20px,24vh,56px)",
               ...fu(680),
             }}>
               {["MOAT","QUALITY","GROWTH","VALUATION","COMPOUNDING"].map(tag => (
@@ -994,6 +1057,71 @@ export default function Home() {
 
         {/* ══════════ RESEARCH PHILOSOPHY CAROUSEL ══════════ */}
         <EdgeCarousel pal={pal}/>
+
+        {/* ══════════ DASHBOARDS ══════════ */}
+        <section style={{
+          padding:"56px 18px 0",
+          maxWidth:1360, margin:"0 auto",
+        }}>
+          <div style={{
+            textAlign:"center", marginBottom:36,
+          }}>
+            <div style={{
+              fontSize:9, letterSpacing:"0.38em", color:GOLD,
+              fontWeight:700, marginBottom:10,
+              fontFamily:"'DM Sans',sans-serif",
+            }}>
+              LIVE DASHBOARDS
+            </div>
+            <h2 style={{
+              fontSize:"clamp(22px,3.5vw,36px)",
+              fontWeight:800, color:pal.text,
+              fontFamily:"'Playfair Display',serif",
+              margin:0, lineHeight:1.2,
+            }}>
+              Explore Our Tools
+            </h2>
+            <div style={{width:44,height:2,background:GOLD,margin:"14px auto 0",borderRadius:2}}/>
+          </div>
+
+          <div style={{
+            display:"grid",
+            gridTemplateColumns:"repeat(auto-fit,minmax(min(100%,280px),1fr))",
+            gap:16,
+          }}>
+            {[
+              {
+                icon:"📡",
+                label:"MACRO DASHBOARD",
+                title:"India Macro Board",
+                desc:"GDP, inflation, rates, FII flows, INR. The macro context every equity investor needs — updated live.",
+                path:"/macro",
+                color:"#2E75B6",
+                badge:null,
+              },
+              {
+                icon:"⚡",
+                label:"MOMENTUM DASHBOARD",
+                title:"Momentum Screener",
+                desc:"Price momentum, RSI, 52-week ranks, sector rotation — quantitative signals refreshed daily.",
+                path:"/momentum",
+                color:"#27AE60",
+                badge:"NEW",
+              },
+              {
+                icon:"🔬",
+                label:"RESEARCH UNIVERSE",
+                title:"Stock Dashboards",
+                desc:"Deep-dive fundamental reports. DCF, Porter's 5 Forces, quality scores and FY30 price targets.",
+                path:"/research-universe",
+                color:GOLD,
+                badge:null,
+              },
+            ].map(card => (
+              <DashboardCard key={card.title} card={card} pal={pal} isDark={isDark} />
+            ))}
+          </div>
+        </section>
 
         {/* ══════════ RESEARCH UNIVERSE ══════════ */}
         <section id="universe" style={{
