@@ -69,7 +69,8 @@ export default function Navbar() {
   useEffect(() => {
     const refresh = () => { try { setWishlistCount(lsGetWishlist().length); } catch {} };
     window.addEventListener('focus', refresh);
-    return () => window.removeEventListener('focus', refresh);
+    window.addEventListener('wishlist-updated', refresh);
+    return () => { window.removeEventListener('focus', refresh); window.removeEventListener('wishlist-updated', refresh); };
   }, []);
   const [searchQuery,       setSearchQuery]        = useState("");
   const [menuOpen,          setMenuOpen]           = useState(false);

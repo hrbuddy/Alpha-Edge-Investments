@@ -742,6 +742,7 @@ export default function FlashCard() {
   const [rightSwipes,  setRightSwipes]  = useState([]);
   const [showGate,     setShowGate]     = useState(false);
   const [gateShown,    setGateShown]    = useState(false);
+  const [showConfirm,  setShowConfirm]  = useState(false);
   // Show swipe hint on first session visit
   const [showHint, setShowHint] = useState(() => {
     try { return !sessionStorage.getItem('fc_hint_seen'); } catch { return true; }
@@ -840,6 +841,17 @@ export default function FlashCard() {
     }
   }
 
+  // ── Full reset ──────────────────────────────────────────────────
+  function handleFullReset() {
+    lsSetWishlist([]);
+    setRightSwipes([]);
+    setCurrentIndex(deck.length - 1);
+    setGateShown(false);
+    setShowGate(false);
+    setShowConfirm(false);
+    window.dispatchEvent(new CustomEvent('wishlist-updated'));
+  }
+
   // ── Render ─────────────────────────────────────────────────────
   if (loading) {
     return (
@@ -879,7 +891,54 @@ export default function FlashCard() {
         @keyframes hintRight { 0%,100%{transform:translateX(0)} 50%{transform:translateX(8px)} }
       `}</style>
 
-      <div ref={pageRef} style={{ background: SURFACE, minHeight: "100vh", display: "flex", flexDirection: "column", paddingTop: 130, fontFamily: "'DM Sans',sans-serif", overflow: "hidden", position: "relative" }}>
+      <div ref={pageRef} style={{ background: SURFACE, minHeight: "100vh", display: "flex", flexDirection: "column", paddingTop: 160, fontFamily: "'DM Sans',sans-serif", overflow: "hidden", position: "relative" }}>
+
+        {/* ── Reset button ── */}
+        <button
+          onClick={() => setShowConfirm(true)}
+          title="Reset deck & wishlist"
+          style={{
+            position:"fixed", top:112, right:12, zIndex:500,
+            background:"rgba(255,255,255,0.07)",
+            border:"1px solid rgba(255,255,255,0.12)",
+            borderRadius:"50%", width:34, height:34,
+            display:"flex", alignItems:"center", justifyContent:"center",
+            cursor:"pointer", fontSize:15,
+          }}
+        >🔄</button>
+
+        {/* ── Confirm dialog ── */}
+        {showConfirm && (
+          <>
+            <div onClick={() => setShowConfirm(false)} style={{ position:"fixed", inset:0, zIndex:2000, background:"rgba(0,0,0,0.65)" }}/>
+            <div style={{
+              position:"fixed", top:"50%", left:"50%", zIndex:2001,
+              transform:"translate(-50%,-50%)",
+              background:"#0f1e30", border:"1px solid rgba(212,160,23,0.3)",
+              borderRadius:18, padding:"28px 24px", width:"min(320px,88vw)",
+              fontFamily:"'DM Sans',sans-serif", textAlign:"center",
+              boxShadow:"0 24px 60px rgba(0,0,0,0.7)",
+            }}>
+              <div style={{ fontSize:36, marginBottom:14 }}>🔄</div>
+              <div style={{ fontSize:16, fontWeight:800, color:"#f0f6ff", marginBottom:10, fontFamily:"'Playfair Display',serif" }}>Reset Everything?</div>
+              <p style={{ fontSize:12, color:"rgba(255,255,255,0.45)", lineHeight:1.7, margin:"0 0 24px" }}>
+                This will clear your entire wishlist and restart the deck from the beginning. This cannot be undone.
+              </p>
+              <button onClick={handleFullReset} style={{
+                width:"100%", padding:"13px", borderRadius:10,
+                background:"#E74C3C", border:"none", color:"#fff",
+                fontSize:12, fontWeight:800, letterSpacing:"0.08em",
+                cursor:"pointer", marginBottom:10, fontFamily:"'DM Sans',sans-serif",
+              }}>YES, RESET & CLEAR WISHLIST</button>
+              <button onClick={() => setShowConfirm(false)} style={{
+                width:"100%", padding:"11px", borderRadius:10,
+                background:"transparent", border:"1px solid rgba(255,255,255,0.1)",
+                color:"rgba(255,255,255,0.4)", fontSize:12, fontWeight:700,
+                cursor:"pointer", fontFamily:"'DM Sans',sans-serif",
+              }}>Cancel</button>
+            </div>
+          </>
+        )}
 
         {/* ── Swipe deck ── */}
         <>
@@ -890,11 +949,11 @@ export default function FlashCard() {
 
               {/* ── First-visit swipe hint ── */}
               {showHint && !isDone && !showGate && (
-                <div style={{ position:"absolute", inset:0, zIndex:200, pointerEvents:"none", display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"flex-end", gap:16, paddingBottom:"220px" }}>
+                <div style={{ position:"absolute", inset:0, zIndex:200, pointerEvents:"none", display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center", gap:16 }}>
                   {/* Dim overlay */}
                   <div style={{ position:"absolute", inset:0, background:"rgba(0,0,0,0.45)", borderRadius:22 }}/>
                   {/* Arrows */}
-                  <div style={{ position:"relative", zIndex:1, display:"flex", alignItems:"center", gap:35 }}>
+                  <div style={{ position:"relative", zIndex:1, display:"flex", alignItems:"center", gap:40 }}>
                     <div style={{ textAlign:"center" }}>
                       <div style={{ fontSize:36, animation:"hintLeft 1s ease-in-out infinite" }}>👈</div>
                       <div style={{ fontSize:10, fontWeight:800, color:"#E74C3C", letterSpacing:"0.06em", fontFamily:"'DM Sans',sans-serif", marginTop:6 }}>SKIP</div>
