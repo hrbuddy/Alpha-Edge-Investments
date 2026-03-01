@@ -16,6 +16,7 @@ const STATIC_PAGES = [
   { name:"Terms & Conditions",   ticker:"Page", path:"/terms",              type:"page", active:true },
   { name:"Macro Board",          ticker:"Page", path:"/macro",               type:"page", active:true },
   { name:"Momentum Dashboard",    ticker:"Page", path:"/momentum",           type:"page", active:true },
+  { name:"Discover Stocks",      ticker:"Page", path:"/discover",            type:"page", active:true },
 ];
 
 const SEARCH_ITEMS = [
@@ -34,18 +35,20 @@ const PAGE_NAV_LINKS = [
   { label:"Research Universe",     path:"/research-universe"  },
   { label:"Momentum",              path:"/momentum"           },
   { label:"Macro Dashboard",       path:"/macro"              },
+  { label:"Discover",              path:"/discover"           },
   { label:"Investment Philosophy", path:"/philosophy"         },
   { label:"About Us",              path:"/about"              },
   { label:"Terms & Conditions",    path:"/terms"              },
 ];
 
-// Mobile quick-nav destinations — Home, Stocks, Momentum, Macro
+// Mobile quick-nav destinations — Home, Stocks, Momentum, Macro, Discover
 // Borders only appear when the user is ON that tab (handled via useLocation below)
 const MOBILE_QUICK_NAV = [
   { label:"Home",      icon:"🏠", path:"/",                  active:true,  highlight:false },
   { label:"Stocks",    icon:"📈", path:"/research-universe", active:true,  highlight:false },
   { label:"Momentum",  icon:"⚡", path:"/momentum",          active:true,  highlight:true  },
   { label:"Macro",     icon:"📊", path:"/macro",             active:true,  highlight:false },
+  { label:"Discover",  icon:"🃏", path:"/discover",          active:true,  highlight:true  },
 ];
 
 export default function Navbar() {

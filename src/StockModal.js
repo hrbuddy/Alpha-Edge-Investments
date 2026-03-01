@@ -118,16 +118,52 @@ function ChartTooltip({ active, payload, label }) {
   );
 }
 
+// ── News fetch (Yahoo Finance via allorigins proxy, 1hr TTL) ─────────────────
+const NEWS_TTL_SM = 60 * 60 * 1000;
+function smGetNewsCache(ticker) {
+  try {
+    const raw = localStorage.getItem(`ae_news_${ticker}`);
+    if (!raw) return null;
+    const { data, ts } = JSON.parse(raw);
+    if (Date.now() - ts > NEWS_TTL_SM) { localStorage.removeItem(`ae_news_${ticker}`); return null; }
+    return data;
+  } catch { return null; }
+}
+function smSetNewsCache(ticker, data) {
+  try { localStorage.setItem(`ae_news_${ticker}`, JSON.stringify({ data, ts: Date.now() })); } catch {}
+}
+async function fetchNewsForModal(ticker) {
+  const cached = smGetNewsCache(ticker);
+  if (cached) return cached;
+  try {
+    const q     = `${ticker}.NS`;
+    const yfUrl = `https://query1.finance.yahoo.com/v1/finance/search?q=${encodeURIComponent(q)}&newsCount=3&enableFuzzyQuery=false&enableNavLinks=false&enableCb=false`;
+    const proxy = `https://api.allorigins.win/get?url=${encodeURIComponent(yfUrl)}`;
+    const res   = await fetch(proxy, { cache: "no-store" });
+    const json  = await res.json();
+    const parsed = JSON.parse(json.contents);
+    const news = (parsed?.news ?? []).slice(0, 3).map(n => ({
+      title:     n.title,
+      publisher: n.publisher,
+      link:      n.link,
+      time:      n.providerPublishTime,
+    }));
+    smSetNewsCache(ticker, news);
+    return news;
+  } catch { return []; }
+}
+
 // ── The modal sheet itself ───────────────────────────────────────────────────
 function StockSheet({ ticker, onClose }) {
-  const navigate        = useNavigate();
-  const [pts, setPts]   = useState(null);   // all historical points
+  const navigate              = useNavigate();
+  const [pts, setPts]         = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError]     = useState(false);
   const [period, setPeriod]   = useState("1Y");
-  const sheetRef = useRef(null);
+  const [news, setNews]       = useState(null);   // null = loading, [] = none found
+  const sheetRef              = useRef(null);
 
-  // Fetch data on mount / ticker change
+  // Fetch price data
   useEffect(() => {
     if (!ticker) return;
     setLoading(true); setError(false); setPts(null);
@@ -136,6 +172,13 @@ function StockSheet({ ticker, onClose }) {
       else setError(true);
       setLoading(false);
     });
+  }, [ticker]);
+
+  // Fetch news independently — doesn't block the chart
+  useEffect(() => {
+    if (!ticker) return;
+    setNews(null);
+    fetchNewsForModal(ticker).then(setNews);
   }, [ticker]);
 
   // Close on backdrop click
@@ -331,6 +374,47 @@ function StockSheet({ ticker, onClose }) {
               ))}
             </div>
           )}
+
+          {/* ── Latest News ── */}
+          <div style={{ marginTop: 18 }}>
+            <div style={{ fontSize: 9, color: GOLD, fontWeight: 800, letterSpacing: "0.18em", marginBottom: 10 }}>
+              📰 LATEST NEWS
+            </div>
+            {news === null && (
+              <div style={{ fontSize: 11, color: "#3d5570", padding: "10px 0" }}>Loading news…</div>
+            )}
+            {news?.length === 0 && (
+              <div style={{ fontSize: 11, color: "#3d5570", padding: "10px 0" }}>No recent news found.</div>
+            )}
+            {news?.map((n, i) => {
+              const dt = n.time
+                ? new Date(n.time * 1000).toLocaleDateString("en-IN", { day: "2-digit", month: "short" })
+                : "";
+              return (
+                <a key={i} href={n.link} target="_blank" rel="noopener noreferrer"
+                  style={{ textDecoration: "none", display: "block", marginBottom: 8 }}>
+                  <div style={{
+                    padding: "10px 12px",
+                    background: "rgba(255,255,255,0.03)",
+                    border: "1px solid rgba(255,255,255,0.06)",
+                    borderLeft: `2px solid rgba(212,160,23,0.35)`,
+                    borderRadius: 10, transition: "background .15s",
+                  }}
+                    onMouseEnter={e => e.currentTarget.style.background = "rgba(255,255,255,0.06)"}
+                    onMouseLeave={e => e.currentTarget.style.background = "rgba(255,255,255,0.03)"}
+                  >
+                    <div style={{ fontSize: 12, color: "#c8dae8", lineHeight: 1.5, fontWeight: 500, marginBottom: 4 }}>
+                      {n.title}
+                    </div>
+                    <div style={{ display: "flex", gap: 8 }}>
+                      <span style={{ fontSize: 9, color: "rgba(212,160,23,0.6)", fontWeight: 700 }}>{n.publisher}</span>
+                      {dt && <span style={{ fontSize: 9, color: "#3d5570" }}>{dt}</span>}
+                    </div>
+                  </div>
+                </a>
+              );
+            })}
+          </div>
 
           {/* ── Action buttons ── */}
           <div style={{ display:"flex", gap:10, marginTop:18, flexWrap:"wrap" }}>

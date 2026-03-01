@@ -10,6 +10,7 @@ import InvestmentPhilosophy from "./InvestmentPhilosophy";
 import ResearchUniverse from "./ResearchUniverse";
 import MacroBoard from "./MacroBoard";
 import MomentumDashboard from "./MomentumDashboard";
+import FlashCard from "./FlashCard";
 import { AuthProvider } from "./AuthContext";
 import { StockModalProvider } from "./StockModal";
 
@@ -49,6 +50,7 @@ function App() {
               <Route path="/research-universe" element={<ResearchUniverse />} />
               <Route path="/macro"             element={<MacroBoard />} />
               <Route path="/momentum"          element={<MomentumDashboard />} />
+              <Route path="/discover"          element={<FlashCard />} />
 
               {/* Auto-generated stock routes */}
               {STOCK_ROUTES.map(({ path, stockId }) => (

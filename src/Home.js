@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { useContext, useEffect, useRef, useState } from "react";
 import { ThemeContext } from "./App";
+import { DiscoverFAB } from "./FlashCard";
 
 const NAVY  = "#0D1B2A";
 const GOLD  = "#D4A017";
@@ -1203,6 +1204,7 @@ export default function Home() {
         </section>
 
       </div>
+      <DiscoverFAB />
     </>
   );
 }

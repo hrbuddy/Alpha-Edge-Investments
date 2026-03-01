@@ -77,7 +77,7 @@ export default function Footer() {
 
         {/* Copyright */}
         <div style={{ fontSize:11, color:copyCol, borderTop:`1px solid ${isDark ? "rgba(255,255,255,0.06)" : "rgba(13,27,42,0.08)"}`, paddingTop:22 }}>
-          © {new Date().getFullYear()} Vantage Capital Investmentse  · All Rights Reserved
+          © {new Date().getFullYear()} Vantage Capital Investments · All Rights Reserved
         </div>
       </div>
     </footer>
