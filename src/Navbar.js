@@ -214,7 +214,7 @@ export default function Navbar() {
           .mobile-search-bar{display:none !important;}
           .mobile-search-results{display:none !important;}
           .search-word{display:inline !important;}
-          .logo-wordmark{font-size:17px !important;}
+          .logo-wordmark{font-size:21px !important;}
           .logo-sub{font-size:7.5px !important;}
           .logo-svg{width:36px !important;height:36px !important;}
           .nav-btn{border:1px solid rgba(212,160,23,0.2) !important;background:rgba(212,160,23,0.07) !important;}
@@ -226,8 +226,8 @@ export default function Navbar() {
           .ribbon-links{display:none !important;}
           .hamburger-btn{display:flex !important;}
           .search-word{display:none !important;}
-          .logo-wordmark{font-size:13px !important;letter-spacing:0.2px !important;}
-          .logo-sub{font-size:6px !important;letter-spacing:1.8px !important;}
+          .logo-wordmark{font-size:18px !important;letter-spacing:0.2px !important;}
+          .logo-sub{font-size:10px !important;letter-spacing:1.8px !important;}
           .logo-svg{width:27px !important;height:27px !important;}
           .nav-btn{border:none !important;background:transparent !important;padding:6px 7px !important;}
           .theme-btn-desktop{display:none !important;}
@@ -307,8 +307,8 @@ export default function Navbar() {
               </g>
             </svg>
             <div>
-              <div className="logo-wordmark" style={{ fontSize:20, fontWeight:800, letterSpacing:"0.4px", color:GOLD, fontFamily:"'Playfair Display',serif", lineHeight:1 }}>VANTAGE CAPITAL</div>
-              <div className="logo-sub" style={{ fontSize:10.5, letterSpacing:"3px", color:"rgba(212,160,23,0.42)", fontFamily:"'DM Sans',sans-serif", fontWeight:700, marginTop:2, textTransform:"uppercase" }}>INVESTMENTS</div>
+              <div className="logo-wordmark" style={{ fontSize:24, fontWeight:800, letterSpacing:"0.4px", color:GOLD, fontFamily:"'Playfair Display',serif", lineHeight:1 }}>VANTAGE CAPITAL</div>
+              <div className="logo-sub" style={{ fontSize:12.5, letterSpacing:"3px", color:"rgba(212,160,23,0.42)", fontFamily:"'DM Sans',sans-serif", fontWeight:700, marginTop:2, textTransform:"uppercase" }}>INVESTMENTS</div>
             </div>
           </Link>
 
