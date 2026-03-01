@@ -879,7 +879,7 @@ export default function FlashCard() {
         @keyframes hintRight { 0%,100%{transform:translateX(0)} 50%{transform:translateX(8px)} }
       `}</style>
 
-      <div ref={pageRef} style={{ background: SURFACE, minHeight: "100vh", display: "flex", flexDirection: "column", paddingTop: 100, fontFamily: "'DM Sans',sans-serif", overflow: "hidden", position: "relative" }}>
+      <div ref={pageRef} style={{ background: SURFACE, minHeight: "100vh", display: "flex", flexDirection: "column", paddingTop: 130, fontFamily: "'DM Sans',sans-serif", overflow: "hidden", position: "relative" }}>
 
         {/* ── Swipe deck ── */}
         <>
@@ -890,11 +890,11 @@ export default function FlashCard() {
 
               {/* ── First-visit swipe hint ── */}
               {showHint && !isDone && !showGate && (
-                <div style={{ position:"absolute", inset:0, zIndex:200, pointerEvents:"none", display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center", gap:16 }}>
+                <div style={{ position:"absolute", inset:0, zIndex:200, pointerEvents:"none", display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"flex-end", gap:16, paddingBottom:"280px" }}>
                   {/* Dim overlay */}
                   <div style={{ position:"absolute", inset:0, background:"rgba(0,0,0,0.45)", borderRadius:22 }}/>
                   {/* Arrows */}
-                  <div style={{ position:"relative", zIndex:1, display:"flex", alignItems:"center", gap:40 }}>
+                  <div style={{ position:"relative", zIndex:1, display:"flex", alignItems:"center", gap:35 }}>
                     <div style={{ textAlign:"center" }}>
                       <div style={{ fontSize:36, animation:"hintLeft 1s ease-in-out infinite" }}>👈</div>
                       <div style={{ fontSize:10, fontWeight:800, color:"#E74C3C", letterSpacing:"0.06em", fontFamily:"'DM Sans',sans-serif", marginTop:6 }}>SKIP</div>
@@ -975,7 +975,7 @@ export function DiscoverFAB() {
           .discover-fab {
             display: flex;
             position: fixed;
-            bottom: 28px;
+            bottom: 8px;
             right: 20px;
             z-index: 900;
             width: 58px;

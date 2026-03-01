@@ -1,5 +1,6 @@
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { lsGetWishlist } from "./FlashCard";
+import { useStockModal } from "./StockModal";
 import { useContext, useState, useRef, useEffect } from "react";
 import { ThemeContext } from "./App";
 import { useAuth } from "./AuthContext";
@@ -55,6 +56,7 @@ const MOBILE_QUICK_NAV = [
 export default function Navbar() {
   const { theme, toggleTheme } = useContext(ThemeContext);
   const { user, signOut }      = useAuth();
+  const { openModal }            = useStockModal();
   const navigate               = useNavigate();
   const location               = useLocation();
   const isDark                 = theme === "dark";
@@ -185,7 +187,7 @@ export default function Navbar() {
         .search-result-item:hover{background:rgba(212,160,23,0.08);}
         .search-result-item:last-child{border-bottom:none;}
 
-        .hamburger-line{display:block;width:20px;height:1.8px;border-radius:2px;transition:all .25s ease;}
+        .hamburger-line{display:block;width:22px;height:2px;border-radius:2px;transition:all .25s ease;}
 
         /* ── Mobile Quick-Nav strip — hidden on desktop ── */
         .mob-qnav {
@@ -546,15 +548,15 @@ export default function Navbar() {
               const route = STOCK_ROUTES.find(r => STOCKS[r.stockId]?.nse === ticker || r.stockId === ticker);
               const stock = route ? STOCKS[route.stockId] : null;
               return (
-                <div key={ticker} style={{ display:"flex", alignItems:"center", justifyContent:"space-between", padding:"14px 20px", borderBottom:"1px solid rgba(255,255,255,0.04)", cursor: route ? "pointer" : "default" }}
-                  onClick={() => { if (route) { navigate(route.path); setWishlistOpen(false); } }}>
+                <div key={ticker} style={{ display:"flex", alignItems:"center", justifyContent:"space-between", padding:"14px 20px", borderBottom:"1px solid rgba(255,255,255,0.04)", cursor:"pointer" }}
+                  onClick={() => { openModal(ticker); setWishlistOpen(false); }}>
                   <div>
-                    <div style={{ fontSize:14, fontWeight:700, color:"#e2e8f0" }}>{stock?.name || ticker}</div>
+                    <div style={{ fontSize:14, fontWeight:700, color:"#e2e8f0", textDecoration:"underline", textDecorationColor:"rgba(212,160,23,0.3)", textUnderlineOffset:"3px" }}>{stock?.name || ticker}</div>
                     <div style={{ fontSize:10, color:"rgba(212,160,23,0.6)", marginTop:2, letterSpacing:"0.05em" }}>NSE: {ticker}</div>
                   </div>
                   {route
-                    ? <span style={{ fontSize:10, fontWeight:800, color:"#D4A017", background:"rgba(212,160,23,0.1)", border:"1px solid rgba(212,160,23,0.25)", padding:"5px 12px", borderRadius:999, letterSpacing:"0.08em" }}>VIEW →</span>
-                    : <span style={{ fontSize:10, color:"rgba(255,255,255,0.2)", letterSpacing:"0.05em" }}>No report</span>
+                    ? <span style={{ fontSize:10, fontWeight:800, color:"#D4A017", background:"rgba(212,160,23,0.1)", border:"1px solid rgba(212,160,23,0.25)", padding:"5px 12px", borderRadius:999, letterSpacing:"0.08em" }}>RESEARCH →</span>
+                    : <span style={{ fontSize:10, fontWeight:800, color:"#D4A017", background:"rgba(212,160,23,0.08)", border:"1px solid rgba(212,160,23,0.2)", padding:"5px 12px", borderRadius:999, letterSpacing:"0.08em" }}>CHART →</span>
                   }
                 </div>
               );
