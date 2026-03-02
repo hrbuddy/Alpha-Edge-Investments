@@ -242,13 +242,13 @@ function StockSheet({ ticker, extraData, onClose }) {
         ref={sheetRef}
         style={{
           position: "fixed",
+          top: "calc(env(safe-area-inset-top) + 108px)",
           bottom: 0, left: 0, right: 0,
           zIndex: 1201,
           background: "#080F1A",
           borderTop: `2px solid ${GOLD}`,
           borderRadius: "20px 20px 0 0",
           padding: "0 0 env(safe-area-inset-bottom)",
-          maxHeight: "calc(100vh - 116px)",
           overflowY: "auto",
           animation: "smSlideUp .28s cubic-bezier(.22,1,.36,1)",
           boxShadow: "0 -16px 60px rgba(0,0,0,0.7)",
@@ -527,11 +527,10 @@ export function StockModalProvider({ children }) {
     setTicker(t?.trim()?.toUpperCase() ?? null);
     setExtraData(extra ?? null);
   }, []);
-
   const closeModal = useCallback(() => {
     setTicker(null);
     setExtraData(null);
-    // On /discover, scroll body back to top so FlashCard is fully visible
+    // Snap body back to top on /discover so FlashCard is fully visible
     if (window.location.pathname === "/discover") {
       window.scrollTo({ top: 0, behavior: "instant" });
     }
