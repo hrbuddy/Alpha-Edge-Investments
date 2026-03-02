@@ -855,7 +855,7 @@ export default function FlashCard() {
   // ── Render ─────────────────────────────────────────────────────
   if (loading) {
     return (
-      <div style={{ background: SURFACE, minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", flexDirection: "column", gap: 16, paddingTop: 72 }}>
+      <div style={{ background: SURFACE, position: "fixed", top: 0, left: 0, right: 0, bottom: 0, display: "flex", alignItems: "center", justifyContent: "center", flexDirection: "column", gap: 16 }}>
         <div style={{ width: 36, height: 36, border: "2px solid rgba(212,160,23,0.2)", borderTop: `2px solid ${GOLD}`, borderRadius: "50%", animation: "fcSpin 0.8s linear infinite" }}/>
         <div style={{ fontSize: 11, color: GOLD, letterSpacing: "0.15em", fontFamily: "'DM Sans',sans-serif" }}>LOADING CARDS…</div>
         <style>{`@keyframes fcSpin { to { transform:rotate(360deg); } }`}</style>
@@ -865,7 +865,7 @@ export default function FlashCard() {
 
   if (error) {
     return (
-      <div style={{ background: SURFACE, minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", flexDirection: "column", gap: 16, padding: "72px 28px 0", textAlign: "center" }}>
+      <div style={{ background: SURFACE, position: "fixed", top: 0, left: 0, right: 0, bottom: 0, display: "flex", alignItems: "center", justifyContent: "center", flexDirection: "column", gap: 16, padding: "28px", textAlign: "center" }}>
         <div style={{ fontSize: 48 }}>📡</div>
         <h2 style={{ fontSize: 20, color: "#e2e8f0", fontFamily: "'Playfair Display',serif", margin: 0 }}>Couldn't load data</h2>
         <p style={{ fontSize: 13, color: "rgba(255,255,255,0.4)", margin: 0 }}>Check Firestore connection and momentum_scores collection.</p>
@@ -890,33 +890,32 @@ export default function FlashCard() {
         @keyframes hintLeft  { 0%,100%{transform:translateX(0)} 50%{transform:translateX(-8px)} }
         @keyframes hintRight { 0%,100%{transform:translateX(0)} 50%{transform:translateX(8px)} }
 
-        /* FlashCard page: pad top by navbar height, fluid across all mobile sizes */
-        .fc-page {
-          padding-top: 104px; /* matches .ae-page-root mobile navbar height */
-        }
-        @media (max-width: 360px) {
-          .fc-page { padding-top: 104px; }
-        }
-        @media (min-width: 361px) and (max-width: 480px) {
-          .fc-page { padding-top: 108px; }
-        }
-        @media (min-width: 481px) and (max-width: 640px) {
-          .fc-page { padding-top: 110px; }
-        }
+        /* Fluid navbar clearance — matches .ae-page-root breakpoints */
+        .fc-page { padding-top: 104px; }
+        @media (min-width: 361px) { .fc-page { padding-top: 106px; } }
+        @media (min-width: 481px) { .fc-page { padding-top: 110px; } }
 
-        /* Top bar: reset button row — sits flush below navbar, never overlaps */
+        /* Reset button row:
+           padding-top  = tiny gap below navbar (tight, as requested)
+           padding-bottom = gap before card (preserved, as requested) */
         .fc-topbar {
           display: flex;
           justify-content: flex-end;
           align-items: center;
-          padding: 6px 12px 4px;
+          padding: 2px 12px 6px;
           flex-shrink: 0;
+        }
+        @media (min-width: 361px) {
+          .fc-topbar { padding: 2px 14px 7px; }
+        }
+        @media (min-width: 481px) {
+          .fc-topbar { padding: 3px 16px 8px; }
         }
       `}</style>
 
-      <div ref={pageRef} style={{ background: SURFACE, minHeight: "100vh", display: "flex", flexDirection: "column", paddingTop: 160, fontFamily: "'DM Sans',sans-serif", overflow: "hidden", position: "relative" }}>
+      <div ref={pageRef} className="fc-page" style={{ background: SURFACE, position: "fixed", top: 0, left: 0, right: 0, bottom: 0, display: "flex", flexDirection: "column", fontFamily: "'DM Sans',sans-serif", overflow: "hidden" }}>
 
-        {/* ── Top bar: navbar spacer + reset button ── */}
+        {/* ── Top bar: reset button ── */}
         <div className="fc-topbar">
           <button
             onClick={() => setShowConfirm(true)}
