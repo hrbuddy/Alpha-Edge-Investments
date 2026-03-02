@@ -889,23 +889,47 @@ export default function FlashCard() {
         .fc-btn-right:active { transform:scale(0.9); }
         @keyframes hintLeft  { 0%,100%{transform:translateX(0)} 50%{transform:translateX(-8px)} }
         @keyframes hintRight { 0%,100%{transform:translateX(0)} 50%{transform:translateX(8px)} }
+
+        /* FlashCard page: pad top by navbar height, fluid across all mobile sizes */
+        .fc-page {
+          padding-top: 104px; /* matches .ae-page-root mobile navbar height */
+        }
+        @media (max-width: 360px) {
+          .fc-page { padding-top: 104px; }
+        }
+        @media (min-width: 361px) and (max-width: 480px) {
+          .fc-page { padding-top: 108px; }
+        }
+        @media (min-width: 481px) and (max-width: 640px) {
+          .fc-page { padding-top: 110px; }
+        }
+
+        /* Top bar: reset button row — sits flush below navbar, never overlaps */
+        .fc-topbar {
+          display: flex;
+          justify-content: flex-end;
+          align-items: center;
+          padding: 6px 12px 4px;
+          flex-shrink: 0;
+        }
       `}</style>
 
       <div ref={pageRef} style={{ background: SURFACE, minHeight: "100vh", display: "flex", flexDirection: "column", paddingTop: 160, fontFamily: "'DM Sans',sans-serif", overflow: "hidden", position: "relative" }}>
 
-        {/* ── Reset button ── */}
-        <button
-          onClick={() => setShowConfirm(true)}
-          title="Reset deck & wishlist"
-          style={{
-            position:"fixed", top:112, right:12, zIndex:500,
-            background:"rgba(255,255,255,0.07)",
-            border:"1px solid rgba(255,255,255,0.12)",
-            borderRadius:"50%", width:34, height:34,
-            display:"flex", alignItems:"center", justifyContent:"center",
-            cursor:"pointer", fontSize:15,
-          }}
-        >🔄</button>
+        {/* ── Top bar: navbar spacer + reset button ── */}
+        <div className="fc-topbar">
+          <button
+            onClick={() => setShowConfirm(true)}
+            title="Reset deck & wishlist"
+            style={{
+              background:"rgba(255,255,255,0.07)",
+              border:"1px solid rgba(255,255,255,0.12)",
+              borderRadius:"50%", width:34, height:34,
+              display:"flex", alignItems:"center", justifyContent:"center",
+              cursor:"pointer", fontSize:15, flexShrink:0,
+            }}
+          >🔄</button>
+        </div>
 
         {/* ── Confirm dialog ── */}
         {showConfirm && (
