@@ -142,7 +142,7 @@ function WinnersLosersBanner({ data, horizon, setHorizon }) {
         <span style={{ fontSize:9, fontWeight:800, color:isWinner ? GREEN : RED, minWidth:22 }}>
           #{s.rank}
         </span>
-        <span className="wl-ticker sm-ticker-link" onClick={() => openModal(s.ticker)}
+        <span className="wl-ticker sm-ticker-link" onClick={() => openModal(s.ticker, { momentumScore: s.norm_score, rank: s.rank, total: allScores.length })}
           style={{ fontSize:13, fontWeight:800, color:"#e2e8f0", fontFamily:"'DM Sans',sans-serif" }}>
           {s.ticker}
         </span>
@@ -296,7 +296,11 @@ function HorizonSection({ data, horizonKey }) {
               <YAxis type="category" dataKey="ticker" width={88}
                 tick={{ fill:SUB, fontSize:8.5, fontFamily:"'DM Sans',sans-serif", fontWeight:600 }}
                 tickLine={false} axisLine={false}
-                onClick={(data) => data?.value && openModal(data.value)}
+                onClick={(data) => {
+                  if (!data?.value) return;
+                  const s = scores.find(x => x.ticker === data.value);
+                  openModal(data.value, s ? { momentumScore: s.norm_score, rank: s.rank, total: scores.length } : null);
+                }}
                 style={{ cursor:"pointer" }}/>
               <ReferenceLine x={0} stroke="rgba(212,160,23,0.2)" strokeWidth={1}/>
               <Tooltip content={<RetTooltip/>} cursor={{ fill:"rgba(212,160,23,0.04)" }} isAnimationActive={false}/>

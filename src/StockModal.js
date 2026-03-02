@@ -87,13 +87,25 @@ function fmtDate(ts) {
 }
 
 
-function momentumLabel(score) {
-  if (score == null) return null;
-  if (score >= 0.6)  return { text: "STRONG",   color: "#27AE60" };
-  if (score >= 0.2)  return { text: "POSITIVE",  color: "#2ECC71" };
-  if (score >= -0.2) return { text: "NEUTRAL",   color: "#F39C12" };
-  if (score >= -0.6) return { text: "WEAK",      color: "#E67E22" };
-  return               { text: "NEGATIVE",  color: "#E74C3C" };
+function momentumFactorLabel(score) {
+  if (score == null) return { text: "N/A",     color: "rgba(255,255,255,0.3)" };
+  // score is raw -1 to +1; convert to 0-100 for threshold comparison
+  const s = ((score + 1) / 2) * 100;
+  if (s >= 60) return { text: "STRONG",  color: "#27AE60" };
+  if (s >= 30) return { text: "NEUTRAL", color: "#F39C12" };
+  return         { text: "WEAK",     color: "#E74C3C" };
+}
+function valueFactorLabel(score) {
+  if (score == null) return { text: "N/A",        color: "rgba(255,255,255,0.3)" };
+  if (score >= 0.33) return { text: "HI VALUE",   color: "#27AE60" };
+  if (score >= -0.33)return { text: "BALANCED",   color: "#F39C12" };
+  return               { text: "HI GROWTH",   color: "#9B59B6" };
+}
+function sizeFactorLabel(score) {
+  if (score == null)  return { text: "N/A",       color: "rgba(255,255,255,0.3)" };
+  if (score >= 0.33)  return { text: "LARGE CAP", color: "#2E86AB" };
+  if (score >= -0.33) return { text: "MID CAP",   color: "#F39C12" };
+  return                { text: "SMALL CAP",  color: "#E67E22" };
 }
 
 // ── Look up if ticker has a full research page ───────────────────────────────
@@ -163,6 +175,43 @@ async function fetchNewsForModal(ticker) {
   } catch { return []; }
 }
 
+// ── Collapsible fundamentals groups ─────────────────────────────────────────
+function FundamentalGroups({ groups }) {
+  const [open, setOpen] = useState({});
+  const toggle = key => setOpen(prev => ({ ...prev, [key]: !prev[key] }));
+  return (
+    <div style={{ display:"flex", flexDirection:"column", gap:6 }}>
+      {groups.map(group => {
+        const isOpen = open[group.label] ?? false;
+        const hasData = group.items.some(i => i.value !== "—");
+        return (
+          <div key={group.label} style={{ background:"rgba(255,255,255,0.03)", border:"1px solid rgba(255,255,255,0.06)", borderRadius:10 }}>
+            {/* Header — always visible, click to toggle */}
+            <div onClick={() => toggle(group.label)} style={{ display:"flex", justifyContent:"space-between", alignItems:"center", padding:"10px 12px", cursor:"pointer", userSelect:"none" }}>
+              <div style={{ display:"flex", alignItems:"center", gap:8 }}>
+                <span style={{ fontSize:9, fontWeight:800, letterSpacing:"0.18em", color:GOLD }}>{group.label}</span>
+                {!hasData && <span style={{ fontSize:7, color:"rgba(255,255,255,0.2)" }}>no data</span>}
+              </div>
+              <span style={{ fontSize:10, color:"rgba(255,255,255,0.25)", transition:"transform .2s", display:"inline-block", transform: isOpen ? "rotate(180deg)" : "rotate(0deg)" }}>▾</span>
+            </div>
+            {/* Expandable content */}
+            {isOpen && (
+              <div style={{ padding:"0 12px 12px", display:"grid", gridTemplateColumns:"repeat(auto-fit, minmax(70px, 1fr))", gap:"8px 8px" }}>
+                {group.items.map(item => (
+                  <div key={item.label}>
+                    <div style={{ fontSize:8, color:"rgba(255,255,255,0.3)", marginBottom:2, letterSpacing:"0.3px" }}>{item.label}</div>
+                    <div style={{ fontSize:13, fontWeight:700, color: item.value === "—" ? "rgba(255,255,255,0.15)" : "#e2e8f0" }}>{item.value}</div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
 // ── The modal sheet itself ───────────────────────────────────────────────────
 function StockSheet({ ticker, extraData, onClose }) {
   const navigate              = useNavigate();
@@ -171,7 +220,9 @@ function StockSheet({ ticker, extraData, onClose }) {
   const [error, setError]     = useState(false);
   const [period, setPeriod]   = useState("1Y");
   const [news, setNews]       = useState(null);   // null = loading, [] = none found
-  const sheetRef              = useRef(null);
+  const [factors, setFactors]         = useState(null);
+  const [fundamentals, setFundamentals] = useState(null);
+  const sheetRef                        = useRef(null);
 
   // Fetch price data + scroll sheet to top on open
   useEffect(() => {
@@ -191,6 +242,33 @@ function StockSheet({ ticker, extraData, onClose }) {
     if (!ticker) return;
     setNews(null);
     fetchNewsForModal(ticker).then(setNews);
+  }, [ticker]);
+
+  // Fetch factor scores + fundamentals from same Firestore doc
+  useEffect(() => {
+    if (!ticker) return;
+    setFactors(null);
+    setFundamentals(null);
+    getDoc(doc(db, "stock_fundamentals", ticker))
+      .then(snap => {
+        const d = snap.exists() ? snap.data() : {};
+        const raw = d?.factors ?? {};
+        setFactors({
+          size_score:  raw.size_score  ?? null,
+          value_score: raw.value_score ?? null,
+          coverage:    raw.value_coverage ?? 0,
+        });
+        setFundamentals({
+          valuation:    d?.valuation    ?? {},
+          profitability: d?.profitability ?? {},
+          growth:       d?.growth       ?? {},
+          balance_sheet: d?.balance_sheet ?? {},
+        });
+      })
+      .catch(() => {
+        setFactors({ size_score: null, value_score: null, coverage: 0 });
+        setFundamentals({});
+      });
   }, [ticker]);
 
   // Close on backdrop click
@@ -250,6 +328,7 @@ function StockSheet({ ticker, extraData, onClose }) {
           borderRadius: "20px 20px 0 0",
           padding: "0 0 env(safe-area-inset-bottom)",
           overflowY: "auto",
+          WebkitOverflowScrolling: "touch",
           animation: "smSlideUp .28s cubic-bezier(.22,1,.36,1)",
           boxShadow: "0 -16px 60px rgba(0,0,0,0.7)",
           fontFamily: "'DM Sans',sans-serif",
@@ -395,24 +474,112 @@ function StockSheet({ ticker, extraData, onClose }) {
             </div>
           )}
 
-          {/* ── Momentum Score (if opened from FlashCard) ── */}
-          {extraData?.momentumScore != null && (() => {
-            const score = extraData.momentumScore;
-            const pct = ((score + 1) / 2) * 100;
-            const ml = momentumLabel(score);
+          {/* ── Factor Scores: Momentum · Size · Value (3 tiles) ── */}
+          <div style={{ marginTop:14 }}>
+            <div style={{ fontSize:9, fontWeight:700, letterSpacing:"0.12em", color:"rgba(255,255,255,0.35)", marginBottom:8 }}>FACTOR SCORES</div>
+            <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr 1fr", gap:8 }}>
+              {[
+                {
+                  key:     "momentum",
+                  label:   "MOMENTUM",
+                  score:   extraData?.momentumScore ?? null,
+                  loading: false,
+                  labelFn: momentumFactorLabel,
+                },
+                {
+                  key:     "value",
+                  label:   "VALUE",
+                  score:   factors?.value_score ?? null,
+                  loading: factors === null,
+                  labelFn: valueFactorLabel,
+                },
+                {
+                  key:     "size",
+                  label:   "SIZE",
+                  score:   factors?.size_score ?? null,
+                  loading: factors === null,
+                  labelFn: sizeFactorLabel,
+                },
+              ].map(tile => {
+                const pct = tile.score != null ? ((tile.score + 1) / 2) * 100 : null; // for bar width only
+                const fl  = tile.labelFn(tile.loading ? null : tile.score);
+                return (
+                  <div key={tile.key} style={{
+                    background:"rgba(255,255,255,0.04)",
+                    border:`1px solid ${pct != null ? fl.color + "33" : "rgba(255,255,255,0.08)"}`,
+                    borderRadius:12, padding:"12px 10px 10px",
+                    display:"flex", flexDirection:"column", gap:6,
+                  }}>
+                    <span style={{ fontSize:8, fontWeight:800, letterSpacing:"0.9px", color:"rgba(255,255,255,0.4)" }}>{tile.label}</span>
+                    <div style={{ fontSize:18, fontWeight:900, lineHeight:1, color: tile.loading ? "rgba(255,255,255,0.15)" : fl.color }}>
+                      {tile.loading ? "—" : pct != null ? Math.round(pct) : "—"}
+                    </div>
+                    <div style={{ height:3, borderRadius:2, background:"rgba(255,255,255,0.08)" }}>
+                      {!tile.loading && pct != null && (
+                        <div style={{ height:"100%", borderRadius:2, width:`${Math.max(2,pct)}%`, background:fl.color, opacity:0.75 }}/>
+                      )}
+                    </div>
+                    <span style={{ fontSize:8, fontWeight:700, color: tile.loading ? "rgba(255,255,255,0.2)" : fl.color }}>
+                      {tile.loading ? "…" : fl.text}
+                    </span>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+
+
+          {/* ── Fundamentals ── */}
+          {fundamentals && Object.keys(fundamentals).some(k => Object.keys(fundamentals[k]).length > 0) && (() => {
+            const fmtPct  = v => v != null ? `${(v * 100).toFixed(1)}%` : "—";
+            const fmtNum  = (v, dp=1) => v != null ? v.toFixed(dp) : "—";
+            const fmtX    = v => v != null ? `${v.toFixed(1)}x` : "—";
+            const val  = fundamentals.valuation    ?? {};
+            const prof = fundamentals.profitability ?? {};
+            const grow = fundamentals.growth       ?? {};
+            const bs   = fundamentals.balance_sheet ?? {};
+
+            const groups = [
+              {
+                label: "VALUATION",
+                items: [
+                  { label: "P/E",        value: fmtX(val.pe)         },
+                  { label: "P/B",        value: fmtX(val.pb)         },
+                  { label: "P/S",        value: fmtX(val.ps)         },
+                  { label: "EV/EBITDA",  value: fmtX(val.ev_ebitda)  },
+                ],
+              },
+              {
+                label: "PROFITABILITY",
+                items: [
+                  { label: "ROE",        value: fmtPct(prof.roe)            },
+                  { label: "ROA",        value: fmtPct(prof.roa)            },
+                  { label: "ROCE",       value: fmtPct(prof.roce)           },
+                  { label: "Net Margin", value: fmtPct(prof.net_margin)     },
+                ],
+              },
+              {
+                label: "GROWTH",
+                items: [
+                  { label: "Revenue YoY",  value: fmtPct(grow.revenue_growth)    },
+                  { label: "Earnings YoY", value: fmtPct(grow.earnings_growth)   },
+                  { label: "Qtrly EPS YoY",value: fmtPct(grow.earnings_q_growth) },
+                ],
+              },
+              {
+                label: "BALANCE SHEET",
+                items: [
+                  { label: "D/E Ratio",    value: fmtNum(bs.debt_equity)     },
+                  { label: "Current",      value: fmtNum(bs.current_ratio)   },
+                  { label: "Int. Cover",   value: fmtX(bs.interest_coverage) },
+                ],
+              },
+            ];
+
             return (
-              <div style={{ marginTop:14, padding:"14px 16px", background:"rgba(255,255,255,0.03)", border:"1px solid rgba(255,255,255,0.06)", borderRadius:14 }}>
-                <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:8 }}>
-                  <span style={{ fontSize:9, fontWeight:800, letterSpacing:"1px", color:"rgba(255,255,255,0.35)" }}>MOMENTUM RANK</span>
-                  <span style={{ fontSize:9, fontWeight:800, color: ml.color, letterSpacing:"0.8px" }}>#{extraData.rank} / {extraData.total}</span>
-                </div>
-                <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:6 }}>
-                  <span style={{ fontSize:9, fontWeight:700, color:"rgba(255,255,255,0.35)", letterSpacing:"0.8px" }}>MOMENTUM SCORE</span>
-                  <span style={{ fontSize:12, fontWeight:900, color: ml.color }}>{ml.text} · {pct.toFixed(0)}/100</span>
-                </div>
-                <div style={{ position:"relative", height:6, borderRadius:3, background:"rgba(255,255,255,0.08)", overflow:"hidden" }}>
-                  <div style={{ position:"absolute", left:0, top:0, height:"100%", width:`${Math.max(3, pct)}%`, borderRadius:3, background:`linear-gradient(90deg, ${ml.color}88, ${ml.color})` }}/>
-                </div>
+              <div style={{ marginTop:16 }}>
+                <div style={{ fontSize:9, fontWeight:700, letterSpacing:"0.12em", color:"rgba(255,255,255,0.35)", marginBottom:8 }}>FUNDAMENTALS</div>
+                <FundamentalGroups groups={groups} />
               </div>
             );
           })()}
