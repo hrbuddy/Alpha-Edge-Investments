@@ -65,6 +65,7 @@ export default function Navbar() {
 
   const [searchOpen,        setSearchOpen]        = useState(false);
   const [wishlistCount,     setWishlistCount]     = useState(() => { try { return lsGetWishlist().length; } catch { return 0; } });
+  const [scrollY,            setScrollY]            = useState(0);
   const [wishlistOpen,      setWishlistOpen]      = useState(false);
   const [wishlistItems,     setWishlistItems]     = useState([]);
 
@@ -111,6 +112,13 @@ export default function Navbar() {
     document.addEventListener("touchstart", fn);
     return () => { document.removeEventListener("mousedown", fn); document.removeEventListener("touchstart", fn); };
   }, [menuOpen]);
+
+  // scroll-to-top tracking
+  useEffect(() => {
+    const onScroll = () => setScrollY(window.scrollY);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
   const navBg     = isDark ? "rgba(10,21,36,0.97)"  : "rgba(245,240,232,0.97)";
   const borderCol = isDark ? "rgba(212,160,23,0.14)" : "rgba(212,160,23,0.25)";
@@ -571,6 +579,28 @@ export default function Navbar() {
         </div>
       </>
     )}
+      {scrollY > 300 && (
+        <button
+          onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+          aria-label="Back to top"
+          style={{
+            position:"fixed", bottom:28, right:20, zIndex:300000,
+            width:40, height:40, borderRadius:"50%",
+            background:"rgba(212,160,23,0.15)",
+            border:"1px solid rgba(212,160,23,0.4)",
+            backdropFilter:"blur(10px)",
+            display:"flex", alignItems:"center", justifyContent:"center",
+            cursor:"pointer", transition:"all .2s",
+            boxShadow:"0 4px 16px rgba(0,0,0,0.3)",
+          }}
+          onMouseEnter={e => { e.currentTarget.style.background="rgba(212,160,23,0.3)"; e.currentTarget.style.transform="translateY(-2px)"; }}
+          onMouseLeave={e => { e.currentTarget.style.background="rgba(212,160,23,0.15)"; e.currentTarget.style.transform="translateY(0)"; }}
+        >
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+            <path d="M7 12V2M7 2L2 7M7 2l5 5" stroke="#D4A017" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+          </svg>
+        </button>
+      )}
     </>
   );
 }

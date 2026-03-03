@@ -48,20 +48,6 @@ function fmtMonth(monthKey) {
   return new Date(+y, +m - 1, 1).toLocaleDateString("en-IN", { month: "short", year: "numeric" });
 }
 
-function buildHistogram(scores, bins = 20) {
-  const step = 2 / bins;
-  const buckets = Array.from({ length: bins }, (_, i) => ({
-    bin:   -1 + i * step + step / 2,
-    label: `${(-1 + i * step).toFixed(1)}`,
-    count: 0,
-  }));
-  scores.forEach(s => {
-    const idx = Math.min(Math.floor((s.norm_score + 1) / step), bins - 1);
-    if (idx >= 0) buckets[idx].count++;
-  });
-  return buckets;
-}
-
 // ── Tooltips ──────────────────────────────────────────────────────────────────
 function RetTooltip({ active, payload }) {
   if (!active || !payload?.length) return null;
@@ -74,17 +60,6 @@ function RetTooltip({ active, payload }) {
         Return: {d?.ret >= 0 ? "+" : ""}{(d?.ret * 100).toFixed(1)}%
       </div>
       <div style={{ fontSize:11, color:SUB, marginTop:2 }}>Score: {d?.norm_score?.toFixed(3)}</div>
-    </div>
-  );
-}
-
-function HistTooltip({ active, payload }) {
-  if (!active || !payload?.length) return null;
-  const d = payload[0]?.payload;
-  return (
-    <div style={{ background:"rgba(6,14,26,0.97)", border:`1px solid rgba(212,160,23,0.2)`, borderRadius:8, padding:"8px 12px", fontFamily:"'DM Sans',sans-serif" }}>
-      <div style={{ fontSize:11, color:"#e2e8f0" }}>Score ≈ {d?.bin?.toFixed(2)}</div>
-      <div style={{ fontSize:11, color:GOLD, marginTop:2 }}>{d?.count} stocks</div>
     </div>
   );
 }
@@ -227,7 +202,6 @@ function HorizonSection({ data, horizonKey }) {
   const meta     = HORIZON_META[horizonKey];
   const scores   = useMemo(() => data?.[meta.field] ?? [], [data, meta.field]);
   const top20    = scores.slice(0, 20);
-  const histData = useMemo(() => buildHistogram(scores), [scores]);
 
   if (scores.length === 0) {
     return (
@@ -252,35 +226,7 @@ function HorizonSection({ data, horizonKey }) {
         <span style={{ fontSize:10, color:MUTED, fontFamily:"'DM Sans',sans-serif" }}>{meta.desc}</span>
       </div>
 
-      <div className="mom-charts-grid" style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:24 }}>
-        <div>
-          <div style={{ fontSize:10, fontWeight:700, color:SUB, letterSpacing:"1.2px", marginBottom:6, fontFamily:"'DM Sans',sans-serif" }}>
-            SCORE DISTRIBUTION · {scores.length} STOCKS
-          </div>
-          <p style={{ fontSize:10, color:MUTED, margin:"0 0 10px", lineHeight:1.6, fontFamily:"'DM Sans',sans-serif" }}>
-            Cross-sectional momentum normalised to [−1, +1]. Right tail = highest momentum.
-          </p>
-          <ResponsiveContainer width="100%" height={220}>
-            <BarChart data={histData} margin={{ top:4, right:8, left:-20, bottom:0 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.04)" vertical={false}/>
-              <XAxis dataKey="label" tick={{ fill:MUTED, fontSize:8, fontFamily:"'DM Sans',sans-serif" }}
-                tickLine={false} axisLine={{ stroke:"rgba(212,160,23,0.1)" }} interval={4}/>
-              <YAxis tick={{ fill:MUTED, fontSize:8 }} tickLine={false} axisLine={false}/>
-              <ReferenceLine x="0.0" stroke="rgba(212,160,23,0.3)" strokeWidth={1.5} strokeDasharray="4 2"/>
-              <Tooltip content={<HistTooltip/>} cursor={{ fill:"rgba(212,160,23,0.04)" }}/>
-              <Bar dataKey="count" radius={[3,3,0,0]} maxBarSize={24} isAnimationActive={false}>
-                {histData.map((entry, i) => (
-                  <Cell key={i}
-                    fill={entry.bin > 0.5 ? meta.color : entry.bin > 0 ? `${meta.color}cc` : `${meta.color}88`}
-                    fillOpacity={entry.bin > 0.5 ? 1 : entry.bin > 0 ? 0.85 : 0.65}
-                  />
-                ))}
-              </Bar>
-            </BarChart>
-          </ResponsiveContainer>
-        </div>
-
-        <div>
+      <div style={{ marginBottom:8 }}>
           <div style={{ fontSize:10, fontWeight:700, color:SUB, letterSpacing:"1.2px", marginBottom:6, fontFamily:"'DM Sans',sans-serif" }}>
             TOP 20 · {meta.retLabel.toUpperCase()}
           </div>
@@ -318,7 +264,6 @@ function HorizonSection({ data, horizonKey }) {
           </ResponsiveContainer>
         </div>
       </div>
-    </div>
   );
 }
 
@@ -482,25 +427,23 @@ export default function MomentumDashboard() {
       `}</style>
 
       {/* Header */}
-      <div className="ae-page-header" style={{ padding:"60px 28px 0", borderBottom:`1px solid rgba(212,160,23,0.15)` }}>
-        <div style={{ maxWidth:1320, margin:"0 auto" }}>
-          <div style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-start", flexWrap:"wrap", gap:12, marginBottom:20 }}>
-            <div>
-              <div style={{ fontSize:9, color:GOLD, letterSpacing:"2.5px", fontWeight:700, marginBottom:6 }}>VANTAGE CAPITAL · QUANT</div>
-              <h1 style={{ margin:"0 0 4px", fontSize:28, fontWeight:800, fontFamily:"'Playfair Display',serif", color:"#fff" }}>Momentum Factor</h1>
-              <div style={{ fontSize:12, color:SUB }}>
-                Cross-sectional momentum · Nifty 500 universe · Updated monthly
-              </div>
-            </div>
+      <div className="ae-page-header" style={{ padding:"60px 28px 32px", borderBottom:`1px solid rgba(212,160,23,0.15)`, textAlign:"center" }}>
+        <div style={{ maxWidth:680, margin:"0 auto" }}>
+          <div>
+            <div style={{ fontSize:9, color:GOLD, letterSpacing:"2.5px", fontWeight:700, marginBottom:10 }}>VANTAGE CAPITAL · QUANT ENGINE</div>
+            <h1 style={{ margin:"0 0 12px", fontSize:"clamp(28px,4vw,42px)", fontWeight:800, fontFamily:"'Playfair Display',serif", color:"#fff", lineHeight:1.15 }}>Momentum Factor</h1>
+            <div style={{ width:44, height:2, background:TEAL, borderRadius:2, margin:"0 auto 14px" }}/>
+            <p style={{ fontSize:13, color:SUB, lineHeight:1.8, margin:"0 0 16px" }}>Cross-sectional price momentum across the Nifty 500 — stocks that have outperformed peers over 3M, 6M and 12-1M horizons, updated monthly.</p>
             {!loading && !error && current && (
-              <div style={{ padding:"10px 18px", background:"rgba(39,174,96,0.08)", border:`1px solid ${GREEN}33`, borderRadius:10, textAlign:"right" }}>
-                <div style={{ fontSize:9, color:SUB, letterSpacing:1, marginBottom:3 }}>LAST UPDATED</div>
-                <div style={{ fontSize:15, fontWeight:800, color:GREEN }}>{current.date}</div>
+              <div style={{ display:"inline-flex", alignItems:"center", gap:6, padding:"6px 14px", background:"rgba(39,174,96,0.08)", border:`1px solid ${GREEN}33`, borderRadius:999, fontSize:11, fontWeight:700, color:GREEN }}>
+                🟢 LAST UPDATED · {current.date}
               </div>
             )}
           </div>
 
+
           {/* Metric strip */}
+          {!loading && !error && current && <div style={{ marginTop:24 }}/> }
           {!loading && !error && current && (
             <div className="mom-metric-strip" style={{ display:"grid", gridTemplateColumns:"repeat(4,1fr)", gap:10, flexWrap:"wrap", marginBottom:20 }}>
               {[

@@ -4,8 +4,7 @@
 
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { collection, getDocs } from "firebase/firestore";
-import { db } from "./firebase";
+
 
 const NAVY   = "#0D1B2A";
 const GOLD   = "#D4A017";
@@ -153,18 +152,7 @@ function FactorCard({ factor, goTo }) {
 
 export default function QuantPage() {
   const navigate = useNavigate();
-  const [coverage, setCoverage] = useState(null);
-
-  useEffect(() => {
-    window.scrollTo(0, 0);
-    getDocs(collection(db, "stock_fundamentals"))
-      .then(snap => {
-        let count = 0;
-        snap.forEach(d => { if (d.data()?.factors) count++; });
-        if (count > 0) setCoverage(count);
-      })
-      .catch(() => {});
-  }, []);
+  useEffect(() => { window.scrollTo(0, 0); }, []);
 
   return (
     <div
@@ -174,47 +162,19 @@ export default function QuantPage() {
       <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Playfair+Display:wght@700;800&display=swap" rel="stylesheet"/>
       <style>{`
         @media(max-width:900px) { .qp-grid { grid-template-columns: 1fr 1fr !important; } }
-        @media(max-width:600px) { .qp-grid { grid-template-columns: 1fr !important; } .qp-metrics { grid-template-columns: 1fr 1fr !important; } }
+        @media(max-width:600px) { .qp-grid { grid-template-columns: 1fr !important; } }
       `}</style>
 
-      <div className="ae-page-header" style={{ padding:"60px 28px 0", borderBottom:`1px solid rgba(212,160,23,0.15)` }}>
-        <div style={{ maxWidth:1160, margin:"0 auto" }}>
-          <div style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-start", flexWrap:"wrap", gap:12, marginBottom:20 }}>
-            <div>
-              <div style={{ fontSize:9, color:GOLD, letterSpacing:"2.5px", fontWeight:700, marginBottom:6 }}>VANTAGE CAPITAL · QUANT ENGINE</div>
-              <h1 style={{ margin:"0 0 6px", fontSize:28, fontWeight:800, fontFamily:"'Playfair Display',serif", color:"#fff" }}>Factor Research Hub</h1>
-              <div style={{ fontSize:12, color:SUB }}>Systematic, academic-grade factor models · Nifty 500 universe</div>
-            </div>
-            <div style={{ padding:"8px 16px", background:"rgba(39,174,96,0.1)", border:`1px solid ${GREEN}44`, borderRadius:8, alignSelf:"flex-start" }}>
-              <div style={{ fontSize:9, color:SUB, letterSpacing:1, marginBottom:2 }}>LIVE FACTORS</div>
-              <div style={{ fontSize:20, fontWeight:800, color:GREEN }}>3 / 5</div>
-            </div>
-          </div>
-
-          <div className="qp-metrics" style={{ display:"grid", gridTemplateColumns:"repeat(4,1fr)", gap:10, marginBottom:20 }}>
-            {[
-              { label:"Universe",     value:"Nifty 500", sub:"index constituents",        color:GOLD   },
-              { label:"Live Factors", value:"3",         sub:"Momentum · Size · Value",    color:GREEN  },
-              { label:"Coming Soon",  value:"2",         sub:"Quality · Growth",            color:ORANGE },
-              { label:"Coverage",     value:coverage ? String(coverage) : "500+", sub:"stocks with factor scores", color:TEAL },
-            ].map(m => (
-              <div key={m.label} style={{ background:"rgba(255,255,255,0.025)", border:"1px solid rgba(255,255,255,0.07)", borderRadius:10, padding:"12px 16px" }}>
-                <div style={{ fontSize:9, color:SUB, textTransform:"uppercase", letterSpacing:1, marginBottom:4 }}>{m.label}</div>
-                <div style={{ fontSize:19, fontWeight:800, color:m.color }}>{m.value}</div>
-                <div style={{ fontSize:9, color:MUTED, marginTop:2 }}>{m.sub}</div>
-              </div>
-            ))}
-          </div>
-
-          <div style={{ display:"flex" }}>
-            <div style={{ padding:"9px 20px", borderBottom:`3px solid ${GOLD}`, color:GOLD, fontWeight:800, fontSize:13, fontFamily:"'DM Sans',sans-serif" }}>All Factors</div>
-          </div>
+      <div className="ae-page-header" style={{ padding:"60px 28px 32px", borderBottom:`1px solid rgba(212,160,23,0.15)`, textAlign:"center" }}>
+        <div style={{ maxWidth:680, margin:"0 auto" }}>
+          <div style={{ fontSize:9, color:GOLD, letterSpacing:"2.5px", fontWeight:700, marginBottom:10 }}>VANTAGE CAPITAL · QUANT ENGINE</div>
+          <h1 style={{ margin:"0 0 12px", fontSize:"clamp(28px,4vw,42px)", fontWeight:800, fontFamily:"'Playfair Display',serif", color:"#fff", lineHeight:1.15 }}>Factor Research Hub</h1>
+          <div style={{ width:44, height:2, background:GOLD, borderRadius:2, margin:"0 auto 14px" }}/>
+          <p style={{ fontSize:13, color:SUB, lineHeight:1.8, margin:0 }}>Systematic, academic-grade factor models across the Nifty 500 universe — Momentum, Size and Value live, Quality and Growth coming soon.</p>
         </div>
       </div>
 
       <div style={{ padding:"32px 28px 80px", maxWidth:1160, margin:"0 auto" }}>
-        <div style={{ fontSize:11, fontWeight:700, color:SUB, letterSpacing:"2px", marginBottom:20 }}>FACTOR MODELS</div>
-
         <div className="qp-grid" style={{ display:"grid", gridTemplateColumns:"repeat(3, 1fr)", gap:16, marginBottom:40 }}>
           {FACTORS.map(f => <FactorCard key={f.key} factor={f} goTo={navigate} />)}
         </div>
