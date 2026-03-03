@@ -482,7 +482,7 @@ export default function MomentumDashboard() {
       `}</style>
 
       {/* Header */}
-      <div style={{ padding:"60px 28px 0", borderBottom:`1px solid rgba(212,160,23,0.15)` }}>
+      <div className="ae-page-header" style={{ padding:"60px 28px 0", borderBottom:`1px solid rgba(212,160,23,0.15)` }}>
         <div style={{ maxWidth:1320, margin:"0 auto" }}>
           <div style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-start", flexWrap:"wrap", gap:12, marginBottom:20 }}>
             <div>

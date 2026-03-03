@@ -13,6 +13,9 @@ import MomentumDashboard from "./MomentumDashboard";
 import FlashCard from "./FlashCard";
 import { AuthProvider } from "./AuthContext";
 import { StockModalProvider } from "./StockModal";
+import QuantPage from "./QuantPage";
+import SizeDashboard from "./SizeDashboard";
+import ValueDashboard from "./ValueDashboard";
 
 // ── New scalable dashboard system ──
 import { STOCKS, STOCK_ROUTES } from "./dashboards/stocksDB";
@@ -38,7 +41,6 @@ function App() {
     <ThemeContext.Provider value={{ theme, toggleTheme }}>
       <AuthProvider>
         <Router>
-          {/* StockModalProvider must be inside Router so it can useNavigate */}
           <StockModalProvider>
             <Navbar />
             <Routes>
@@ -50,9 +52,11 @@ function App() {
               <Route path="/research-universe" element={<ResearchUniverse />} />
               <Route path="/macro"             element={<MacroBoard />} />
               <Route path="/momentum"          element={<MomentumDashboard />} />
+              <Route path="/quant"             element={<QuantPage />} />
+              <Route path="/size"              element={<SizeDashboard />} />
+              <Route path="/value"             element={<ValueDashboard />} />
               <Route path="/discover"          element={<FlashCard />} />
 
-              {/* Auto-generated stock routes */}
               {STOCK_ROUTES.map(({ path, stockId }) => (
                 <Route
                   key={stockId}

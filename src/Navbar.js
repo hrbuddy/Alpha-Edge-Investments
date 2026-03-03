@@ -17,7 +17,10 @@ const STATIC_PAGES = [
   { name:"Sign Up",              ticker:"Page", path:"/signup",              type:"page", active:true },
   { name:"Terms & Conditions",   ticker:"Page", path:"/terms",              type:"page", active:true },
   { name:"Macro Board",          ticker:"Page", path:"/macro",               type:"page", active:true },
-  { name:"Momentum Dashboard",    ticker:"Page", path:"/momentum",           type:"page", active:true },
+  { name:"Quant Hub",             ticker:"Page", path:"/quant",              type:"page", active:true },
+  { name:"Momentum Factor",      ticker:"Page", path:"/momentum",           type:"page", active:true },
+  { name:"Size Factor",          ticker:"Page", path:"/size",               type:"page", active:true },
+  { name:"Value Factor",         ticker:"Page", path:"/value",              type:"page", active:true },
   { name:"Discover Stocks",      ticker:"Page", path:"/discover",            type:"page", active:true },
 ];
 
@@ -35,7 +38,7 @@ const SEARCH_ITEMS = [
 const PAGE_NAV_LINKS = [
   { label:"Home",                  path:"/"                   },
   { label:"Research Universe",     path:"/research-universe"  },
-  { label:"Momentum",            path:"/momentum"           },
+  { label:"Quant",               path:"/quant"              },
   { label:"Macro Dashboard",       path:"/macro"              },
   { label:"Investment Philosophy", path:"/philosophy"         },
   { label:"About Us",              path:"/about"              },
@@ -47,7 +50,7 @@ const PAGE_NAV_LINKS = [
 const MOBILE_QUICK_NAV = [
   { label:"Home",      icon:"🏠", path:"/",                  active:true,  highlight:false },
   { label:"Stocks",    icon:"📈", path:"/research-universe", active:true,  highlight:false },
-  { label:"Momentum",  icon:"🚀", path:"/momentum",          active:true,  highlight:true  },
+  { label:"Quant",     icon:"⚡", path:"/quant",            active:true,  highlight:true  },
   { label:"Macro",     icon:"📊", path:"/macro",             active:true,  highlight:false },
   { label:"Discover",  icon:"⚡", path:"/discover",          active:true,  highlight:true  },
 ];
@@ -224,6 +227,9 @@ export default function Navbar() {
           .ae-page-root { padding-top: 104px !important; }
           .mob-qnav { display: flex !important; }
         }
+
+        /* Reduce the large top-padding on every page's header section */
+        .ae-page-header { padding-top: 20px !important; }
 
         /* ── DESKTOP ── */
         @media(min-width:641px){

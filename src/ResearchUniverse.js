@@ -225,7 +225,7 @@ export default function ResearchUniverse() {
       }}>
 
         {/* ── HEADER ── */}
-        <section style={{
+        <section className="ae-page-header" style={{
           background: isDark ? "rgba(255,255,255,0.015)" : "rgba(13,27,42,0.04)",
           borderBottom: `1px solid rgba(212,160,23,0.13)`,
           padding: "52px 24px 48px", textAlign: "center",

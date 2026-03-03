@@ -474,7 +474,7 @@ function StockSheet({ ticker, extraData, onClose }) {
             </div>
           )}
 
-          {/* ── Factor Scores: Momentum · Size · Value (3 tiles) ── */}
+          {/* ── Factor Scores: Momentum · Size · Value (3 tiles — click to open factor page) ── */}
           <div style={{ marginTop:14 }}>
             <div style={{ fontSize:9, fontWeight:700, letterSpacing:"0.12em", color:"rgba(255,255,255,0.35)", marginBottom:8 }}>FACTOR SCORES</div>
             <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr 1fr", gap:8 }}>
@@ -485,6 +485,7 @@ function StockSheet({ ticker, extraData, onClose }) {
                   score:   extraData?.momentumScore ?? null,
                   loading: false,
                   labelFn: momentumFactorLabel,
+                  path:    "/momentum",
                 },
                 {
                   key:     "value",
@@ -492,6 +493,7 @@ function StockSheet({ ticker, extraData, onClose }) {
                   score:   factors?.value_score ?? null,
                   loading: factors === null,
                   labelFn: valueFactorLabel,
+                  path:    "/value",
                 },
                 {
                   key:     "size",
@@ -499,17 +501,40 @@ function StockSheet({ ticker, extraData, onClose }) {
                   score:   factors?.size_score ?? null,
                   loading: factors === null,
                   labelFn: sizeFactorLabel,
+                  path:    "/size",
                 },
               ].map(tile => {
-                const pct = tile.score != null ? ((tile.score + 1) / 2) * 100 : null; // for bar width only
+                const pct = tile.score != null ? ((tile.score + 1) / 2) * 100 : null;
                 const fl  = tile.labelFn(tile.loading ? null : tile.score);
                 return (
-                  <div key={tile.key} style={{
-                    background:"rgba(255,255,255,0.04)",
-                    border:`1px solid ${pct != null ? fl.color + "33" : "rgba(255,255,255,0.08)"}`,
-                    borderRadius:12, padding:"12px 10px 10px",
-                    display:"flex", flexDirection:"column", gap:6,
-                  }}>
+                  <div
+                    key={tile.key}
+                    onClick={() => { if (!tile.loading) { onClose(); navigate(tile.path); } }}
+                    title={`View ${tile.label} factor page`}
+                    style={{
+                      background:"rgba(255,255,255,0.04)",
+                      border:`1px solid ${pct != null ? fl.color + "33" : "rgba(255,255,255,0.08)"}`,
+                      borderRadius:12, padding:"12px 10px 10px",
+                      display:"flex", flexDirection:"column", gap:6,
+                      cursor: tile.loading ? "default" : "pointer",
+                      transition:"border-color .15s, background .15s",
+                      position:"relative",
+                    }}
+                    onMouseEnter={e => {
+                      if (!tile.loading) {
+                        e.currentTarget.style.background = "rgba(255,255,255,0.07)";
+                        e.currentTarget.style.borderColor = fl.color + "66";
+                      }
+                    }}
+                    onMouseLeave={e => {
+                      e.currentTarget.style.background = "rgba(255,255,255,0.04)";
+                      e.currentTarget.style.borderColor = pct != null ? fl.color + "33" : "rgba(255,255,255,0.08)";
+                    }}
+                  >
+                    {/* ↗ navigate hint */}
+                    {!tile.loading && (
+                      <span style={{ position:"absolute", top:6, right:8, fontSize:8, color:"rgba(255,255,255,0.2)", lineHeight:1 }}>↗</span>
+                    )}
                     <span style={{ fontSize:8, fontWeight:800, letterSpacing:"0.9px", color:"rgba(255,255,255,0.4)" }}>{tile.label}</span>
                     <div style={{ fontSize:18, fontWeight:900, lineHeight:1, color: tile.loading ? "rgba(255,255,255,0.15)" : fl.color }}>
                       {tile.loading ? "—" : pct != null ? Math.round(pct) : "—"}

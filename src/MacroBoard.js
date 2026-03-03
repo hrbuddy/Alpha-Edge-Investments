@@ -627,7 +627,7 @@ export default function MacroBoard() {
       <div style={{ background:pal.bg, minHeight:"100vh", paddingTop:92, color:pal.text, fontFamily:"'DM Sans',sans-serif" }} className="ae-page-root">
 
         {/* Header */}
-        <section style={{ background:isDark?"rgba(255,255,255,0.015)":"rgba(13,27,42,0.04)", borderBottom:`1px solid ${pal.border}`, padding:"48px 24px 44px", textAlign:"center" }}>
+        <section className="ae-page-header" style={{ background:isDark?"rgba(255,255,255,0.015)":"rgba(13,27,42,0.04)", borderBottom:`1px solid ${pal.border}`, padding:"48px 24px 44px", textAlign:"center" }}>
           <div style={{ maxWidth:720, margin:"0 auto" }}>
             <div style={{ fontSize:9, letterSpacing:"0.38em", color:GOLD, fontWeight:700, marginBottom:12, ...fu(0) }}>LIVE MARKET DATA</div>
             <h1 style={{ fontSize:"clamp(26px,4vw,40px)", fontWeight:900, fontFamily:"'Playfair Display',serif", margin:"0 0 12px", lineHeight:1.15, color:pal.text, ...fu(80) }}>
