@@ -66,9 +66,8 @@ function ScoreTooltip({ active, payload }) {
 function StockCard({ s, isTop, openModal }) {
   return (
     <div
-      onClick={() => openModal(s.ticker)}
       style={{
-        display:"flex", alignItems:"center", gap:8, padding:"9px 12px", cursor:"pointer",
+        display:"flex", alignItems:"center", gap:8, padding:"9px 12px", minWidth:0, overflow:"hidden",
         background: isTop ? "rgba(39,174,96,0.05)" : "rgba(142,68,173,0.05)",
         border:`1px solid ${isTop ? "rgba(39,174,96,0.18)" : "rgba(142,68,173,0.18)"}`,
         borderLeft:`3px solid ${isTop ? GREEN : PURPLE}`,
@@ -76,10 +75,7 @@ function StockCard({ s, isTop, openModal }) {
       }}
     >
       <span style={{ fontSize:9, fontWeight:800, color:isTop ? GREEN : PURPLE, minWidth:28, flexShrink:0 }}>#{s.rank}</span>
-      <span style={{ fontSize:13, fontWeight:800, color:"#e2e8f0", fontFamily:"'DM Sans',sans-serif", overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>
-        {s.ticker}
-      </span>
-      <span style={{ fontSize:10, color:MUTED, marginLeft:"auto", flexShrink:0 }}>{s.norm_score?.toFixed(2)}</span>
+      <span className="sm-ticker-link" onClick={() => openModal(s.ticker)} style={{ fontSize:13, fontWeight:800, color:"#e2e8f0", fontFamily:"'DM Sans',sans-serif" }}>{s.ticker}</span>
     </div>
   );
 }

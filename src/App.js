@@ -16,6 +16,7 @@ import { StockModalProvider } from "./StockModal";
 import QuantPage from "./QuantPage";
 import SizeDashboard from "./SizeDashboard";
 import ValueDashboard from "./ValueDashboard";
+import PortfolioSimulator from "./PortfolioSimulator";
 
 // ── New scalable dashboard system ──
 import { STOCKS, STOCK_ROUTES } from "./dashboards/stocksDB";
@@ -56,6 +57,7 @@ function App() {
               <Route path="/size"              element={<SizeDashboard />} />
               <Route path="/value"             element={<ValueDashboard />} />
               <Route path="/discover"          element={<FlashCard />} />
+              <Route path="/portfolio"         element={<PortfolioSimulator />} />
 
               {STOCK_ROUTES.map(({ path, stockId }) => (
                 <Route

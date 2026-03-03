@@ -6,7 +6,8 @@ import { ThemeContext } from "./App";
 import { useAuth } from "./AuthContext";
 import { STOCKS, STOCK_ROUTES } from "./dashboards/stocksDB";
 
-const GOLD = "#D4A017";
+const GOLD  = "#D4A017";
+const MUTED = "#3d5570";
 const NAVY = "#0D1B2A";
 
 const STATIC_PAGES = [
@@ -35,6 +36,15 @@ const SEARCH_ITEMS = [
   ...STATIC_PAGES,
 ];
 
+const QUANT_SUB_LINKS = [
+  { label:"Momentum", icon:"🚀", path:"/momentum", live:true  },
+  { label:"Value",    icon:"💎", path:"/value",    live:true  },
+  { label:"Size",     icon:"📐", path:"/size",     live:true  },
+  { label:"Quality",  icon:"🔬", path:"/quant",    live:false },
+  { label:"Growth",   icon:"📈", path:"/quant",    live:false },
+  { label:"Portfolio", icon:"🗂️", path:"/portfolio", live:true  },
+];
+
 const PAGE_NAV_LINKS = [
   { label:"Home",                  path:"/"                   },
   { label:"Research Universe",     path:"/research-universe"  },
@@ -50,7 +60,7 @@ const PAGE_NAV_LINKS = [
 const MOBILE_QUICK_NAV = [
   { label:"Home",      icon:"🏠", path:"/",                  active:true,  highlight:false },
   { label:"Stocks",    icon:"📈", path:"/research-universe", active:true,  highlight:false },
-  { label:"Quant",     icon:"⚡", path:"/quant",            active:true,  highlight:true  },
+  { label:"Quant",     icon:"π",  path:"/quant",            active:true,  highlight:true  },
   { label:"Macro",     icon:"📊", path:"/macro",             active:true,  highlight:false },
   { label:"Discover",  icon:"⚡", path:"/discover",          active:true,  highlight:true  },
 ];
@@ -80,8 +90,11 @@ export default function Navbar() {
   const [menuOpen,          setMenuOpen]           = useState(false);
   const [stocksOpen,        setStocksOpen]         = useState(false);
   const [mobileStocksOpen,  setMobileStocksOpen]   = useState(false);
+  const [quantOpen,        setQuantOpen]        = useState(false);
+  const [mobileQuantOpen,  setMobileQuantOpen]  = useState(false);
   const stocksRef  = useRef(null);
   const menuRef    = useRef(null);
+  const quantRef   = useRef(null);
   const searchRef      = useRef(null);
   const inputRef       = useRef(null);
   const mobileInputRef = useRef(null);
@@ -105,6 +118,13 @@ export default function Navbar() {
     return () => document.removeEventListener("mousedown", fn);
   }, [stocksOpen]);
 
+
+  useEffect(() => {
+    if (!quantOpen) return;
+    const fn = e => { if (quantRef.current && !quantRef.current.contains(e.target)) setQuantOpen(false); };
+    document.addEventListener("mousedown", fn);
+    return () => document.removeEventListener("mousedown", fn);
+  }, [quantOpen]);
   useEffect(() => {
     if (!menuOpen) return;
     const fn = e => { if (menuRef.current && !menuRef.current.contains(e.target)) setMenuOpen(false); };
@@ -221,6 +241,7 @@ export default function Navbar() {
         }
         .mob-qnav-item:active { opacity: 0.7; }
         .mob-qnav-icon { font-size: 14px; line-height: 1; }
+          .mob-qnav-pi { font-size: 18px !important; font-weight: 900; color: #D4A017; font-family: serif; }
         .mob-qnav-label {
           font-size: 7px; font-weight: 800; letter-spacing: 0.6px;
           font-family: 'DM Sans', sans-serif; white-space: nowrap;
@@ -431,7 +452,7 @@ export default function Navbar() {
                 {item.highlight && !isCurrentRoute && (
                   <span style={{ position:"absolute", top:-4, right:-4, width:8, height:8, borderRadius:"50%", background:"#27AE60", border:"1.5px solid " + (isDark ? "#0a1628" : "#F5F0E8"), boxShadow:"0 0 6px #27AE60" }}/>
                 )}
-                <span className="mob-qnav-icon">{item.icon}</span>
+                <span className={item.icon === "π" ? "mob-qnav-icon mob-qnav-pi" : "mob-qnav-icon"}>{item.icon}</span>
                 <span className="mob-qnav-label" style={{ color: isCurrentRoute ? GOLD : item.highlight ? "rgba(212,160,23,0.75)" : item.active ? GOLD : textCol, fontWeight: isCurrentRoute ? 800 : item.highlight ? 800 : 700 }}>
                   {item.label}
                   {item.highlight && !isCurrentRoute && <span style={{ fontSize:6, marginLeft:3, color:"#27AE60", letterSpacing:"0.5px" }}>NEW</span>}
@@ -443,11 +464,41 @@ export default function Navbar() {
 
         {/* ── SECONDARY RIBBON (desktop only) ── */}
         <div className="ribbon-links" style={{ borderTop:`1px solid rgba(212,160,23,0.08)`, padding:"0 24px", height:38, display:"flex", alignItems:"center", justifyContent:"center", gap:32, overflowX:"visible", background:"transparent", position:"relative", zIndex:200000 }}>
-          {PAGE_NAV_LINKS.map(l => (
+          {PAGE_NAV_LINKS.filter(l => l.label !== "Quant").map(l => (
             <Link key={l.label} to={l.path} className="nav-link" style={{ color:textCol }}>
               {l.label}
             </Link>
           ))}
+
+          {/* ── Quant dropdown ── */}
+          <div ref={quantRef} style={{ position:"relative" }}>
+            <button onClick={() => setQuantOpen(o => !o)} className="nav-link"
+              style={{ background:"none", border:"none", cursor:"pointer", color: quantOpen ? GOLD : textCol, display:"flex", alignItems:"center", gap:4, fontFamily:"inherit", fontSize:"inherit", fontWeight:"inherit", padding:0 }}>
+              Quant
+              <span style={{ fontSize:9, transition:"transform .2s", display:"inline-block", transform: quantOpen ? "rotate(180deg)" : "rotate(0deg)", marginLeft:2 }}>▼</span>
+            </button>
+            {quantOpen && (
+              <div style={{ position:"absolute", top:"calc(100% + 10px)", left:0, minWidth:180, background: isDark ? "rgba(6,14,26,0.98)" : "rgba(238,233,222,0.98)", border:`1px solid rgba(212,160,23,0.18)`, borderRadius:10, boxShadow:"0 8px 32px rgba(0,0,0,0.4)", backdropFilter:"blur(12px)", overflow:"hidden", zIndex:99999 }}>
+                <Link to="/quant" onClick={() => setQuantOpen(false)}
+                  style={{ display:"flex", alignItems:"center", gap:10, padding:"10px 16px", borderBottom:`1px solid rgba(212,160,23,0.10)`, textDecoration:"none", background:"transparent" }}
+                  onMouseEnter={e => e.currentTarget.style.background="rgba(212,160,23,0.07)"}
+                  onMouseLeave={e => e.currentTarget.style.background="transparent"}>
+                  <span style={{ fontSize:14, fontWeight:900, color:GOLD, fontFamily:"serif" }}>π</span>
+                  <span style={{ fontSize:11, fontWeight:800, color:GOLD, letterSpacing:"0.5px" }}>Quant Hub</span>
+                </Link>
+                {QUANT_SUB_LINKS.map(q => (
+                  <Link key={q.label} to={q.path} onClick={() => { if(q.live) setQuantOpen(false); }}
+                    style={{ display:"flex", alignItems:"center", gap:10, padding:"9px 16px", borderBottom:`1px solid rgba(255,255,255,0.04)`, textDecoration:"none", opacity: q.live ? 1 : 0.4, pointerEvents: q.live ? "auto" : "none", background:"transparent" }}
+                    onMouseEnter={e => { if(q.live) e.currentTarget.style.background="rgba(212,160,23,0.07)"; }}
+                    onMouseLeave={e => e.currentTarget.style.background="transparent"}>
+                    <span style={{ fontSize:13 }}>{q.icon}</span>
+                    <span style={{ fontSize:11, fontWeight:700, color: isDark ? "#c8dae8" : "#1a2e42" }}>{q.label}</span>
+                    {!q.live && <span style={{ fontSize:8, fontWeight:800, color:MUTED, letterSpacing:"1px", marginLeft:"auto" }}>SOON</span>}
+                  </Link>
+                ))}
+              </div>
+            )}
+          </div>
 
           {/* All Stocks dropdown */}
           <div ref={stocksRef} style={{ position:"relative" }}>
@@ -487,12 +538,42 @@ export default function Navbar() {
         {menuOpen && (
           <div className="mobile-menu" style={{ borderTop:`1px solid rgba(212,160,23,0.10)`, background:ribbonBg, padding:"4px 0 8px", boxShadow:"0 8px 32px rgba(0,0,0,0.5)", animation:"menuSlide .25s ease forwards" }}>
 
-            {PAGE_NAV_LINKS.map(l => (
+            {PAGE_NAV_LINKS.filter(l => l.label !== "Quant").map(l => (
               <Link key={l.label} to={l.path} className="nav-link" onClick={() => setMenuOpen(false)}
                 style={{ display:"block", padding:"13px 24px", fontSize:12, borderBottom:`1px solid rgba(212,160,23,0.06)`, letterSpacing:"1.6px", color:textCol }}>
                 {l.label}
               </Link>
             ))}
+
+            {/* ── Mobile Quant submenu ── */}
+            <div>
+              <button onClick={() => setMobileQuantOpen(o => !o)}
+                style={{ width:"100%", textAlign:"left", background:"none", border:"none", borderBottom:`1px solid rgba(212,160,23,0.06)`, padding:"13px 24px", fontSize:12, color: mobileQuantOpen ? GOLD : textCol, fontWeight:600, cursor:"pointer", display:"flex", justifyContent:"space-between", alignItems:"center", fontFamily:"inherit", letterSpacing:"1.6px" }}>
+                Quant
+                <span style={{ fontSize:10, transition:"transform .2s", display:"inline-block", transform: mobileQuantOpen ? "rotate(180deg)" : "rotate(0deg)" }}>▼</span>
+              </button>
+              {mobileQuantOpen && (
+                <div style={{ background: isDark ? "rgba(0,0,0,0.18)" : "rgba(13,27,42,0.04)" }}>
+                  <Link to="/quant" onClick={() => { setMenuOpen(false); setMobileQuantOpen(false); }}
+                    style={{ display:"flex", alignItems:"center", gap:10, padding:"10px 32px", borderBottom:`1px solid rgba(212,160,23,0.05)`, textDecoration:"none" }}
+                    onMouseEnter={e => e.currentTarget.style.background="rgba(212,160,23,0.07)"}
+                    onMouseLeave={e => e.currentTarget.style.background="transparent"}>
+                    <span style={{ fontSize:14, fontWeight:900, color:GOLD, fontFamily:"serif" }}>π</span>
+                    <span style={{ fontSize:12, fontWeight:800, color:GOLD }}>Quant Hub</span>
+                  </Link>
+                  {QUANT_SUB_LINKS.map(q => (
+                    <Link key={q.label} to={q.live ? q.path : "/quant"} onClick={() => { if(q.live){ setMenuOpen(false); setMobileQuantOpen(false); } }}
+                      style={{ display:"flex", alignItems:"center", gap:10, padding:"10px 32px", borderBottom:`1px solid rgba(212,160,23,0.05)`, textDecoration:"none", opacity: q.live ? 1 : 0.4, pointerEvents: q.live ? "auto" : "none" }}
+                      onMouseEnter={e => { if(q.live) e.currentTarget.style.background="rgba(212,160,23,0.07)"; }}
+                      onMouseLeave={e => e.currentTarget.style.background="transparent"}>
+                      <span style={{ fontSize:13 }}>{q.icon}</span>
+                      <span style={{ fontSize:12, fontWeight:600, color: isDark ? "#c8dae8" : "#1a2e42" }}>{q.label}</span>
+                      {!q.live && <span style={{ fontSize:8, fontWeight:800, color:MUTED, letterSpacing:"1px", marginLeft:"auto" }}>SOON</span>}
+                    </Link>
+                  ))}
+                </div>
+              )}
+            </div>
 
             <div>
               <button

@@ -19,7 +19,7 @@ const SUB    = "#5a7a94";
 const FACTORS = [
   {
     key:         "momentum",
-    icon:        "⚡",
+    icon:        "🚀",
     label:       "MOMENTUM",
     title:       "Momentum Factor",
     desc:        "Stocks that have outperformed peers over recent horizons tend to continue outperforming — cross-sectional price momentum.",
@@ -85,67 +85,81 @@ const FACTORS = [
 ];
 
 function FactorCard({ factor, goTo }) {
-  const [hov, setHov] = useState(false);
+  const [open, setOpen] = useState(false);
+  const [hov,  setHov]  = useState(false);
   const live = factor.status === "LIVE";
 
   return (
     <div
-      onClick={() => { if (live && factor.path) goTo(factor.path); }}
       onMouseEnter={() => setHov(true)}
       onMouseLeave={() => setHov(false)}
       style={{
-        position:     "relative",
-        background:   hov && live ? "rgba(255,255,255,0.042)" : "rgba(255,255,255,0.022)",
-        border:       `1px solid ${hov && live ? factor.color + "60" : "rgba(255,255,255,0.07)"}`,
+        background:   hov ? "rgba(255,255,255,0.032)" : "rgba(255,255,255,0.018)",
+        border:       `1px solid ${hov ? factor.color + "50" : "rgba(255,255,255,0.07)"}`,
         borderLeft:   `3px solid ${live ? factor.color : "rgba(255,255,255,0.12)"}`,
-        borderRadius: 14,
-        padding:      "22px 24px 20px",
-        cursor:       live ? "pointer" : "default",
+        borderRadius: 12,
         opacity:      live ? 1 : 0.52,
-        transform:    hov && live ? "translateY(-2px)" : "translateY(0)",
-        boxShadow:    hov && live ? "0 8px 32px rgba(0,0,0,0.32)" : "none",
         transition:   "all .2s",
+        overflow:     "hidden",
       }}
     >
-      <div style={{ position:"absolute", top:14, right:14, display:"flex", alignItems:"center", gap:5 }}>
-        {live ? (
-          <>
-            <span style={{ width:6, height:6, borderRadius:"50%", background:GREEN, boxShadow:`0 0 6px ${GREEN}`, display:"inline-block" }}/>
-            <span style={{ fontSize:8, fontWeight:800, color:GREEN, letterSpacing:"1.5px", fontFamily:"'DM Sans',sans-serif" }}>LIVE</span>
-          </>
-        ) : (
-          <span style={{ fontSize:8, fontWeight:700, color:MUTED, letterSpacing:"1.5px", background:"rgba(255,255,255,0.05)", padding:"3px 9px", borderRadius:999, fontFamily:"'DM Sans',sans-serif" }}>COMING SOON</span>
-        )}
-      </div>
-
-      <div style={{ display:"flex", alignItems:"center", gap:10, marginBottom:12 }}>
-        <span style={{ fontSize:22, lineHeight:1 }}>{factor.icon}</span>
-        <span style={{ fontSize:9, fontWeight:800, letterSpacing:"2.5px", color:live ? factor.color : MUTED, fontFamily:"'DM Sans',sans-serif" }}>{factor.label}</span>
-      </div>
-
-      <div style={{ fontSize:17, fontWeight:800, color:live ? "#e2e8f0" : "#3a5068", fontFamily:"'Playfair Display',serif", marginBottom:8, lineHeight:1.2 }}>
-        {factor.title}
-      </div>
-
-      <div style={{ fontSize:11, color:live ? SUB : MUTED, lineHeight:1.7, marginBottom:14 }}>
-        {factor.desc}
-      </div>
-
-      <div style={{ display:"inline-block", fontSize:9, fontWeight:700, color:live ? factor.color + "cc" : MUTED, background:live ? factor.color + "14" : "transparent", padding:"4px 11px", borderRadius:999, marginBottom:18, letterSpacing:"0.4px", fontFamily:"'DM Sans',sans-serif" }}>
-        {factor.detail}
-      </div>
-
-      <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center" }}>
-        <div>
-          <div style={{ fontSize:9, color:MUTED, letterSpacing:"0.8px", fontFamily:"'DM Sans',sans-serif" }}>{factor.metricLabel.toUpperCase()}</div>
-          <div style={{ fontSize:20, fontWeight:900, color:live ? factor.color : MUTED, fontFamily:"'DM Sans',sans-serif", lineHeight:1.1, marginTop:2 }}>{factor.metricValue}</div>
-        </div>
-        {live && (
-          <div style={{ fontSize:11, fontWeight:800, color:factor.color, display:"flex", alignItems:"center", gap:5, opacity:hov ? 1 : 0.6, transition:"opacity .15s", fontFamily:"'DM Sans',sans-serif" }}>
-            Explore <span style={{ fontSize:15 }}>→</span>
+      {/* ── Collapsed header — always visible ── */}
+      <div style={{ display:"flex", alignItems:"center", gap:12, padding:"16px 18px" }}>
+        <span style={{ fontSize:20, lineHeight:1, flexShrink:0 }}>{factor.icon}</span>
+        {/* Title area — navigates directly if live */}
+        <div
+          onClick={() => { if (live && factor.path) goTo(factor.path); }}
+          style={{ flex:1, minWidth:0, cursor: live ? "pointer" : "default" }}
+        >
+          <div style={{ display:"flex", alignItems:"center", gap:8, marginBottom:3 }}>
+            <span style={{ fontSize:9, fontWeight:800, letterSpacing:"2px", color:live ? factor.color : MUTED, fontFamily:"'DM Sans',sans-serif" }}>{factor.label}</span>
+            {live ? (
+              <span style={{ display:"flex", alignItems:"center", gap:4 }}>
+                <span style={{ width:5, height:5, borderRadius:"50%", background:GREEN, boxShadow:`0 0 5px ${GREEN}`, flexShrink:0 }}/>
+                <span style={{ fontSize:7, fontWeight:800, color:GREEN, letterSpacing:"1.5px", fontFamily:"'DM Sans',sans-serif" }}>LIVE</span>
+              </span>
+            ) : (
+              <span style={{ fontSize:7, fontWeight:700, color:MUTED, letterSpacing:"1.5px", fontFamily:"'DM Sans',sans-serif" }}>SOON</span>
+            )}
           </div>
-        )}
+          <div className={live ? "sm-ticker-link" : ""} style={{ fontSize:14, fontWeight:800, color:live ? "#e2e8f0" : "#3a5068", fontFamily:"'Playfair Display',serif", whiteSpace:"nowrap", overflow:"hidden", textOverflow:"ellipsis", display:"inline-block", maxWidth:"100%" }}>
+            {factor.title}
+          </div>
+        </div>
+        {/* Arrow — only toggles expand/collapse */}
+        <div
+          onClick={() => setOpen(o => !o)}
+          style={{ flexShrink:0, padding:"4px 6px", cursor:"pointer", borderRadius:6, background: open ? "rgba(255,255,255,0.06)" : "transparent", transition:"background .15s" }}
+        >
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none" style={{ display:"block", transform: open ? "rotate(180deg)" : "rotate(0deg)", transition:"transform .2s" }}>
+            <path d="M2 5l5 5 5-5" stroke={SUB} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+          </svg>
+        </div>
       </div>
+
+      {/* ── Expanded body ── */}
+      {open && (
+        <div style={{ padding:"0 18px 18px", borderTop:"1px solid rgba(255,255,255,0.05)" }}>
+          <div style={{ fontSize:12, color:SUB, lineHeight:1.75, margin:"14px 0 12px" }}>
+            {factor.desc}
+          </div>
+          <div style={{ display:"inline-block", fontSize:9, fontWeight:700, color:live ? factor.color+"aa" : MUTED, background:live ? factor.color+"12" : "rgba(255,255,255,0.03)", border:`1px solid ${live ? factor.color+"25" : "rgba(255,255,255,0.06)"}`, borderRadius:999, padding:"4px 10px", marginBottom:14, letterSpacing:"0.5px", fontFamily:"'DM Sans',sans-serif" }}>
+            {factor.detail}
+          </div>
+          {live && (
+            <div>
+              <button
+                onClick={() => goTo(factor.path)}
+                style={{ background:factor.color+"18", border:`1px solid ${factor.color}44`, borderRadius:999, padding:"7px 20px", color:factor.color, fontSize:11, fontWeight:800, letterSpacing:"1px", cursor:"pointer", fontFamily:"'DM Sans',sans-serif", transition:"all .15s" }}
+                onMouseEnter={e => e.currentTarget.style.background = factor.color+"30"}
+                onMouseLeave={e => e.currentTarget.style.background = factor.color+"18"}
+              >
+                EXPLORE {factor.label} →
+              </button>
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 }
@@ -161,8 +175,6 @@ export default function QuantPage() {
     >
       <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Playfair+Display:wght@700;800&display=swap" rel="stylesheet"/>
       <style>{`
-        @media(max-width:900px) { .qp-grid { grid-template-columns: 1fr 1fr !important; } }
-        @media(max-width:600px) { .qp-grid { grid-template-columns: 1fr !important; } }
       `}</style>
 
       <div className="ae-page-header" style={{ padding:"60px 28px 32px", borderBottom:`1px solid rgba(212,160,23,0.15)`, textAlign:"center" }}>
@@ -175,7 +187,7 @@ export default function QuantPage() {
       </div>
 
       <div style={{ padding:"32px 28px 80px", maxWidth:1160, margin:"0 auto" }}>
-        <div className="qp-grid" style={{ display:"grid", gridTemplateColumns:"repeat(3, 1fr)", gap:16, marginBottom:40 }}>
+        <div style={{ display:"flex", flexDirection:"column", gap:8, marginBottom:40 }}>
           {FACTORS.map(f => <FactorCard key={f.key} factor={f} goTo={navigate} />)}
         </div>
 

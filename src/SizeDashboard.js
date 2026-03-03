@@ -67,9 +67,8 @@ function ScoreTooltip({ active, payload }) {
 function StockCard({ s, isTop, openModal }) {
   return (
     <div
-      onClick={() => openModal(s.ticker)}
       style={{
-        display:"flex", alignItems:"center", gap:8, padding:"9px 12px", cursor:"pointer",
+        display:"flex", alignItems:"center", gap:8, padding:"9px 12px", minWidth:0, overflow:"hidden",
         background: isTop ? "rgba(46,117,182,0.05)" : "rgba(230,126,34,0.05)",
         border:`1px solid ${isTop ? "rgba(46,117,182,0.18)" : "rgba(230,126,34,0.18)"}`,
         borderLeft:`3px solid ${isTop ? BLUE : ORANGE}`,
@@ -77,10 +76,7 @@ function StockCard({ s, isTop, openModal }) {
       }}
     >
       <span style={{ fontSize:9, fontWeight:800, color:isTop ? BLUE : ORANGE, minWidth:28, flexShrink:0 }}>#{s.rank}</span>
-      <span style={{ fontSize:13, fontWeight:800, color:"#e2e8f0", fontFamily:"'DM Sans',sans-serif", overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>
-        {s.ticker}
-      </span>
-      <span style={{ fontSize:10, color:MUTED, marginLeft:"auto", flexShrink:0 }}>{s.norm_score?.toFixed(2)}</span>
+      <span className="sm-ticker-link" onClick={() => openModal(s.ticker)} style={{ fontSize:13, fontWeight:800, color:"#e2e8f0", fontFamily:"'DM Sans',sans-serif" }}>{s.ticker}</span>
     </div>
   );
 }
@@ -226,8 +222,7 @@ export default function SizeDashboard() {
           <div style={{ width:44, height:2, background:BLUE, borderRadius:2, margin:"0 auto 14px" }}/>
           <p style={{ fontSize:13, color:SUB, lineHeight:1.8, margin:"0 0 16px" }}>Fama-French SMB — market capitalisation rank across the Nifty 500. Smaller companies earn a return premium over large caps over long horizons.</p>
           <div style={{ display:"inline-flex", alignItems:"center", gap:6, padding:"6px 14px", background: isLive ? "rgba(39,174,96,0.1)" : "rgba(46,117,182,0.08)", border:`1px solid ${isLive ? GREEN+"44" : BLUE+"33"}`, borderRadius:999, fontSize:11, fontWeight:700, color: isLive ? GREEN : BLUE }}>
-            {isLive ? "🟢 LIVE DATA" : "📦 SAMPLE DATA"}
-            {isLive && asOf && <span style={{ fontWeight:400, color:SUB, marginLeft:6 }}>· as of {asOf}</span>}
+            {isLive && asOf ? `🟢 LAST UPDATED · ${asOf}` : isLive ? "🟢 LIVE DATA" : "📦 SAMPLE DATA"}
           </div>
         </div>
       </div>
