@@ -65,16 +65,16 @@ async function fetchBenchmark(bm){
 // StatCol: shows PORT row + BM row
 function StatCol({label,portVal,bmVal,portColor,bmColor}){
   return(
-    <div style={{flex:1,minWidth:0,padding:"12px 14px",background:"rgba(255,255,255,0.025)",border:"1px solid rgba(255,255,255,0.07)",borderRadius:10}}>
+    <div style={{flex:1,minWidth:0,padding:"10px 10px",background:"rgba(255,255,255,0.025)",border:"1px solid rgba(255,255,255,0.07)",borderRadius:10,overflow:"hidden"}}>
       <div style={{fontSize:9,color:SUB,textTransform:"uppercase",letterSpacing:"1px",marginBottom:8}}>{label}</div>
       <div style={{display:"flex",alignItems:"baseline",gap:5,marginBottom:4}}>
         <span style={{fontSize:9,color:MUTED,minWidth:26}}>PORT</span>
-        <span style={{fontSize:20,fontWeight:800,color:portColor||"#e2e8f0",lineHeight:1}}>{portVal}</span>
+        <span className="pm-val" style={{fontSize:16,fontWeight:800,color:portColor||"#e2e8f0",lineHeight:1,whiteSpace:"nowrap"}}>{portVal}</span>
       </div>
       {bmVal!==undefined&&(
         <div style={{display:"flex",alignItems:"baseline",gap:5}}>
           <span style={{fontSize:9,color:MUTED,minWidth:26}}>BM</span>
-          <span style={{fontSize:14,fontWeight:700,color:bmColor||SUB,lineHeight:1}}>{bmVal}</span>
+          <span className="pm-bm" style={{fontSize:12,fontWeight:700,color:bmColor||SUB,lineHeight:1,whiteSpace:"nowrap"}}>{bmVal}</span>
         </div>
       )}
     </div>
@@ -83,15 +83,17 @@ function StatCol({label,portVal,bmVal,portColor,bmColor}){
 
 function WeightRow({stock,weight,mode,onChange,onRemove,color}){
   return(
-    <div style={{display:"flex",alignItems:"center",gap:10,padding:"8px 12px",background:"rgba(255,255,255,0.02)",border:"1px solid rgba(255,255,255,0.06)",borderLeft:`3px solid ${color}`,borderRadius:8}}>
-      <span style={{fontSize:13,fontWeight:800,color:"#e2e8f0",minWidth:90}}>{stock}</span>
-      <input type="range" min={1} max={100} step={1} value={Math.round(weight*100)} disabled={mode==="equal"} onChange={e=>onChange(Number(e.target.value)/100)} style={{flex:1,accentColor:color,opacity:mode==="equal"?0.4:1,cursor:mode==="equal"?"not-allowed":"pointer"}}/>
-      <input type="number" min={1} max={100} step={1} value={Math.round(weight*100)} disabled={mode==="equal"} onChange={e=>onChange(Math.max(0.01,Math.min(1,Number(e.target.value)/100)))} style={{width:52,textAlign:"center",background:"rgba(255,255,255,0.06)",border:`1px solid ${color}44`,borderRadius:6,color:"#e2e8f0",fontSize:12,fontWeight:700,padding:"4px 6px",opacity:mode==="equal"?0.5:1}}/>
-      <span style={{fontSize:11,color:MUTED,minWidth:14}}>%</span>
+    <div style={{display:"flex",alignItems:"center",gap:8,padding:"8px 10px",background:"rgba(255,255,255,0.02)",border:"1px solid rgba(255,255,255,0.06)",borderLeft:`3px solid ${color}`,borderRadius:8,minWidth:0}}>
+      <span style={{fontSize:12,fontWeight:800,color:"#e2e8f0",flexShrink:0,maxWidth:"28%",overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{stock}</span>
+      <input type="range" min={1} max={100} step={1} value={Math.round(weight*100)} disabled={mode==="equal"} onChange={e=>onChange(Number(e.target.value)/100)} style={{flex:1,minWidth:0,accentColor:color,opacity:mode==="equal"?0.4:1,cursor:mode==="equal"?"not-allowed":"pointer"}}/>
+      <div style={{display:"flex",alignItems:"stretch",border:`1px solid ${color}44`,borderRadius:6,overflow:"hidden",flexShrink:0}}>
+        <input type="number" min={1} max={100} step={1} value={Math.round(weight*100)} disabled={mode==="equal"} onChange={e=>onChange(Math.max(0.01,Math.min(1,Number(e.target.value)/100)))} style={{width:36,textAlign:"center",background:"rgba(255,255,255,0.06)",border:"none",color:"#e2e8f0",fontSize:12,fontWeight:700,padding:"4px 2px",opacity:mode==="equal"?0.5:1,outline:"none"}}/>
+        <span style={{fontSize:11,color:MUTED,display:"flex",alignItems:"center",padding:"0 6px 0 2px",background:"rgba(255,255,255,0.03)"}}>%</span>
+      </div>
       <button onClick={onRemove}
-        style={{background:"rgba(192,57,43,0.15)",border:"1px solid rgba(192,57,43,0.3)",borderRadius:6,cursor:"pointer",color:RED,fontSize:13,padding:"3px 7px",lineHeight:1,flexShrink:0}}
-        onMouseEnter={e=>{e.currentTarget.style.background="rgba(192,57,43,0.35)";}}
-        onMouseLeave={e=>{e.currentTarget.style.background="rgba(192,57,43,0.15)";}}>×</button>
+        style={{flexShrink:0,background:"transparent",border:"none",cursor:"pointer",color:RED,fontSize:14,fontWeight:700,lineHeight:1,padding:"2px 3px",opacity:0.7}}
+        onMouseEnter={e=>{e.currentTarget.style.opacity="1";}}
+        onMouseLeave={e=>{e.currentTarget.style.opacity="0.7";}}>×</button>
     </div>
   );
 }
@@ -349,7 +351,7 @@ export default function PortfolioSimulator(){
   return(
     <div style={{background:`linear-gradient(160deg,${NAVY} 0%,#060e1a 100%)`,minHeight:"100vh",color:"#e2e8f0",fontFamily:"'DM Sans',sans-serif",paddingTop:92}}>
       <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;600;700;800&family=Playfair+Display:wght@700;800&display=swap" rel="stylesheet"/>
-      <style>{`@keyframes pSpin{to{transform:rotate(360deg)}}input[type=range]{height:4px;cursor:pointer}input[type=number]::-webkit-inner-spin-button{opacity:0.5}@media(max-width:760px){.pm-layout{flex-direction:column!important}.pm-left{width:100%!important}.pm-stats{flex-wrap:wrap!important}}`}</style>
+      <style>{`@keyframes pSpin{to{transform:rotate(360deg)}}input[type=range]{height:4px;cursor:pointer}input[type=number]::-webkit-inner-spin-button{opacity:0.5}@media(max-width:760px){.pm-layout{flex-direction:column!important}.pm-left{width:100%!important}.pm-stats{display:grid!important;grid-template-columns:1fr 1fr 1fr!important;gap:6px!important}.pm-stats>div{padding:8px 8px!important}.pm-stats .pm-val{font-size:13px!important}.pm-stats .pm-bm{font-size:11px!important}}`}</style>
 
       {/* Header */}
       <div style={{padding:"52px 28px 28px",borderBottom:"1px solid rgba(212,160,23,0.15)",textAlign:"center"}}>
