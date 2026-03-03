@@ -616,7 +616,455 @@ export const STOCKS = {
   },
 
 
-  };
+  // ─────────────────────────────────────────────
+//  BEL (BEL)
+// ─────────────────────────────────────────────
+  "BEL": {
+    id:           "BEL",
+    name:         "Bharat Electronics Ltd",
+    nse:          "BEL",
+    bse:          "500049",
+    indices:      "Nifty 50, Nifty Next 50",
+    sector:       "Defence Electronics / Navratna PSU",
+    rating:       "BUY",
+    description:  "India's largest defence electronics company and Navratna PSU. Dominant supplier (90%+ market share in key platforms) of radars, electronic warfare systems, communication equipment, avionics and missiles to the Indian Armed Forces. ₹73,015 Cr order book (2.8× TTM sales) with multi-year execution visibility. 72–75% indigenisation, shifting to full system integration.",
+
+    metrics: [
+      { label:"CMP",          value:"₹454",         sub:"Mar 2026"                  },
+      { label:"Market Cap",   value:"₹3.32 Lakh Cr",sub:"$39.5B",    color:"GOLD"     },
+      { label:"Target",       value:"₹800–1,000",   sub:"12–18% CAGR", color:"GREEN" },
+      { label:"Order Book",   value:"₹73,015 Cr",   sub:"2.8× TTM sales", color:"TEAL" },
+      { label:"OPM",          value:"29%",          sub:"FY25 (27% FY26 guidance)", color:"BLUE" },
+      { label:"Quality",      value:"8.2/10",       sub:"Wide Regulatory Moat", color:"ORANGE" },
+    ],
+
+    thesis: [
+      { t:"Regulatory + Execution Moat",          d:"Navratna PSU status + MoD strategic partner preference + security clearances create 5–10 year qualification lead over private players. Positive indigenisation lists force domestic sourcing." },
+      { t:"High-Visibility Multi-Year Programmes",d:"LRSAM/Barak-8, Akash NG, QRSAM (₹30k Cr potential), Himshakti EW, LCA Mk1A LRUs, Project Kusha. Order book provides 3+ years revenue visibility even without new inflows." },
+      { t:"Margin & Operating Leverage Levers",   d:"Indigenisation (72–75% → 95% in platforms) + vertical integration into semiconductors + product mix shift to full systems. OPM expanding 27–30% range with minimal capex (₹1,000–1,400 Cr)." },
+      { t:"Defence Budget + Export Tailwinds",    d:"Atmanirbhar Bharat + defence budget surge. Exports targeting 10%+ (Vietnam, Armenia, ASEAN). Non-defence diversification (railways, data centres, anti-drone) to 10–15%." },
+    ],
+
+    finData: [
+      { yr:"FY21",  rev:14100, opm:22, opProfit:3102, cfo:3500, pat:2040, capex:600, dep:400, tax:800, fcff:2900, cfoPatPct:172, roce:24, type:"H" },
+      { yr:"FY22",  rev:15300, opm:24, opProfit:3672, cfo:4000, pat:2420, capex:650, dep:420, tax:950, fcff:3350, cfoPatPct:165, roce:26, type:"H" },
+      { yr:"FY23",  rev:17700, opm:25, opProfit:4425, cfo:4800, pat:3020, capex:700, dep:450, tax:1100, fcff:4100, cfoPatPct:159, roce:28, type:"H" },
+      { yr:"FY24",  rev:20200, opm:27, opProfit:5454, cfo:5500, pat:3985, capex:800, dep:500, tax:1400, fcff:4700, cfoPatPct:138, roce:32, type:"H" },
+      { yr:"FY25",  rev:23769, opm:29, opProfit:6893, cfo:6500, pat:5322, capex:900, dep:550, tax:1800, fcff:5600, cfoPatPct:122, roce:38, type:"H" },
+      { yr:"FY26E", rev:27944, opm:28.7,opProfit:8020, cfo:7500, pat:6200, capex:1000,dep:600, tax:2100, fcff:6500, cfoPatPct:121, roce:40, type:"P" },
+      { yr:"FY27E", rev:32431, opm:28.8,opProfit:9340, cfo:8800, pat:7200, capex:1100,dep:650, tax:2500, fcff:7700, cfoPatPct:122, roce:42, type:"P" },
+      { yr:"FY28E", rev:37675, opm:28.8,opProfit:10850,cfo:10500,pat:8500,capex:1200,dep:700, tax:2900, fcff:9300, cfoPatPct:124, roce:44, type:"P" },
+      { yr:"FY29E", rev:44000, opm:29.5,opProfit:12980,cfo:12500,pat:10200,capex:1300,dep:750, tax:3500, fcff:11200,cfoPatPct:123, roce:45, type:"P" },
+      { yr:"FY30E", rev:52000, opm:30,  opProfit:15600,cfo:15000,pat:12500,capex:1400,dep:800, tax:4200, fcff:13600,cfoPatPct:120, roce:46, type:"P" },
+    ],
+
+    segmentKeys: ["defence", "nondef", "export"],
+    segmentLabels: { defence:"Defence (Core)", nondef:"Non-Defence", export:"Exports" },
+    segData: [
+      { yr:"FY21",  defence:13113, nondef:987,  export:0,    total:14100 },
+      { yr:"FY22",  defence:14229, nondef:1071, export:0,    total:15300 },
+      { yr:"FY23",  defence:16461, nondef:1239, export:0,    total:17700 },
+      { yr:"FY24",  defence:18786, nondef:1414, export:0,    total:20200 },
+      { yr:"FY25",  defence:22106, nondef:1664, export:0,    total:23769 },
+      { yr:"FY26E", defence:25987, nondef:1956, export:0,    total:27944 },
+      { yr:"FY27E", defence:30161, nondef:2270, export:0,    total:32431 },
+      { yr:"FY28E", defence:35038, nondef:2637, export:0,    total:37675 },
+      { yr:"FY29E", defence:40920, nondef:3080, export:0,    total:44000 },
+      { yr:"FY30E", defence:48360, nondef:3640, export:0,    total:52000 },
+    ],
+
+    porterKeys: ["defence", "nondef", "export"],
+    porterLabels: { defence:"Defence Platforms", nondef:"Non-Defence", export:"Exports" },
+    porterData: [
+      { force:"New Entrants",  defence:9.5, nondef:7.5, export:8 },
+      { force:"Buyer Power",   defence:6,   nondef:5.5, export:6 },
+      { force:"Supplier Power",defence:5.5, nondef:6,   export:5 },
+      { force:"Substitutes",   defence:8.5, nondef:7,   export:7.5 },
+      { force:"Rivalry",       defence:7,   nondef:6.5, export:6 },
+    ],
+    porterNarrative: [
+      { force:"Threat of New Entrants",     lines:["Defence: VERY LOW — Security clearances, DRDO ToT, 5–10yr qualification lead","Non-Defence: LOW — Established PSU preference in govt tenders","Exports: LOW — Brand + offset policy advantage"] },
+      { force:"Bargaining Power of Buyers", lines:["Defence: MODERATE — Single large buyer (MoD) but long-term contracts + spares","Non-Defence: LOW — Multiple customers (railways, airports)","Exports: MODERATE — Sovereign buyers but offset clauses"] },
+      { force:"Supplier Power",             lines:["All segments: MODERATE — Imported components, but 72–75% indigenisation + in-house semiconductors reducing dependency"] },
+      { force:"Threat of Substitutes",      lines:["Defence: VERY LOW — Specialised tech, no viable alternatives","Non-Defence: LOW — Custom solutions","Exports: LOW — Global competition but offset + quality edge"] },
+      { force:"Competitive Rivalry",        lines:["Defence: MODERATE — Private players (L&T, Tata) in sub-systems only; BEL leads platforms","Non-Defence: MODERATE — Emerging competition","Exports: LOW — BEL gaining share via government-to-government routes"] },
+    ],
+    porterConclusion: "BEL operates in an extremely favourable competitive structure. Regulatory + technological moat in defence electronics is near-impenetrable for the next 10–15 years. Private players remain restricted to sub-systems; BEL is the default platform-level integrator.",
+
+    qualityData: [
+      { param:"Longevity",              score:10,   full:"72 years ÷ 5 = 10 (capped)" },
+      { param:"Predictable CF",         score:9.0,  full:"Avg CFO/PAT ÷ 150" },
+      { param:"ROCE",                   score:9.5,  full:"Avg ROCE ÷ 3.5" },
+      { param:"Revenue Resilience",     score:9.0,  full:"CAGR + down years" },
+      { param:"EPS Stability",          score:8.5,  full:"Volatility calc" },
+      { param:"CFO/PAT",                score:9.0,  full:"Latest ÷ 120" },
+      { param:"Margins",                score:8.5,  full:"Margin + expansion" },
+      { param:"Reinvestment",           score:8.0,  full:"Capex efficiency" },
+      { param:"Balance Sheet Strength", score:10,   full:"(Debt Score + Cash Score) ÷ 2" },
+    ],
+    qualitySummary: {
+      consolidated: "9.1/10",
+      standalone:   "9.1/10",
+      insight:      "Standalone operating metrics reflect true quality (38%+ ROCE, clean cash conversion). Consolidated numbers are clean with zero debt. Regulatory moat and order book visibility make this one of the strongest quality defence franchises in India.",
+    },
+
+    sensitivity: {
+      cmp: 454,
+      peColumns: [
+        { label:"35x (De-rate)", key:"pe35" },
+        { label:"45x (Base)",    key:"pe45" },
+        { label:"55x (Re-rate)", key:"pe55" },
+        { label:"65x (Premium)", key:"pe65" },
+      ],
+      rows: [
+        { label:"Bear ₹18",   pe35:630,  pe45:810,  pe55:990,  pe65:1170 },
+        { label:"Base ₹24",   pe35:840,  pe45:1080, pe55:1320, pe65:1560 },
+        { label:"Bull ₹30",   pe35:1050, pe45:1350, pe55:1650, pe65:1950 },
+      ],
+      scenarios: [
+        { label:"BEAR",      color:"RED",   rev:"₹44,000 Cr", opm:"27%", eps:"₹18",  pe:"35–45x", target:"₹630–810",   desc:"QRSAM delayed. Defence budget growth slows. Execution rate remains 20–22%. Private competition increases in sub-systems." },
+        { label:"BASE CASE", color:"BLUE",  rev:"₹52,000 Cr", opm:"30%", eps:"₹24",  pe:"45–55x", target:"₹1,080–1,320", desc:"16% revenue CAGR. QRSAM + Kusha execution ramps. Indigenisation drives 28–30% OPM. Order book visibility intact." },
+        { label:"BULL",      color:"GREEN", rev:"₹60,000+ Cr",opm:"32%", eps:"₹30",  pe:"55–65x", target:"₹1,650–1,950", desc:"18–20% CAGR. Exports hit 10%+. Full system integration + Akash NG/QRSAM acceleration. Market re-rates defence electronics to global growth multiples." },
+      ],
+      conclusion: "Base Case FY30 Target: ₹800–1,000 (12–18% CAGR from ₹454). Order book + policy tailwinds provide multi-year visibility that is not fully priced in at current 55x TTM P/E.",
+    },
+  },
+
+  // ─────────────────────────────────────────────
+//  BAJFINANCE
+// ─────────────────────────────────────────────
+  "BAJFINANCE": {
+    id:           "BAJFINANCE",
+    name:         "Bajaj Finance Ltd",
+    nse:          "BAJFINANCE",
+    bse:          "500034",
+    indices:      "Nifty 50, Nifty Next 50",
+    sector:       "NBFC / Consumer Finance",
+    rating:       "BUY",
+    description:  "India's leading diversified NBFC with 115.40 MM customer franchise. Dominant in consumer durable, personal loans, mortgages (via BHFL), MSME and rural lending. Strong cross-sell engine + AI-driven underwriting (BFL 3.0 FINAI). AUM ₹4.85 Lakh Cr (adjusted) with 21-22% FY26 guidance post MSME risk tightening. Long-term 23-25% AUM CAGR feasible.",
+
+    metrics: [
+      { label:"CMP",          value:"₹978",         sub:"Mar 2026"                  },
+      { label:"Market Cap",   value:"₹6.09 Lakh Cr",sub:"$72B",      color:"GOLD"     },
+      { label:"Target",       value:"₹1,600–1,800", sub:"13–16% CAGR", color:"GREEN" },
+      { label:"AUM",          value:"₹4.85 Lakh Cr",sub:"Q3 FY26 adj. (+22% YoY)", color:"TEAL" },
+      { label:"Core ROE",     value:"19.6%",        sub:"Q3 FY26 ann.", color:"BLUE" },
+      { label:"Quality",      value:"8.3/10",       sub:"Cross-sell + Data Moat", color:"ORANGE" },
+    ],
+
+    thesis: [
+      { t:"Massive Cross-Sell Flywheel",          d:"115.40 MM customers + 87 MM EMI cards → 40-50% incremental loans from existing base at near-zero CAC. New customer addition 4.76 MM in Q3 alone." },
+      { t:"AI + Data Moat (BFL 3.0 FINAI)",       d:"Proprietary analytics + AI across underwriting, pricing, collections. Superior risk pricing vs peers; enables faster product launches (Gold, Car, MFI verticals)." },
+      { t:"Diversified + Resilient Model",        d:"Mortgages 31.5%, Urban B2C 20.6%, MSME 10.6%, Rural/Commercial/Gold growing fast. Low-cost funding (51% money market + 17% deposits). Capital adequacy 21.45%." },
+      { t:"Long-term Growth Intact Despite Near-term Caution", d:"FY26 AUM guidance 21-22% (MSME tightened, housing competitive). Post-FY26 23-25% CAGR via new verticals + rural recovery. Core ROE 19-21% sustainable." },
+    ],
+
+    finData: [
+      { yr:"FY21",  rev:26683, opm:65, opProfit:17300, cfo:18000, pat:4420,  capex:300, dep:400, tax:1572, fcff:17700, cfoPatPct:407, roce:12, type:"H" },
+      { yr:"FY22",  rev:31648, opm:69, opProfit:21894, cfo:22000, pat:7028,  capex:350, dep:450, tax:2476, fcff:21650, cfoPatPct:313, roce:17, type:"H" },
+      { yr:"FY23",  rev:41418, opm:70, opProfit:28858, cfo:28000, pat:11508, capex:400, dep:500, tax:4020, fcff:27600, cfoPatPct:243, roce:22, type:"H" },
+      { yr:"FY24",  rev:54983, opm:66, opProfit:36258, cfo:32000, pat:14451, capex:450, dep:550, tax:4859, fcff:31550, cfoPatPct:221, roce:21, type:"H" },
+      { yr:"FY25",  rev:69725, opm:64, opProfit:44954, cfo:38000, pat:16779, capex:500, dep:600, tax:5531, fcff:37500, cfoPatPct:226, roce:19, type:"H" },
+      { yr:"FY26E", rev:85000, opm:63, opProfit:53550, cfo:45000, pat:20500, capex:550, dep:650, tax:6800, fcff:44450, cfoPatPct:220, roce:20, type:"P" },
+      { yr:"FY27E", rev:104000,opm:63, opProfit:65520, cfo:55000, pat:25500, capex:600, dep:700, tax:8500, fcff:54400, cfoPatPct:216, roce:21, type:"P" },
+      { yr:"FY28E", rev:127000,opm:63, opProfit:80010, cfo:67000, pat:31500, capex:650, dep:750, tax:10500,fcff:66350, cfoPatPct:213, roce:21, type:"P" },
+      { yr:"FY29E", rev:155000,opm:63, opProfit:97650, cfo:82000, pat:38500, capex:700, dep:800, tax:12800,fcff:81200, cfoPatPct:213, roce:21, type:"P" },
+      { yr:"FY30E", rev:190000,opm:63, opProfit:119700,cfo:100000,pat:47000,capex:750, dep:850, tax:15600,fcff:99250, cfoPatPct:213, roce:21, type:"P" },
+    ],
+
+    segmentKeys: ["mortgage", "urbanB2C", "msme", "ruralOther", "salesFinance"],
+    segmentLabels: { mortgage:"Mortgages (incl BHFL)", urbanB2C:"Urban B2C Loans", msme:"MSME Lending", ruralOther:"Rural + Gold + Others", salesFinance:"Sales Finance" },
+    segData: [
+      { yr:"FY25", mortgage:152747, urbanB2C:99878, msme:51136, ruralOther:60000, salesFinance:35000, total:416661 },
+      { yr:"FY26E",mortgage:190000, urbanB2C:125000, msme:57000, ruralOther:75000, salesFinance:43000, total:490000 },
+      { yr:"FY27E",mortgage:235000, urbanB2C:155000, msme:65000, ruralOther:93000, salesFinance:52000, total:600000 },
+      { yr:"FY28E",mortgage:290000, urbanB2C:190000, msme:75000, ruralOther:115000,salesFinance:63000, total:733000 },
+      { yr:"FY29E",mortgage:355000, urbanB2C:235000, msme:85000, ruralOther:140000,salesFinance:75000, total:890000 },
+      { yr:"FY30E",mortgage:435000, urbanB2C:290000, msme:98000, ruralOther:170000,salesFinance:90000, total:1083000 },
+    ],
+
+    porterKeys: ["consumer", "mortgage", "msme"],
+    porterLabels: { consumer:"Consumer Lending", mortgage:"Mortgages", msme:"MSME" },
+    porterData: [
+      { force:"New Entrants",  consumer:8.5, mortgage:7.5, msme:8 },
+      { force:"Buyer Power",   consumer:6,   mortgage:7,   msme:6.5 },
+      { force:"Supplier Power",consumer:5,   mortgage:5.5, msme:5 },
+      { force:"Substitutes",   consumer:7,   mortgage:8,   msme:7 },
+      { force:"Rivalry",       consumer:7.5, mortgage:8,   msme:7 },
+    ],
+    porterNarrative: [
+      { force:"Threat of New Entrants",     lines:["Consumer: LOW — Brand + 115 MM franchise + data moat","Mortgage: MODERATE — BHFL scale + competition","MSME: LOW — Tightened underwriting edge"] },
+      { force:"Bargaining Power of Buyers", lines:["All segments: LOW-MOD — Mass-affluent focus + cross-sell stickiness"] },
+      { force:"Supplier Power",             lines:["All segments: VERY LOW — Diverse funding (51% money market + deposits)"] },
+      { force:"Threat of Substitutes",      lines:["Consumer: MOD — Banks/digital lenders","Mortgage: HIGH — Banks/HFCs","MSME: MOD — Fintechs"] },
+      { force:"Competitive Rivalry",        lines:["Consumer: MODERATE — Bajaj differentiated by cross-sell","Mortgage: HIGH — Competition but BHFL gaining share","MSME: MODERATE — Risk actions taken"] },
+    ],
+    porterConclusion: "Bajaj Finance operates in a highly favourable structure. Cross-sell + proprietary data + AI create sustainable moat in consumer lending. Mortgage/MSME competitive but disciplined risk management and funding advantage protect margins.",
+
+    qualityData: [
+      { param:"Longevity",              score:7.0,  full:"35 years ÷ 5 = 7.0" },
+      { param:"Predictable CF",         score:8.5,  full:"Avg CFO/PAT ÷ 150" },
+      { param:"ROCE",                   score:9.0,  full:"Avg ROCE ÷ 3.5" },
+      { param:"Revenue Resilience",     score:9.0,  full:"CAGR + down years" },
+      { param:"EPS Stability",          score:8.0,  full:"Volatility calc" },
+      { param:"CFO/PAT",                score:9.0,  full:"Latest ÷ 120" },
+      { param:"Margins",                score:8.5,  full:"Margin + expansion" },
+      { param:"Reinvestment",           score:8.0,  full:"Capex efficiency" },
+      { param:"Balance Sheet Strength", score:3.4,  full:"(Debt Score + Cash Score) ÷ 2" },
+    ],
+    qualitySummary: {
+      consolidated: "7.8/10",
+      standalone:   "7.8/10",
+      insight:      "Core operating quality exceptional (19.6% ROE, clean asset quality post MSME tightening). Recent guidance cut reflects prudence, not weakness. Cross-sell + AI moat + diversified funding = durable 20%+ ROE franchise.",
+    },
+
+    sensitivity: {
+      cmp: 978,
+      peColumns: [
+        { label:"25x (De-rate)", key:"pe25" },
+        { label:"30x (Base)",    key:"pe30" },
+        { label:"35x (Re-rate)", key:"pe35" },
+        { label:"40x (Premium)", key:"pe40" },
+      ],
+      rows: [
+        { label:"Bear ₹45",   pe25:1125, pe30:1350, pe35:1575, pe40:1800 },
+        { label:"Base ₹61",   pe25:1525, pe30:1830, pe35:2135, pe40:2440 },
+        { label:"Bull ₹75",   pe25:1875, pe30:2250, pe35:2625, pe40:3000 },
+      ],
+      scenarios: [
+        { label:"BEAR",      color:"RED",   rev:"₹1.55 Lakh Cr", opm:"61%", eps:"₹45",  pe:"25–30x", target:"₹1,125–1,350", desc:"MSME/housing stress persists. AUM CAGR slows to 18%. Credit cost spikes to 2%+. Market de-rates NBFCs." },
+        { label:"BASE CASE", color:"BLUE",  rev:"₹1.90 Lakh Cr", opm:"63%", eps:"₹61",  pe:"30–35x", target:"₹1,830–2,135", desc:"22% AUM CAGR. New verticals (Gold/Car/MFI) scale. Opex leverage + stable NIM. Reasonable 30-35x multiple." },
+        { label:"BULL",      color:"GREEN", rev:"₹2.30 Lakh Cr", opm:"64%", eps:"₹75",  pe:"35–40x", target:"₹2,625–3,000", desc:"25% AUM CAGR. Rural + cross-sell fires. AI drives further opex gains. Re-rating to global fintech multiples." },
+      ],
+      conclusion: "Base Case FY30 Target: ₹1,600–1,800 (13–16% CAGR from ₹978). 30x FY30 EPS on ₹61 (22% AUM CAGR + 20% ROE). Orderly MSME tightening + new verticals provide multi-year visibility not fully priced at current 33x TTM.",
+    },
+  },
+
+
+  // ─────────────────────────────────────────────
+//  TVSMOTOR
+// ─────────────────────────────────────────────
+  "TVSMOTOR": {
+    id:           "TVSMOTOR",
+    name:         "TVS Motor Company Ltd",
+    nse:          "TVSMOTOR",
+    bse:          "532343",
+    indices:      "Nifty 50, Nifty Next 50",
+    sector:       "Automobiles / Two & Three Wheelers",
+    rating:       "BUY",
+    description:  "India's third-largest two-wheeler manufacturer (20% market share in 10M FY26) with leadership in premium ICE (Apache, Raider, Ntorq), electric scooters (iQube + Orbiter at 23% EV share — higher than its ICE share), and emerging 3W EV (King EV). Record exports (Feb'26 high of 1.58 lakh units) and only legacy player gaining share in both ICE & EV segments. Strong premiumisation + EV transition + Norton pipeline (6 new bikes 2026-28).",
+
+    metrics: [
+      { label:"CMP",          value:"₹3,813",       sub:"Mar 2026"                  },
+      { label:"Market Cap",   value:"₹1.82 Lakh Cr",sub:"$21.7B",    color:"GOLD"     },
+      { label:"Target",       value:"₹5,800–7,000", sub:"16–20% CAGR", color:"GREEN" },
+      { label:"EBITDA Margin",value:"13.1%",        sub:"Q3 FY26 (+120 bps)", color:"TEAL" },
+      { label:"EV Share",     value:"23%",          sub:"9M FY26 (EV > ICE)", color:"BLUE" },
+      { label:"Quality",      value:"8.8/10",       sub:"Premium + EV + Export Moat", color:"ORANGE" },
+    ],
+
+    thesis: [
+      { t:"Premiumisation + EV Leadership Flywheel", d:"Only legacy OEM gaining market share in both ICE (20% overall) and EV (23% — now > its ICE share). Orbiter + iQube ramp + Apache RTX300 + Ntorq 150 driving mix shift and 120 bps margin expansion in Q3 FY26." },
+      { t:"Record Export Scale & Diversification",   d:"Feb'26 exports hit all-time high 1.58 lakh units (+27% YoY). Africa + LATAM focus; exports now ~24% of revenue with 21% CAGR expected. 3W EV (King EV) capturing share in L5 category (30–32% penetration)." },
+      { t:"Margin & Operating Leverage Levers",      d:"EBITDA margin at 13.1% in Q3 FY26 (+120 bps) via premium mix, PLI benefits, cost control and EV scale. FY25-28E consensus: 21%/26%/29% revenue/EBITDA/PAT CAGR. Norton premium launch pipeline 2026-28 adds high-margin upside." },
+      { t:"Market Share Gains in Transition",        d:"Gained 2% overall 2W share in 10M FY26 (18% → 20%). EV market share 23% in 9M FY26. Strong rural + premium recovery + new launches position TVS ahead of Hero/Bajaj in EV shift." },
+    ],
+
+    finData: [
+      { yr:"FY21",  rev:18700, opm:9.5, opProfit:1777, cfo:2200, pat:800,  capex:600, dep:700, tax:300, fcff:1600, cfoPatPct:275, roce:15, type:"H" },
+      { yr:"FY22",  rev:21200, opm:10.5,opProfit:2226, cfo:2800, pat:1100, capex:700, dep:750, tax:400, fcff:2100, cfoPatPct:255, roce:18, type:"H" },
+      { yr:"FY23",  rev:24700, opm:11.0,opProfit:2717, cfo:3200, pat:1400, capex:800, dep:800, tax:500, fcff:2400, cfoPatPct:229, roce:20, type:"H" },
+      { yr:"FY24",  rev:31776, opm:11.1,opProfit:3527, cfo:3800, pat:2083, capex:900, dep:850, tax:700, fcff:2900, cfoPatPct:182, roce:22, type:"H" },
+      { yr:"FY25",  rev:36251, opm:12.3,opProfit:4459, cfo:4500, pat:2711, capex:1000,dep:900, tax:900, fcff:3500, cfoPatPct:166, roce:24, type:"H" },
+      { yr:"FY26E", rev:44000, opm:13.5,opProfit:5940, cfo:5500, pat:3400, capex:1100,dep:950, tax:1100,fcff:4400, cfoPatPct:162, roce:26, type:"P" },
+      { yr:"FY27E", rev:53000, opm:14.0,opProfit:7420, cfo:6700, pat:4300, capex:1200,dep:1000, tax:1400,fcff:5500, cfoPatPct:156, roce:27, type:"P" },
+      { yr:"FY28E", rev:64000, opm:14.3,opProfit:9152, cfo:8200, pat:5400, capex:1300,dep:1050, tax:1750,fcff:6900, cfoPatPct:152, roce:28, type:"P" },
+      { yr:"FY29E", rev:76000, opm:14.5,opProfit:11020,cfo:9800, pat:6700, capex:1400,dep:1100, tax:2150,fcff:8400, cfoPatPct:146, roce:29, type:"P" },
+      { yr:"FY30E", rev:90000, opm:14.8,opProfit:13320,cfo:11800,pat:8500, capex:1500,dep:1150, tax:2700,fcff:10300,cfoPatPct:139, roce:30, type:"P" },
+    ],
+
+    segmentKeys: ["domestic2w", "exports", "ev", "threeW"],
+    segmentLabels: { domestic2w:"Domestic 2W (ICE)", exports:"Exports", ev:"Electric Vehicles", threeW:"3W (incl EV)" },
+    segData: [
+      { yr:"FY25", domestic2w:24000, exports:8700, ev:2500, threeW:1051, total:36251 },
+      { yr:"FY26E",domestic2w:28500, exports:11000,ev:3500, threeW:1000, total:44000 },
+      { yr:"FY27E",domestic2w:34000, exports:13500,ev:4500, threeW:1000, total:53000 },
+      { yr:"FY28E",domestic2w:41000, exports:16500,ev:5500, threeW:1000, total:64000 },
+      { yr:"FY29E",domestic2w:48500, exports:20000,ev:6500, threeW:1000, total:76000 },
+      { yr:"FY30E",domestic2w:57000, exports:24000,ev:8000, threeW:1000, total:90000 },
+    ],
+
+    porterKeys: ["iceScooter", "premiumBike", "evScooter", "export"],
+    porterLabels: { iceScooter:"ICE Scooters", premiumBike:"Premium Motorcycles", evScooter:"EV Scooters", export:"Exports" },
+    porterData: [
+      { force:"New Entrants",  iceScooter:8, premiumBike:9, evScooter:8.5, export:8 },
+      { force:"Buyer Power",   iceScooter:6, premiumBike:5.5,evScooter:6,   export:6 },
+      { force:"Supplier Power",iceScooter:5, premiumBike:5,  evScooter:5.5, export:5 },
+      { force:"Substitutes",   iceScooter:7, premiumBike:6,  evScooter:7.5, export:6.5 },
+      { force:"Rivalry",       iceScooter:7.5,premiumBike:6.5,evScooter:7,   export:7 },
+    ],
+    porterNarrative: [
+      { force:"Threat of New Entrants",     lines:["ICE Scooters: LOW — Brand + distribution","Premium Bike: VERY LOW — Apache/Norton tech edge","EV Scooters: LOW — iQube/Orbiter scale + PLI","Exports: LOW — Africa/LATAM relationships"] },
+      { force:"Bargaining Power of Buyers", lines:["All segments: LOW-MOD — Premium + connected features + service network lock-in"] },
+      { force:"Supplier Power",             lines:["All segments: VERY LOW — In-house R&D + backward integration"] },
+      { force:"Threat of Substitutes",      lines:["ICE: MOD — Public transport","Premium: LOW — Lifestyle appeal","EV: LOW — Policy push","Exports: MOD — Local competition"] },
+      { force:"Competitive Rivalry",        lines:["ICE Scooter: MODERATE — Hero/Honda","Premium Bike: LOW — Bajaj/RE","EV Scooter: MODERATE — Bajaj/Ather but TVS leading legacy","Exports: MODERATE — Bajaj but TVS gaining"] },
+    ],
+    porterConclusion: "TVS operates in an extremely favourable structure. Premium + EV + export moat is widening. Only legacy player gaining share in both ICE and EV (23% EV share). Norton pipeline and 3W EV entry create multi-year high-margin growth runway.",
+
+    qualityData: [
+      { param:"Longevity",              score:10,   full:"65 years ÷ 5 = 10 (capped)" },
+      { param:"Predictable CF",         score:9.0,  full:"Avg CFO/PAT ÷ 150" },
+      { param:"ROCE",                   score:9.0,  full:"Avg ROCE ÷ 3.5" },
+      { param:"Revenue Resilience",     score:9.5,  full:"CAGR + down years" },
+      { param:"EPS Stability",          score:9.0,  full:"Volatility calc" },
+      { param:"CFO/PAT",                score:9.0,  full:"Latest ÷ 120" },
+      { param:"Margins",                score:9.0,  full:"Margin + expansion" },
+      { param:"Reinvestment",           score:8.5,  full:"Capex efficiency" },
+      { param:"Balance Sheet Strength", score:5.5,  full:"(Debt Score + Cash Score) ÷ 2" },
+    ],
+    qualitySummary: {
+      consolidated: "8.7/10",
+      standalone:   "8.7/10",
+      insight:      "Core quality exceptional — only OEM gaining share in ICE + EV transition, record EBITDA margin 13.1%, export scale, and premium/Norton pipeline. FY25-28E 21%/26%/29% CAGR confirms durable 25%+ ROCE franchise.",
+    },
+
+    sensitivity: {
+      cmp: 3813,
+      peColumns: [
+        { label:"30x (De-rate)", key:"pe30" },
+        { label:"35x (Base)",    key:"pe35" },
+        { label:"40x (Re-rate)", key:"pe40" },
+        { label:"45x (Premium)", key:"pe45" },
+      ],
+      rows: [
+        { label:"Bear ₹160",  pe30:4800, pe35:5600, pe40:6400, pe45:7200 },
+        { label:"Base ₹240",  pe30:7200, pe35:8400, pe40:9600, pe45:10800 },
+        { label:"Bull ₹300",  pe30:9000, pe35:10500,pe40:12000,pe45:13500 },
+      ],
+      scenarios: [
+        { label:"BEAR",      color:"RED",   rev:"₹70,000 Cr", opm:"13%", eps:"₹160", pe:"30–35x", target:"₹4,800–5,600", desc:"EV slowdown + rural weakness. Market share gains stall. Margin expansion caps at 13%." },
+        { label:"BASE CASE", color:"BLUE",  rev:"₹90,000 Cr", opm:"14.8%",eps:"₹240", pe:"35–40x", target:"₹8,400–9,600", desc:"19% revenue CAGR. EV 25%+ share + Norton ramp. Premium mix drives 14.8% EBITDA. 35–40x justified." },
+        { label:"BULL",      color:"GREEN", rev:"₹1,05,000 Cr",opm:"15.5%",eps:"₹300", pe:"40–45x", target:"₹12,000–13,500", desc:"22% CAGR. Exports 30%+ revenue + 30% EV share. Norton premium + 3W EV fires. Re-rating to global EV/auto multiples." },
+      ],
+      conclusion: "Base Case FY30 Target: ₹5,800–7,000 (16–20% CAGR from ₹3,813). 35–38x FY30 EPS on ₹240 (19% revenue CAGR + 14.8% EBITDA + 30% ROCE). Market share gains, EV leadership, and Norton pipeline provide multi-year visibility not fully priced at current levels.",
+    },
+  },
+
+
+    // ─────────────────────────────────────────────
+  //  V2RETAIL (Updated Pure-Maths 9-Parameter)
+  // ─────────────────────────────────────────────
+  "V2RETAIL": {
+    id:           "V2RETAIL",
+    name:         "V2 Retail Ltd",
+    nse:          "V2RETAIL",
+    bse:          "532867",
+    indices:      "Nifty Smallcap 100",
+    sector:       "Retail / Value Fashion Apparel",
+    rating:       "BUY",
+    description:  "Fastest-growing value fashion retailer focused on Tier-II/III cities targeting neo-middle & middle-class customers. Operates 294 stores (31.9 lakh sq ft) as of Dec 2025 with aggressive expansion (105 new stores in 9M FY26; +150 guided for FY27). Q3 FY26 blockbuster: Revenue ₹929 Cr (+57% YoY), PAT ₹102 Cr (+99% YoY) on festive demand, full-price sales 92%, operating leverage (margin 18.7%). 8-10% SSSG guidance + 50%+ revenue growth ambition via store additions and improved productivity.",
+
+    metrics: [
+      { label:"CMP",          value:"₹1,940",       sub:"Mar 2026"                  },
+      { label:"Market Cap",   value:"₹7,100 Cr",    sub:"$845M",     color:"GOLD"     },
+      { label:"Target",       value:"₹4,200–5,200", sub:"17–22% CAGR", color:"GREEN" },
+      { label:"Store Count",  value:"294 (+105 in 9M)", sub:"Dec 2025; +150 FY27", color:"TEAL" },
+      { label:"EBITDA Margin",value:"18.7%",        sub:"Q3 FY26 (pre-IndAS)", color:"BLUE" },
+      { label:"Quality",      value:"7.7/10",       sub:"Pure Maths Score", color:"ORANGE" },
+    ],
+
+    thesis: [
+      { t:"Aggressive Store-Led Growth Engine",   d:"105 new stores added in 9M FY26 (total 294). Pipeline robust; guidance for 150 more in FY27 (end-FY26 ~325 stores). QIP proceeds deployed for warehousing + network. Mature stores productivity rising sharply." },
+      { t:"Strong Operating Leverage + Margin Expansion", d:"Q3 FY26 operating margin 18.7% (highest ever). Full-price sales 92%, gross margin trajectory to 28-29%. Volume growth 48% in Q3 on festive + better inventory management. Normalised SSSG 12.8% (Q3) / 8.6% (9M)." },
+      { t:"Tier-II/III Value Fashion Moat",       d:"Neo-middle class focus + apparel dominance. Minimal discounting, strong same-store momentum. Only organised player scaling rapidly in under-penetrated markets vs fragmented unorganised + big-box competition." },
+      { t:"Turnaround Execution + FY27 50%+ Revenue Guidance", d:"From near-losses in FY23 to record PAT ₹102 Cr in Q3 FY26. Management confident on 8-10% SSSG + 50% revenue growth FY27 via store additions and productivity." },
+    ],
+
+    finData: [
+      { yr:"FY23",  rev:839,  opm:10, opProfit:85,  cfo:50,  pat:-13, capex:80, dep:90, tax:0,   fcff:-30, cfoPatPct:null, roce:4,  type:"H" },
+      { yr:"FY24",  rev:1165, opm:13, opProfit:149, cfo:120, pat:28,  capex:100,dep:100, tax:10, fcff:20,  cfoPatPct:429, roce:11, type:"H" },
+      { yr:"FY25",  rev:1884, opm:14, opProfit:260, cfo:223, pat:72,  capex:131,dep:110, tax:25, fcff:92,  cfoPatPct:310, roce:17, type:"H" },
+      { yr:"FY26E", rev:3200, opm:15, opProfit:480, cfo:350, pat:180, capex:200,dep:120, tax:60, fcff:150, cfoPatPct:194, roce:19, type:"P" },
+      { yr:"FY27E", rev:4800, opm:16, opProfit:768, cfo:520, pat:320, capex:250,dep:130, tax:105,fcff:270, cfoPatPct:163, roce:22, type:"P" },
+      { yr:"FY28E", rev:6500, opm:16.5,opProfit:1073,cfo:700, pat:480, capex:280,dep:140, tax:160,fcff:420, cfoPatPct:146, roce:24, type:"P" },
+      { yr:"FY29E", rev:8500, opm:17, opProfit:1445,cfo:920, pat:680, capex:300,dep:150, tax:225,fcff:620, cfoPatPct:135, roce:25, type:"P" },
+      { yr:"FY30E", rev:11000,opm:17.5,opProfit:1925,cfo:1200,pat:950, capex:320,dep:160, tax:315,fcff:880, cfoPatPct:126, roce:26, type:"P" },
+    ],
+
+    segmentKeys: ["apparel", "nonApparel", "others"],
+    segmentLabels: { apparel:"Apparel (Core)", nonApparel:"Non-Apparel", others:"Others" },
+    segData: [
+      { yr:"FY25",  apparel:1500, nonApparel:300, others:84,  total:1884 },
+      { yr:"FY26E", apparel:2550, nonApparel:500, others:150, total:3200 },
+      { yr:"FY27E", apparel:3800, nonApparel:700, others:300, total:4800 },
+      { yr:"FY28E", apparel:5100, nonApparel:950, others:450, total:6500 },
+      { yr:"FY29E", apparel:6600, nonApparel:1300,others:600, total:8500 },
+      { yr:"FY30E", apparel:8500, nonApparel:1700,others:800, total:11000 },
+    ],
+
+    porterKeys: ["tier23Value", "organisedApparel", "ecom"],
+    porterLabels: { tier23Value:"Tier-II/III Value Retail", organisedApparel:"Organised Apparel", ecom:"E-commerce" },
+    porterData: [
+      { force:"New Entrants",  tier23Value:8.5, organisedApparel:7, ecom:6 },
+      { force:"Buyer Power",   tier23Value:6,   organisedApparel:6.5, ecom:7 },
+      { force:"Supplier Power",tier23Value:5,   organisedApparel:5.5, ecom:5 },
+      { force:"Substitutes",   tier23Value:7,   organisedApparel:7.5, ecom:8 },
+      { force:"Rivalry",       tier23Value:7,   organisedApparel:8,   ecom:8.5 },
+    ],
+    porterNarrative: [
+      { force:"Threat of New Entrants",     lines:["Tier-II/III Value: LOW — Real-estate + supply chain + local understanding moat","Organised Apparel: MODERATE — Capital intensive","E-com: HIGH — Low barriers"] },
+      { force:"Bargaining Power of Buyers", lines:["All segments: MOD — Price-sensitive but brand + full-price mix (92%) building stickiness"] },
+      { force:"Supplier Power",             lines:["All segments: LOW — Direct sourcing + scale improving bargaining"] },
+      { force:"Threat of Substitutes",      lines:["Tier-II/III: MOD — Unorganised + local kiranas","Organised: MOD — Big-box players","E-com: HIGH — Flipkart/Amazon penetration"] },
+      { force:"Competitive Rivalry",        lines:["Tier-II/III Value: MODERATE — Fragmented unorganised but organised gaining","Organised Apparel: HIGH — Reliance Trends, Aditya Birla","E-com: VERY HIGH — Pure-play competition"] },
+    ],
+    porterConclusion: "V2 Retail enjoys a favourable position in under-penetrated Tier-II/III value fashion. Rapid store rollout + operating leverage + reduced discounting create widening moat vs unorganised players. Competition from organised big-box and e-com exists but execution edge in smaller cities + full-price focus differentiates.",
+
+    qualityData: [
+      { param:"Longevity",              score:5.0,  full:"25 years ÷ 5 = 5.0" },
+      { param:"Predictable CF",         score:10,   full:"Avg CFO/PAT ÷ 150" },
+      { param:"ROCE",                   score:4.9,  full:"17% ÷ 3.5" },
+      { param:"Revenue Resilience",     score:9.5,  full:"CAGR + down years" },
+      { param:"EPS Stability",          score:7.0,  full:"Volatility calc" },
+      { param:"CFO/PAT",                score:10,   full:"Latest ÷ 120" },
+      { param:"Margins",                score:8.5,  full:"Margin + expansion" },
+      { param:"Reinvestment",           score:8.0,  full:"Capex efficiency" },
+      { param:"Balance Sheet Strength", score:3.0,  full:"(Debt Score + Cash Score) ÷ 2" },
+    ],
+    qualitySummary: {
+      consolidated: "7.7/10",
+      standalone:   "7.7/10",
+      insight:      "Pure maths score. Longevity capped at 5.0 (25 years). Balance sheet moderate due to debt. Strong cash conversion and resilience pull it up.",
+    },
+
+    sensitivity: {
+      cmp: 1940,
+      peColumns: [
+        { label:"35x (De-rate)", key:"pe35" },
+        { label:"45x (Base)",    key:"pe45" },
+        { label:"55x (Re-rate)", key:"pe55" },
+        { label:"65x (Premium)", key:"pe65" },
+      ],
+      rows: [
+        { label:"Bear ₹65",   pe35:2275, pe45:2925, pe55:3575, pe65:4225 },
+        { label:"Base ₹95",   pe35:3325, pe45:4275, pe55:5225, pe65:6175 },
+        { label:"Bull ₹125",  pe35:4375, pe45:5625, pe55:6875, pe65:8125 },
+      ],
+      scenarios: [
+        { label:"BEAR",      color:"RED",   rev:"₹7,500 Cr", opm:"15%", eps:"₹65",  pe:"35–45x", target:"₹2,275–2,925", desc:"SSSG slows to 5%. Store addition delays. Margin pressure from competition + discounting. Debt servicing strains." },
+        { label:"BASE CASE", color:"BLUE",  rev:"₹11,000 Cr",opm:"17.5%",eps:"₹95", pe:"45–55x", target:"₹4,275–5,225", desc:"8-10% SSSG + 150 stores/year. Operating leverage sustains. Gross margin 28-29%. Reasonable premium for growth." },
+        { label:"BULL",      color:"GREEN", rev:"₹14,000 Cr",opm:"18.5%",eps:"₹125", pe:"55–65x", target:"₹6,875–8,125", desc:"12%+ SSSG + faster rollout to 500+ stores. Market share gains in Tier-II/III. Re-rating on consistent execution." },
+      ],
+      conclusion: "Base Case FY30 Target: ₹4,200–5,200 (17–22% CAGR from ₹1,940). 45-55x FY30 EPS on ₹95 (store-led 25%+ revenue CAGR + 17.5% EBITDA + rising ROCE). Aggressive expansion + SSSG momentum + operating leverage provide multi-year visibility in under-penetrated value retail segment.",
+    },
+  },
+
+
+    };
+
+
+
   
   
   // ─────────────────────────────────────────────────────────────────────────────
@@ -624,9 +1072,17 @@ export const STOCKS = {
   //  Add one line per stock. Route path + which DB key to use.
   // ─────────────────────────────────────────────────────────────────────────────
   export const STOCK_ROUTES = [
+    { path: "/bajfinance",    stockId: "BAJFINANCE"  },
+    { path: "/bel",           stockId: "BEL"  },
+    { path: "/tvs-motor",     stockId: "TVSMOTOR"    },
+    { path: "/v2-retails",     stockId: "V2RETAIL"    },
     { path: "/info-edge",     stockId: "NAUKRI"    },
     { path: "/eicher-motors", stockId: "EICHERMOT" },
     { path: "/igil",          stockId: "IGIL"      },
     { path: "/mcx",           stockId: "MCX"       },
-  { path: "/yatharth",      stockId: "YATHARTH"  },
+    { path: "/yatharth",      stockId: "YATHARTH"  },
+    
+
+    
+
   ];
