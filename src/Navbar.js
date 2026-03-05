@@ -42,17 +42,13 @@ const QUANT_SUB_LINKS = [
   { label:"Size",     icon:"📐", path:"/size",     live:true  },
   { label:"Quality",  icon:"🔬", path:"/quant",    live:false },
   { label:"Growth",   icon:"📈", path:"/quant",    live:false },
-  { label:"Portfolio", icon:"🗂️", path:"/portfolio", live:true  },
 ];
 
-const PAGE_NAV_LINKS = [
-  { label:"Home",                  path:"/"                   },
-  { label:"Research Universe",     path:"/research-universe"  },
-  { label:"Quant",               path:"/quant"              },
-  { label:"Macro Dashboard",       path:"/macro"              },
-  { label:"Investment Philosophy", path:"/philosophy"         },
-  { label:"About Us",              path:"/about"              },
-  { label:"Terms & Conditions",    path:"/terms"              },
+
+const ABOUT_SUB_LINKS = [
+  { label:"About Us",              icon:"👥", path:"/about"       },
+  { label:"Investment Philosophy", icon:"📖", path:"/philosophy"  },
+  { label:"Terms & Conditions",    icon:"📋", path:"/terms"       },
 ];
 
 // Mobile quick-nav destinations — Home, Stocks, Momentum, Macro, Discover
@@ -63,6 +59,7 @@ const MOBILE_QUICK_NAV = [
   { label:"Quant",     icon:"π",  path:"/quant",            active:true,  highlight:true  },
   { label:"Macro",     icon:"📊", path:"/macro",             active:true,  highlight:false },
   { label:"Discover",  icon:"⚡", path:"/discover",          active:true,  highlight:true  },
+  { label:"Portfolio", icon:"🗂️", path:"/portfolio",         active:true,  highlight:false },
 ];
 
 export default function Navbar() {
@@ -92,9 +89,12 @@ export default function Navbar() {
   const [mobileStocksOpen,  setMobileStocksOpen]   = useState(false);
   const [quantOpen,        setQuantOpen]        = useState(false);
   const [mobileQuantOpen,  setMobileQuantOpen]  = useState(false);
+  const [aboutOpen,        setAboutOpen]        = useState(false);
+  const [mobileAboutOpen,  setMobileAboutOpen]  = useState(false);
   const stocksRef  = useRef(null);
   const menuRef    = useRef(null);
   const quantRef   = useRef(null);
+  const aboutRef   = useRef(null);
   const searchRef      = useRef(null);
   const inputRef       = useRef(null);
   const mobileInputRef = useRef(null);
@@ -125,6 +125,12 @@ export default function Navbar() {
     document.addEventListener("mousedown", fn);
     return () => document.removeEventListener("mousedown", fn);
   }, [quantOpen]);
+  useEffect(() => {
+    if (!aboutOpen) return;
+    const fn = e => { if (aboutRef.current && !aboutRef.current.contains(e.target)) setAboutOpen(false); };
+    document.addEventListener("mousedown", fn);
+    return () => document.removeEventListener("mousedown", fn);
+  }, [aboutOpen]);
   useEffect(() => {
     if (!menuOpen) return;
     const fn = e => { if (menuRef.current && !menuRef.current.contains(e.target)) setMenuOpen(false); };
@@ -464,17 +470,21 @@ export default function Navbar() {
 
         {/* ── SECONDARY RIBBON (desktop only) ── */}
         <div className="ribbon-links" style={{ borderTop:`1px solid rgba(212,160,23,0.08)`, padding:"0 24px", height:38, display:"flex", alignItems:"center", justifyContent:"center", gap:32, overflowX:"visible", background:"transparent", position:"relative", zIndex:200000 }}>
-          {PAGE_NAV_LINKS.filter(l => l.label !== "Quant").map(l => (
-            <Link key={l.label} to={l.path} className="nav-link" style={{ color:textCol }}>
-              {l.label}
-            </Link>
-          ))}
 
-          {/* ── Quant dropdown ── */}
+          {/* Home */}
+          <Link to="/" className="nav-link" style={{ color:textCol }}>Home</Link>
+
+          {/* Research Universe */}
+          <Link to="/research-universe" className="nav-link" style={{ color:textCol }}>Research Universe</Link>
+
+          {/* Portfolio Simulator */}
+          <Link to="/portfolio" className="nav-link" style={{ color:textCol }}>Portfolio Simulator</Link>
+
+          {/* Quant dropdown */}
           <div ref={quantRef} style={{ position:"relative" }}>
             <button onClick={() => setQuantOpen(o => !o)} className="nav-link"
               style={{ background:"none", border:"none", cursor:"pointer", color: quantOpen ? GOLD : textCol, display:"flex", alignItems:"center", gap:4, fontFamily:"inherit", fontSize:"inherit", fontWeight:"inherit", padding:0 }}>
-              Quant
+              Quant Hub
               <span style={{ fontSize:9, transition:"transform .2s", display:"inline-block", transform: quantOpen ? "rotate(180deg)" : "rotate(0deg)", marginLeft:2 }}>▼</span>
             </button>
             {quantOpen && (
@@ -500,13 +510,35 @@ export default function Navbar() {
             )}
           </div>
 
+          {/* Macro */}
+          <Link to="/macro" className="nav-link" style={{ color:textCol }}>Macro</Link>
+
+          {/* About Us dropdown */}
+          <div ref={aboutRef} style={{ position:"relative" }}>
+            <button onClick={() => setAboutOpen(o => !o)} className="nav-link"
+              style={{ background:"none", border:"none", cursor:"pointer", color: aboutOpen ? GOLD : textCol, display:"flex", alignItems:"center", gap:4, fontFamily:"inherit", fontSize:"inherit", fontWeight:"inherit", padding:0 }}>
+              About Us
+              <span style={{ fontSize:9, transition:"transform .2s", display:"inline-block", transform: aboutOpen ? "rotate(180deg)" : "rotate(0deg)", marginLeft:2 }}>▼</span>
+            </button>
+            {aboutOpen && (
+              <div style={{ position:"absolute", top:"calc(100% + 10px)", left:0, minWidth:200, background: isDark ? "rgba(6,14,26,0.98)" : "rgba(238,233,222,0.98)", border:`1px solid rgba(212,160,23,0.18)`, borderRadius:10, boxShadow:"0 8px 32px rgba(0,0,0,0.4)", backdropFilter:"blur(12px)", overflow:"hidden", zIndex:99999 }}>
+                {ABOUT_SUB_LINKS.map(a => (
+                  <Link key={a.label} to={a.path} onClick={() => setAboutOpen(false)}
+                    style={{ display:"flex", alignItems:"center", gap:10, padding:"10px 16px", borderBottom:`1px solid rgba(255,255,255,0.04)`, textDecoration:"none", background:"transparent" }}
+                    onMouseEnter={e => e.currentTarget.style.background="rgba(212,160,23,0.07)"}
+                    onMouseLeave={e => e.currentTarget.style.background="transparent"}>
+                    <span style={{ fontSize:13 }}>{a.icon}</span>
+                    <span style={{ fontSize:11, fontWeight:700, color: isDark ? "#c8dae8" : "#1a2e42" }}>{a.label}</span>
+                  </Link>
+                ))}
+              </div>
+            )}
+          </div>
+
           {/* All Stocks dropdown */}
           <div ref={stocksRef} style={{ position:"relative" }}>
-            <button
-              onClick={() => setStocksOpen(o => !o)}
-              className="nav-link"
-              style={{ background:"none", border:"none", cursor:"pointer", color:stocksOpen ? GOLD : textCol, display:"flex", alignItems:"center", gap:5, padding:0, fontFamily:"'DM Sans',sans-serif", fontSize:11, fontWeight:700, letterSpacing:"0.8px" }}
-            >
+            <button onClick={() => setStocksOpen(o => !o)} className="nav-link"
+              style={{ background:"none", border:"none", cursor:"pointer", color:stocksOpen ? GOLD : textCol, display:"flex", alignItems:"center", gap:5, padding:0 }}>
               All Stocks
               <span style={{ fontSize:9, transition:"transform .2s", display:"inline-block", transform:stocksOpen?"rotate(180deg)":"rotate(0deg)" }}>▼</span>
             </button>
@@ -515,12 +547,10 @@ export default function Navbar() {
                 {STOCK_ROUTES.map(({ path, stockId }) => {
                   const s = STOCKS[stockId];
                   return (
-                    <Link key={stockId} to={path}
-                      onClick={() => setStocksOpen(false)}
+                    <Link key={stockId} to={path} onClick={() => setStocksOpen(false)}
                       style={{ display:"flex", justifyContent:"space-between", alignItems:"center", padding:"11px 16px", textDecoration:"none", borderBottom:`1px solid rgba(212,160,23,0.07)`, transition:"background .15s" }}
                       onMouseEnter={e => e.currentTarget.style.background="rgba(212,160,23,0.06)"}
-                      onMouseLeave={e => e.currentTarget.style.background="transparent"}
-                    >
+                      onMouseLeave={e => e.currentTarget.style.background="transparent"}>
                       <div>
                         <div style={{ fontSize:12, fontWeight:700, color: isDark ? "#c8dae8" : "#0D1B2A", fontFamily:"'DM Sans',sans-serif" }}>{s.name}</div>
                         <div style={{ fontSize:9, color:"rgba(212,160,23,0.55)", letterSpacing:1, marginTop:1, fontFamily:"'DM Sans',sans-serif" }}>NSE: {s.nse}</div>
@@ -538,18 +568,29 @@ export default function Navbar() {
         {menuOpen && (
           <div className="mobile-menu" style={{ borderTop:`1px solid rgba(212,160,23,0.10)`, background:ribbonBg, padding:"4px 0 8px", boxShadow:"0 8px 32px rgba(0,0,0,0.5)", animation:"menuSlide .25s ease forwards" }}>
 
-            {PAGE_NAV_LINKS.filter(l => l.label !== "Quant").map(l => (
-              <Link key={l.label} to={l.path} className="nav-link" onClick={() => setMenuOpen(false)}
-                style={{ display:"block", padding:"13px 24px", fontSize:12, borderBottom:`1px solid rgba(212,160,23,0.06)`, letterSpacing:"1.6px", color:textCol }}>
-                {l.label}
-              </Link>
-            ))}
+            {/* Home */}
+            <Link to="/" className="nav-link" onClick={() => setMenuOpen(false)}
+              style={{ display:"block", padding:"13px 24px", fontSize:12, borderBottom:`1px solid rgba(212,160,23,0.06)`, letterSpacing:"1.6px", color:textCol }}>
+              Home
+            </Link>
 
-            {/* ── Mobile Quant submenu ── */}
+            {/* Research Universe */}
+            <Link to="/research-universe" className="nav-link" onClick={() => setMenuOpen(false)}
+              style={{ display:"block", padding:"13px 24px", fontSize:12, borderBottom:`1px solid rgba(212,160,23,0.06)`, letterSpacing:"1.6px", color:textCol }}>
+              Research Universe
+            </Link>
+
+            {/* Portfolio Simulator */}
+            <Link to="/portfolio" className="nav-link" onClick={() => setMenuOpen(false)}
+              style={{ display:"block", padding:"13px 24px", fontSize:12, borderBottom:`1px solid rgba(212,160,23,0.06)`, letterSpacing:"1.6px", color:textCol }}>
+              Portfolio Simulator
+            </Link>
+
+            {/* Quant submenu */}
             <div>
               <button onClick={() => setMobileQuantOpen(o => !o)}
-                style={{ width:"100%", textAlign:"left", background:"none", border:"none", borderBottom:`1px solid rgba(212,160,23,0.06)`, padding:"13px 24px", fontSize:12, color: mobileQuantOpen ? GOLD : textCol, fontWeight:600, cursor:"pointer", display:"flex", justifyContent:"space-between", alignItems:"center", fontFamily:"inherit", letterSpacing:"1.6px" }}>
-                Quant
+                style={{ width:"100%", textAlign:"left", background:"none", border:"none", borderBottom:`1px solid rgba(212,160,23,0.06)`, padding:"13px 24px", fontSize:12, color: mobileQuantOpen ? GOLD : textCol, fontWeight:700, cursor:"pointer", display:"flex", justifyContent:"space-between", alignItems:"center", fontFamily:"'DM Sans',sans-serif", letterSpacing:"1.6px" }}>
+                Quant Hub
                 <span style={{ fontSize:10, transition:"transform .2s", display:"inline-block", transform: mobileQuantOpen ? "rotate(180deg)" : "rotate(0deg)" }}>▼</span>
               </button>
               {mobileQuantOpen && (
@@ -567,7 +608,7 @@ export default function Navbar() {
                       onMouseEnter={e => { if(q.live) e.currentTarget.style.background="rgba(212,160,23,0.07)"; }}
                       onMouseLeave={e => e.currentTarget.style.background="transparent"}>
                       <span style={{ fontSize:13 }}>{q.icon}</span>
-                      <span style={{ fontSize:12, fontWeight:600, color: isDark ? "#c8dae8" : "#1a2e42" }}>{q.label}</span>
+                      <span style={{ fontSize:12, fontWeight:700, color: isDark ? "#c8dae8" : "#1a2e42" }}>{q.label}</span>
                       {!q.live && <span style={{ fontSize:8, fontWeight:800, color:MUTED, letterSpacing:"1px", marginLeft:"auto" }}>SOON</span>}
                     </Link>
                   ))}
@@ -575,12 +616,39 @@ export default function Navbar() {
               )}
             </div>
 
+            {/* Macro */}
+            <Link to="/macro" className="nav-link" onClick={() => setMenuOpen(false)}
+              style={{ display:"block", padding:"13px 24px", fontSize:12, borderBottom:`1px solid rgba(212,160,23,0.06)`, letterSpacing:"1.6px", color:textCol }}>
+              Macro Dashboard
+            </Link>
+
+            {/* About Us submenu */}
             <div>
-              <button
-                onClick={() => setMobileStocksOpen(o => !o)}
-                style={{ width:"100%", textAlign:"left", background:"none", border:"none", borderBottom:`1px solid rgba(212,160,23,0.06)`, padding:"13px 24px", fontSize:12, fontWeight:700, letterSpacing:"1.6px", color:mobileStocksOpen ? GOLD : textCol, fontFamily:"'DM Sans',sans-serif", cursor:"pointer", display:"flex", justifyContent:"space-between", alignItems:"center" }}
-              >
-                ALL STOCKS
+              <button onClick={() => setMobileAboutOpen(o => !o)}
+                style={{ width:"100%", textAlign:"left", background:"none", border:"none", borderBottom:`1px solid rgba(212,160,23,0.06)`, padding:"13px 24px", fontSize:12, color: mobileAboutOpen ? GOLD : textCol, fontWeight:700, cursor:"pointer", display:"flex", justifyContent:"space-between", alignItems:"center", fontFamily:"'DM Sans',sans-serif", letterSpacing:"1.6px" }}>
+                About Us
+                <span style={{ fontSize:10, transition:"transform .2s", display:"inline-block", transform: mobileAboutOpen ? "rotate(180deg)" : "rotate(0deg)" }}>▼</span>
+              </button>
+              {mobileAboutOpen && (
+                <div style={{ background: isDark ? "rgba(0,0,0,0.18)" : "rgba(13,27,42,0.04)" }}>
+                  {ABOUT_SUB_LINKS.map(a => (
+                    <Link key={a.label} to={a.path} onClick={() => { setMenuOpen(false); setMobileAboutOpen(false); }}
+                      style={{ display:"flex", alignItems:"center", gap:10, padding:"10px 32px", borderBottom:`1px solid rgba(212,160,23,0.05)`, textDecoration:"none" }}
+                      onMouseEnter={e => e.currentTarget.style.background="rgba(212,160,23,0.07)"}
+                      onMouseLeave={e => e.currentTarget.style.background="transparent"}>
+                      <span style={{ fontSize:13 }}>{a.icon}</span>
+                      <span style={{ fontSize:12, fontWeight:700, color: isDark ? "#c8dae8" : "#1a2e42" }}>{a.label}</span>
+                    </Link>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* All Stocks submenu */}
+            <div>
+              <button onClick={() => setMobileStocksOpen(o => !o)}
+                style={{ width:"100%", textAlign:"left", background:"none", border:"none", borderBottom:`1px solid rgba(212,160,23,0.06)`, padding:"13px 24px", fontSize:12, fontWeight:700, letterSpacing:"1.6px", color:mobileStocksOpen ? GOLD : textCol, fontFamily:"'DM Sans',sans-serif", cursor:"pointer", display:"flex", justifyContent:"space-between", alignItems:"center" }}>
+                All Stocks
                 <span style={{ fontSize:10, transition:"transform .2s", display:"inline-block", transform:mobileStocksOpen?"rotate(180deg)":"rotate(0deg)" }}>▼</span>
               </button>
               {mobileStocksOpen && (
@@ -590,8 +658,7 @@ export default function Navbar() {
                     return (
                       <Link key={stockId} to={path}
                         onClick={() => { setMenuOpen(false); setMobileStocksOpen(false); }}
-                        style={{ display:"flex", justifyContent:"space-between", alignItems:"center", padding:"13px 32px", textDecoration:"none", color:"inherit", borderBottom:`1px solid rgba(212,160,23,0.05)`, cursor:"pointer" }}
-                      >
+                        style={{ display:"flex", justifyContent:"space-between", alignItems:"center", padding:"13px 32px", textDecoration:"none", color:"inherit", borderBottom:`1px solid rgba(212,160,23,0.05)`, cursor:"pointer" }}>
                         <div>
                           <div style={{ fontSize:13, fontWeight:700, color: isDark ? "#c8dae8" : "#0D1B2A", fontFamily:"'DM Sans',sans-serif" }}>{s.name}</div>
                           <div style={{ fontSize:9, color:"rgba(212,160,23,0.5)", letterSpacing:1, marginTop:2, fontFamily:"'DM Sans',sans-serif" }}>NSE: {s.nse}</div>
