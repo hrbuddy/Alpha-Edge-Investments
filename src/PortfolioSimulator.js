@@ -18,36 +18,47 @@ const RISK_FREE=0.065;
 function pct(v,dec=1){if(v==null||isNaN(v))return"—";return`${v>=0?"+":""}${(v*100).toFixed(dec)}%`;}
 function fmt2(v){if(v==null||isNaN(v))return"—";return v.toFixed(2);}
 
-function alignSeries(seriesMap){
+function alignSeries(seriesMap,useUnion=false){
   const tickers=Object.keys(seriesMap);
   if(!tickers.length)return{dates:[],aligned:{}};
   const maps={};
   tickers.forEach(t=>{maps[t]={};seriesMap[t].forEach(p=>{const d=new Date(p.ts).toISOString().slice(0,10);maps[t][d]=p.close;});});
-  const sets=tickers.map(t=>new Set(Object.keys(maps[t])));
-  let common=[...sets[0]];
-  for(let i=1;i<sets.length;i++)common=common.filter(d=>sets[i].has(d));
-  common.sort();
+  let dates;
+  if(useUnion){
+    // Union: use all dates where ANY ticker has data
+    const allDates=new Set(tickers.flatMap(t=>Object.keys(maps[t])));
+    dates=[...allDates].sort();
+  } else {
+    // Intersection: only dates where ALL tickers have data (used for benchmark)
+    const sets=tickers.map(t=>new Set(Object.keys(maps[t])));
+    let common=[...sets[0]];
+    for(let i=1;i<sets.length;i++)common=common.filter(d=>sets[i].has(d));
+    dates=common.sort();
+  }
   const aligned={};
-  tickers.forEach(t=>{aligned[t]=common.map(d=>maps[t][d]);});
-  return{dates:common,aligned};
+  tickers.forEach(t=>{aligned[t]=dates.map(d=>maps[t][d]??null);});
+  return{dates,aligned};
 }
 
 function computeMetrics(portRets,dates){
   if(!portRets.length)return{};
-  const n=portRets.length,years=n/252;
+  const n=portRets.length;
+  // Use actual date range for years — not n/252 which inflates CAGR when nulls are skipped
+  const years=Math.max((new Date(dates[dates.length-1])-new Date(dates[0]))/(365.25*24*3600*1000),n/252);
   const cumul=portRets.reduce((acc,r)=>{acc.push((acc[acc.length-1]??1)*(1+r));return acc;},[1]);
   const finalV=cumul[cumul.length-1];
   const cagr=Math.pow(finalV,1/years)-1;
   const mean=portRets.reduce((a,b)=>a+b,0)/n;
   const variance=portRets.reduce((a,b)=>a+(b-mean)**2,0)/(n-1);
   const vol=Math.sqrt(variance*252);
-  const sharpe=((finalV-1)/years-RISK_FREE)/vol;
+  const sharpe=(cagr-RISK_FREE)/vol;
   let peak=1,maxDD=0;
   cumul.forEach(v=>{if(v>peak)peak=v;const dd=(peak-v)/peak;if(dd>maxDD)maxDD=dd;});
   const annualMap={};
   dates.forEach((d,i)=>{if(i===0)return;const yr=d.slice(0,4);if(!annualMap[yr])annualMap[yr]={start:cumul[i-1],end:cumul[i]};else annualMap[yr].end=cumul[i];});
   const annualReturns=Object.entries(annualMap).map(([yr,{start,end}])=>({year:yr,ret:(end-start)/start}));
-  return{cagr,vol,sharpe,maxDD:-maxDD,annualReturns,cumul:cumul.map((v,i)=>({date:dates[i]??dates[0],value:+((v-1)*100).toFixed(2)}))};
+  // cumul has same length as dates (seed + n-1 returns = n elements = dates.length)
+  return{cagr,vol,sharpe,maxDD:-maxDD,annualReturns,cumul:cumul.map((v,i)=>({date:dates[i],value:+((v-1)*100).toFixed(2)}))};
 }
 
 async function fetchStockPrices(ticker){
@@ -149,7 +160,7 @@ function SaveDialog({onSave,onClose,saving,error}){
     <div style={{position:"fixed",inset:0,background:"rgba(0,0,0,0.7)",zIndex:999999,display:"flex",alignItems:"center",justifyContent:"center"}}>
       <div style={{background:"#0d1b2a",border:`1px solid rgba(212,160,23,0.3)`,borderRadius:14,padding:"28px 32px",width:320}}>
         <div style={{fontSize:14,fontWeight:800,color:GOLD,fontFamily:"'Playfair Display',serif",marginBottom:16}}>Save Portfolio</div>
-        <input value={name} onChange={e=>setName(e.target.value)} placeholder="Portfolio name" onKeyDown={e=>e.key==="Enter"&&name.trim()&&onSave(name.trim())} style={{width:"100%",background:"rgba(255,255,255,0.06)",border:`1px solid rgba(212,160,23,0.3)`,borderRadius:8,padding:"8px 12px",color:"#e2e8f0",fontSize:13,fontFamily:"'DM Sans',sans-serif",outline:"none",boxSizing:"border-box",marginBottom:16}}/>
+        <input value={name} onChange={e=>setName(e.target.value)} placeholder="Portfolio name" onKeyDown={e=>e.key==="Enter"&&name.trim()&&onSave(name.trim())} style={{width:"100%",background:"rgba(255,255,255,0.06)",border:`1px solid rgba(212,160,23,0.3)`,borderRadius:8,padding:"5px 10px",color:"#e2e8f0",fontSize:16,fontFamily:"'DM Sans',sans-serif",outline:"none",boxSizing:"border-box",marginBottom:16}}/>
         {error&&<div style={{fontSize:11,color:"#E74C3C",marginBottom:12,padding:"8px 10px",background:"rgba(192,57,43,0.1)",border:"1px solid rgba(192,57,43,0.3)",borderRadius:6,lineHeight:1.5}}>{error}</div>}
           {error&&<div style={{fontSize:11,color:"#E74C3C",marginBottom:12,padding:"8px 10px",background:"rgba(192,57,43,0.1)",border:"1px solid rgba(192,57,43,0.3)",borderRadius:6,lineHeight:1.5}}>{error}</div>}
           {error&&<div style={{fontSize:11,color:"#E74C3C",marginBottom:12,padding:"8px 10px",background:"rgba(192,57,43,0.1)",border:"1px solid rgba(192,57,43,0.3)",borderRadius:6,lineHeight:1.5}}>{error}</div>}
@@ -234,7 +245,7 @@ export default function PortfolioSimulator(){
     const ticker=tickerInput.trim().toUpperCase().replace(/\.NS$/,"");
     if(!ticker)return;
     if(stocks.includes(ticker)){setAddError("Already in portfolio");return;}
-    if(stocks.length>=10){setAddError("Max 10 stocks");return;}
+    if(stocks.length>=30){setAddError("Max 30 stocks");return;}
     setAdding(true);setAddError(null);
     const pts=await fetchStockPrices(ticker);
     if(!pts||pts.length<30){setAddError(`No price data for ${ticker}`);setAdding(false);return;}
@@ -305,20 +316,26 @@ export default function PortfolioSimulator(){
       setDataStartTs(earliestTs);
       if(sliderStart==null)setSliderStart(cutoff);
       const filtered={};fetched.forEach(t=>{filtered[t]=priceMap[t].filter(p=>p.ts>=cutoff);});
-      const{dates,aligned}=alignSeries(filtered);
+      // useUnion=true: use all dates any stock has data — gives maximum history for Max range
+      const{dates,aligned}=alignSeries(filtered,true);
       if(dates.length<30)throw new Error("Insufficient overlapping data. Try a longer range or different stocks.");
       const w=normalise(Object.fromEntries(fetched.map(t=>[t,weights[t]??(1/fetched.length)])));
       const portRets=[];
       for(let i=1;i<dates.length;i++){
-        let r=0;
-        fetched.forEach(t=>{const prev=aligned[t][i-1],curr=aligned[t][i];if(prev&&curr)r+=(w[t]||0)*(curr-prev)/prev;});
+        // On each day, only use stocks that have data for both prev and curr day
+        // Renormalize weights dynamically so portfolio return is always fully invested
+        let r=0,wSum=0;
+        fetched.forEach(t=>{const prev=aligned[t][i-1],curr=aligned[t][i];if(prev&&curr)wSum+=(w[t]||0);});
+        if(wSum>0)fetched.forEach(t=>{const prev=aligned[t][i-1],curr=aligned[t][i];if(prev&&curr)r+=((w[t]||0)/wSum)*(curr-prev)/prev;});
         portRets.push(r);
       }
       const portMetrics=computeMetrics(portRets,dates);
+      // Use portfolio's ACTUAL first date (not cutoff) as BM start — ensures same time period
+      const portFirstTs=new Date(dates[0]).getTime();
       let bmMetrics=null;
       const bmPts=await fetchBenchmark(benchmark);
       if(bmPts){
-        const bmFiltered=bmPts.filter(p=>p.ts>=cutoff);
+        const bmFiltered=bmPts.filter(p=>p.ts>=portFirstTs);
         const{dates:bmDates,aligned:bmAligned}=alignSeries({bm:bmFiltered});
         if(bmDates.length>30){
           const bmRets=[];const bmp=bmAligned["bm"];
@@ -326,7 +343,8 @@ export default function PortfolioSimulator(){
           bmMetrics=computeMetrics(bmRets,bmDates);
         }
       }
-      setResult({portMetrics,bmMetrics,fetched,w,dates,earliestTs,cutoff});
+      // Store actual first portfolio date for chart label
+      setResult({portMetrics,bmMetrics,fetched,w,dates,earliestTs,cutoff,portFirstDate:dates[0]});
     }catch(e){setSimError(e.message);}finally{setSimulating(false);}
   }
 
@@ -337,8 +355,17 @@ export default function PortfolioSimulator(){
     const pm={},bm2={};
     portMetrics.cumul.forEach(p=>{pm[p.date]=p.value;});
     if(bmMetrics)bmMetrics.cumul.forEach(p=>{bm2[p.date]=p.value;});
-    const all=[...new Set([...Object.keys(pm),...Object.keys(bm2)])].sort();
-    return all.map(d=>({date:d,portfolio:pm[d]??null,benchmark:bm2[d]??null}));
+    const portDates=portMetrics.cumul.map(p=>p.date);
+    const firstDate=portDates[0];
+    // Find nearest benchmark date at or before portfolio start — exact match often missing
+    const bmDates=Object.keys(bm2).sort();
+    const nearestBmDate=bmDates.filter(d=>d<=firstDate).pop();
+    const bmOffset=nearestBmDate!=null?bm2[nearestBmDate]:0;
+    return portDates.map(d=>({
+      date:d,
+      portfolio:pm[d]??null,
+      benchmark:bm2[d]!=null?+(bm2[d]-bmOffset).toFixed(2):null
+    }));
   }
 
   function annualWithBm(){
@@ -351,15 +378,15 @@ export default function PortfolioSimulator(){
   return(
     <div style={{background:`linear-gradient(160deg,${NAVY} 0%,#060e1a 100%)`,minHeight:"100vh",color:"#e2e8f0",fontFamily:"'DM Sans',sans-serif",paddingTop:92}}>
       <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;600;700;800&family=Playfair+Display:wght@700;800&display=swap" rel="stylesheet"/>
-      <style>{`@keyframes pSpin{to{transform:rotate(360deg)}}input[type=range]{height:4px;cursor:pointer}input[type=number]::-webkit-inner-spin-button{opacity:0.5}@media(max-width:760px){.pm-layout{flex-direction:column!important}.pm-left{width:100%!important}.pm-stats{display:grid!important;grid-template-columns:1fr 1fr 1fr!important;gap:6px!important}.pm-stats>div{padding:8px 8px!important}.pm-stats .pm-val{font-size:13px!important}.pm-stats .pm-bm{font-size:11px!important}}`}</style>
+      <style>{`@keyframes pSpin{to{transform:rotate(360deg)}}input[type=range]{height:4px;cursor:pointer}input[type=number]::-webkit-inner-spin-button{opacity:0.5}@media(max-width:760px){.pm-layout{flex-direction:column!important}.pm-left{width:100%!important}.pm-stats{display:grid!important;grid-template-columns:1fr 1fr 1fr!important;gap:6px!important}.pm-stats>div{padding:8px 8px!important}.pm-stats .pm-val{font-size:13px!important}.pm-stats .pm-bm{font-size:11px!important}.pm-header{padding:22px 16px 16px!important}.pm-header-divider{display:none!important}.pm-layout{padding:14px 14px 80px!important}}`}</style>
 
       {/* Header */}
-      <div style={{padding:"52px 28px 28px",borderBottom:"1px solid rgba(212,160,23,0.15)",textAlign:"center"}}>
+      <div className="pm-header" style={{padding:"52px 28px 28px",borderBottom:"1px solid rgba(212,160,23,0.15)",textAlign:"center"}}>
         <div style={{maxWidth:660,margin:"0 auto"}}>
-          <div style={{fontSize:9,color:GOLD,letterSpacing:"2.5px",fontWeight:700,marginBottom:10}}>VANTAGE CAPITAL · PORTFOLIO LAB</div>
+          <div className="pm-header-label" style={{fontSize:9,color:GOLD,letterSpacing:"2.5px",fontWeight:700,marginBottom:10}}>VANTAGE CAPITAL · PORTFOLIO LAB</div>
           <h1 style={{margin:"0 0 10px",fontSize:"clamp(26px,4vw,40px)",fontWeight:800,fontFamily:"'Playfair Display',serif",color:"#fff",lineHeight:1.15}}>Portfolio Simulator</h1>
-          <div style={{width:44,height:2,background:GOLD,borderRadius:2,margin:"0 auto 12px"}}/>
-          <p style={{fontSize:12,color:SUB,lineHeight:1.8,margin:"0 0 18px"}}>Build a portfolio, set weights, compare against a benchmark and simulate historical returns.</p>
+          <div className="pm-header-divider" style={{width:44,height:2,background:GOLD,borderRadius:2,margin:"0 auto 12px"}}/>
+          <p className="pm-header-sub" style={{fontSize:12,color:SUB,lineHeight:1.8,margin:"0 0 18px"}}>Build a portfolio, set weights, compare against a benchmark and simulate historical returns.</p>
           <div style={{display:"flex",alignItems:"center",justifyContent:"center",gap:10,flexWrap:"wrap"}}>
             {stocks.length>0&&(
               <button onClick={()=>user?setShowSaveDialog(true):navigate("/signup")} style={{display:"flex",alignItems:"center",gap:6,padding:"8px 18px",borderRadius:999,background:GOLD+"18",border:`1px solid ${GOLD}55`,color:GOLD,fontSize:11,fontWeight:800,cursor:"pointer",letterSpacing:"0.5px"}}>
@@ -380,15 +407,36 @@ export default function PortfolioSimulator(){
         {/* LEFT PANEL */}
         <div className="pm-left" style={{width:360,flexShrink:0}}>
 
-          {/* Load saved portfolios */}
-          <button onClick={()=>user?setShowSheet(true):navigate("/signup")}
-            style={{width:"100%",display:"flex",alignItems:"center",gap:8,padding:"10px 14px",borderRadius:10,background:"rgba(255,255,255,0.025)",border:"1px solid rgba(255,255,255,0.08)",color:SUB,fontSize:11,fontWeight:700,cursor:"pointer",marginBottom:14,textAlign:"left"}}
-            onMouseEnter={e=>{e.currentTarget.style.borderColor=GOLD+"55";e.currentTarget.style.color=GOLD;}}
-            onMouseLeave={e=>{e.currentTarget.style.borderColor="rgba(255,255,255,0.08)";e.currentTarget.style.color=SUB;}}>
-            <span style={{fontSize:14}}>📂</span>
-            <span style={{flex:1}}>Load Saved Portfolio</span>
-            {savedPortfolios.length>0&&<span style={{fontSize:9,background:GOLD+"22",color:GOLD,padding:"2px 7px",borderRadius:999,fontWeight:800}}>{savedPortfolios.length}</span>}
-          </button>
+          {/* Load buttons row */}
+          <div style={{display:"flex",gap:8,marginBottom:14}}>
+            <button onClick={()=>user?setShowSheet(true):navigate("/signup")}
+              style={{flex:1,display:"flex",alignItems:"center",gap:8,padding:"10px 14px",borderRadius:10,background:"rgba(255,255,255,0.025)",border:"1px solid rgba(255,255,255,0.08)",color:SUB,fontSize:11,fontWeight:700,cursor:"pointer",textAlign:"left"}}
+              onMouseEnter={e=>{e.currentTarget.style.borderColor=GOLD+"55";e.currentTarget.style.color=GOLD;}}
+              onMouseLeave={e=>{e.currentTarget.style.borderColor="rgba(255,255,255,0.08)";e.currentTarget.style.color=SUB;}}>
+              <span style={{fontSize:14}}>📂</span>
+              <span style={{flex:1}}>Load Saved</span>
+              {savedPortfolios.length>0&&<span style={{fontSize:9,background:GOLD+"22",color:GOLD,padding:"2px 7px",borderRadius:999,fontWeight:800}}>{savedPortfolios.length}</span>}
+            </button>
+            <button onClick={()=>{
+                try{
+                  const wl=JSON.parse(localStorage.getItem("ae_wishlist")||"[]");
+                  if(!wl.length){alert("Your wishlist is empty. Heart some stocks first!");return;}
+                  if(stocks.length>0&&!window.confirm(`Replace current ${stocks.length} stock(s) with ${Math.min(wl.length,30)} wishlisted stocks?`))return;
+                  const tickers=wl.slice(0,30);
+                  const w=1/tickers.length;
+                  const wm={};tickers.forEach(t=>{wm[t]=w;});
+                  setStocks(tickers);setWeights(wm);setWeightMode("equal");
+                  setResult(null);setDataStartTs(null);setSliderStart(null);
+                  setPendingSim(true);
+                }catch(e){alert("Could not load wishlist.");}
+              }}
+              style={{flex:1,display:"flex",alignItems:"center",gap:8,padding:"10px 14px",borderRadius:10,background:"rgba(255,255,255,0.025)",border:"1px solid rgba(255,255,255,0.08)",color:SUB,fontSize:11,fontWeight:700,cursor:"pointer",textAlign:"left"}}
+              onMouseEnter={e=>{e.currentTarget.style.borderColor="#E74C3C55";e.currentTarget.style.color="#E74C3C";}}
+              onMouseLeave={e=>{e.currentTarget.style.borderColor="rgba(255,255,255,0.08)";e.currentTarget.style.color=SUB;}}>
+              <span style={{fontSize:14}}>🤍</span>
+              <span style={{flex:1}}>From Wishlist</span>
+            </button>
+          </div>
 
           {/* Ticker autocomplete */}
           <div style={{background:"rgba(255,255,255,0.022)",border:"1px solid rgba(255,255,255,0.07)",borderRadius:12,padding:"18px",marginBottom:14}}>
@@ -401,12 +449,13 @@ export default function PortfolioSimulator(){
                     if(v.length>=1){const m=universe.filter(u=>u.ticker.startsWith(v)||u.name.toUpperCase().includes(v)).slice(0,8);setSuggestions(m);setShowSugg(m.length>0);}
                     else setShowSugg(false);
                   }}
-                  onKeyDown={e=>{if(e.key==="Enter"){setShowSugg(false);addStock();}if(e.key==="Escape")setShowSugg(false);}}
+                  onKeyDown={e=>{if(e.key==="Enter"){setShowSugg(false);addStock();e.target.blur();}if(e.key==="Escape"){setShowSugg(false);e.target.blur();}}}
                   onBlur={()=>setTimeout(()=>setShowSugg(false),150)}
                   placeholder="Name or NSE symbol..."
-                  style={{flex:1,background:"rgba(255,255,255,0.05)",border:"1px solid rgba(212,160,23,0.25)",borderRadius:8,padding:"8px 12px",color:"#e2e8f0",fontSize:12,fontFamily:"'DM Sans',sans-serif",outline:"none"}}
+                  autoCorrect="off" autoCapitalize="characters" autoComplete="off" spellCheck="false"
+                  style={{flex:1,background:"rgba(255,255,255,0.05)",border:"1px solid rgba(212,160,23,0.25)",borderRadius:8,padding:"4px 10px",color:"#e2e8f0",fontSize:16,lineHeight:"1.2",fontFamily:"'DM Sans',sans-serif",outline:"none"}}
                 />
-                <button onClick={()=>{setShowSugg(false);addStock();}} disabled={adding||!tickerInput.trim()}
+                <button onClick={()=>{setShowSugg(false);addStock();document.activeElement?.blur();}} disabled={adding||!tickerInput.trim()}
                   style={{background:GOLD+"22",border:"1px solid "+GOLD+"44",borderRadius:8,padding:"8px 14px",color:GOLD,fontSize:12,fontWeight:800,cursor:adding?"wait":"pointer",opacity:!tickerInput.trim()?0.4:1,flexShrink:0}}>
                   {adding?"...":"+ ADD"}
                 </button>
@@ -414,7 +463,7 @@ export default function PortfolioSimulator(){
               {showSugg&&suggestions.length>0&&(
                 <div style={{position:"absolute",top:"calc(100% + 4px)",left:0,right:60,background:"rgba(6,14,26,0.98)",border:"1px solid rgba(212,160,23,0.25)",borderRadius:8,boxShadow:"0 8px 24px rgba(0,0,0,0.5)",zIndex:9999,overflow:"hidden"}}>
                   {suggestions.map(u=>(
-                    <div key={u.ticker} onMouseDown={()=>{setTickerInput(u.ticker);setShowSugg(false);}}
+                    <div key={u.ticker} onMouseDown={()=>{setTickerInput(u.ticker);setShowSugg(false);document.activeElement?.blur();}}
                       style={{display:"flex",alignItems:"center",gap:10,padding:"8px 12px",cursor:"pointer",borderBottom:"1px solid rgba(255,255,255,0.04)"}}
                       onMouseEnter={e=>e.currentTarget.style.background="rgba(212,160,23,0.08)"}
                       onMouseLeave={e=>e.currentTarget.style.background="transparent"}>
@@ -426,7 +475,7 @@ export default function PortfolioSimulator(){
               )}
             </div>
             {addError&&<div style={{fontSize:11,color:RED,marginTop:6}}>! {addError}</div>}
-            <div style={{fontSize:10,color:MUTED,marginTop:8}}>Type name or symbol - up to 10 stocks</div>
+            <div style={{fontSize:10,color:MUTED,marginTop:8}}>Type name or symbol - up to 30 stocks</div>
           </div>
 
           {/* Weights */}
@@ -578,7 +627,7 @@ export default function PortfolioSimulator(){
                   <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:16,flexWrap:"wrap"}}>
                     <div style={{width:3,height:18,background:GOLD,borderRadius:2}}/>
                     <span style={{fontSize:14,fontWeight:800,color:GOLD}}>Cumulative Return</span>
-                    <span style={{fontSize:10,color:MUTED,flex:1}}>from {new Date(result.cutoff).toLocaleDateString("en-IN",{month:"short",year:"numeric"})}</span>
+                    <span style={{fontSize:10,color:MUTED,flex:1}}>from {new Date(result.portFirstDate||result.cutoff).toLocaleDateString("en-IN",{month:"short",year:"numeric"})}</span>
                     {bmMetrics&&(
                       <button onClick={()=>setShowBm(p=>!p)} style={{display:"flex",alignItems:"center",gap:5,padding:"3px 10px",borderRadius:999,fontSize:9,fontWeight:800,cursor:"pointer",border:`1px solid ${showBm?benchmark.color+"55":"rgba(255,255,255,0.1)"}`,background:showBm?benchmark.color+"14":"transparent",color:showBm?benchmark.color:MUTED}}>
                         <span style={{display:"inline-block",width:8,height:2,background:showBm?benchmark.color:MUTED,borderRadius:1}}/>
