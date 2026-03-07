@@ -651,53 +651,78 @@ function StockSheet({ ticker, extraData, onClose }) {
           </div>
 
           {/* ── Action buttons ── */}
-          <div style={{ display:"flex", gap:10, marginTop:18, flexWrap:"wrap" }}>
-            {researchPath ? (
-              <button
-                onClick={() => { onClose(); navigate(researchPath); }}
-                style={{
-                  flex:1, padding:"12px 20px", borderRadius:999,
-                  background: GOLD, border:"none",
-                  color: NAVY, fontSize:12, fontWeight:800,
-                  letterSpacing:"0.5px", cursor:"pointer",
-                  fontFamily:"'DM Sans',sans-serif",
-                  transition:"opacity .15s",
-                }}
-                onMouseEnter={e => e.currentTarget.style.opacity="0.88"}
-                onMouseLeave={e => e.currentTarget.style.opacity="1"}
-              >
-                View Full Research →
-              </button>
-            ) : (
-              <button
-                onClick={() => { onClose(); navigate("/research-universe#request"); }}
-                style={{
-                  flex:1, padding:"12px 20px", borderRadius:999,
-                  background:"transparent",
-                  border:`1.5px solid ${GOLD}`,
-                  color: GOLD, fontSize:12, fontWeight:800,
-                  letterSpacing:"0.5px", cursor:"pointer",
-                  fontFamily:"'DM Sans',sans-serif",
-                  transition:"all .15s",
-                }}
-                onMouseEnter={e => { e.currentTarget.style.background="rgba(212,160,23,0.1)"; }}
-                onMouseLeave={e => { e.currentTarget.style.background="transparent"; }}
-              >
-                📩 Request Stock Research
-              </button>
-            )}
+          <div style={{ display:"flex", flexDirection:"column", gap:8, marginTop:20 }}>
+
+            {/* Primary: DCF Model */}
             <button
-              onClick={onClose}
+              onClick={() => { onClose(); navigate(`/dcf/${ticker}`); }}
               style={{
-                padding:"12px 20px", borderRadius:999,
-                background:"rgba(255,255,255,0.06)",
-                border:"1px solid rgba(255,255,255,0.1)",
-                color:"#5a7a94", fontSize:12, fontWeight:700,
-                cursor:"pointer", fontFamily:"'DM Sans',sans-serif",
+                width:"100%", padding:"13px 20px", borderRadius:12,
+                background:"rgba(212,160,23,0.12)",
+                border:`1.5px solid ${GOLD}`,
+                color: GOLD, fontSize:13, fontWeight:800,
+                letterSpacing:"0.3px", cursor:"pointer",
+                fontFamily:"'DM Sans',sans-serif",
+                transition:"all .15s",
+                display:"flex", alignItems:"center", justifyContent:"center", gap:8,
               }}
+              onMouseEnter={e => e.currentTarget.style.background="rgba(212,160,23,0.22)"}
+              onMouseLeave={e => e.currentTarget.style.background="rgba(212,160,23,0.12)"}
             >
-              Close
+              <span style={{ fontSize:15 }}>📊</span>
+              Build DCF Model
             </button>
+
+            {/* Secondary row: Research + Close side by side */}
+            <div style={{ display:"flex", gap:8 }}>
+              {researchPath ? (
+                <button
+                  onClick={() => { onClose(); navigate(researchPath); }}
+                  style={{
+                    flex:1, padding:"11px 16px", borderRadius:12,
+                    background: GOLD, border:"none",
+                    color: NAVY, fontSize:12, fontWeight:800,
+                    letterSpacing:"0.3px", cursor:"pointer",
+                    fontFamily:"'DM Sans',sans-serif",
+                    transition:"opacity .15s", whiteSpace:"nowrap",
+                  }}
+                  onMouseEnter={e => e.currentTarget.style.opacity="0.85"}
+                  onMouseLeave={e => e.currentTarget.style.opacity="1"}
+                >
+                  Full Research →
+                </button>
+              ) : (
+                <button
+                  onClick={() => { onClose(); navigate("/research-universe#request"); }}
+                  style={{
+                    flex:1, padding:"11px 16px", borderRadius:12,
+                    background:"transparent",
+                    border:"1px solid rgba(255,255,255,0.12)",
+                    color:"#94a3b8", fontSize:12, fontWeight:700,
+                    cursor:"pointer", fontFamily:"'DM Sans',sans-serif",
+                    transition:"all .15s", whiteSpace:"nowrap",
+                  }}
+                  onMouseEnter={e => e.currentTarget.style.borderColor="rgba(255,255,255,0.25)"}
+                  onMouseLeave={e => e.currentTarget.style.borderColor="rgba(255,255,255,0.12)"}
+                >
+                  📩 Request Research
+                </button>
+              )}
+              <button
+                onClick={onClose}
+                style={{
+                  padding:"11px 20px", borderRadius:12,
+                  background:"rgba(255,255,255,0.05)",
+                  border:"1px solid rgba(255,255,255,0.1)",
+                  color:"#5a7a94", fontSize:12, fontWeight:700,
+                  cursor:"pointer", fontFamily:"'DM Sans',sans-serif",
+                  whiteSpace:"nowrap",
+                }}
+              >
+                Close
+              </button>
+            </div>
+
           </div>
 
           <div style={{ fontSize:9, color:"#3d5570", textAlign:"center", marginTop:14, letterSpacing:"0.5px" }}>

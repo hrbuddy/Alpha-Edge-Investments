@@ -55,11 +55,11 @@ const ABOUT_SUB_LINKS = [
 // Borders only appear when the user is ON that tab (handled via useLocation below)
 const MOBILE_QUICK_NAV = [
   { label:"Home",      icon:"🏠", path:"/",                  active:true,  highlight:false },
-  { label:"Stocks",    icon:"📈", path:"/research-universe", active:true,  highlight:false },
-  { label:"Quant",     icon:"π",  path:"/quant",            active:true,  highlight:true  },
+  { label:"Stocks",    icon:"📈", path:"/research-universe", active:true,  highlight:true  },
+  { label:"Quant",     icon:"π",  path:"/quant",             active:true,  highlight:false },
   { label:"Macro",     icon:"📊", path:"/macro",             active:true,  highlight:false },
-  { label:"Discover",  icon:"⚡", path:"/discover",          active:true,  highlight:true  },
   { label:"Portfolio", icon:"🗂️", path:"/portfolio",         active:true,  highlight:false },
+  { label:"Discover",  icon:"⚡", path:"/discover",          active:true,  highlight:false },
 ];
 
 export default function Navbar() {
@@ -229,8 +229,8 @@ export default function Navbar() {
         /* ── Mobile Quick-Nav strip — hidden on desktop ── */
         .mob-qnav {
           display: none;
-          gap: 4px;
-          padding: 4px 8px 5px;
+          gap: 2px;
+          padding: 4px 4px 5px;
           border-top: 1px solid rgba(212,160,23,0.08);
         }
         .mob-qnav-item {
@@ -239,17 +239,17 @@ export default function Navbar() {
           flex-direction: column;
           align-items: center;
           gap: 2px;
-          padding: 4px 3px 3px;
+          padding: 4px 2px 3px;
           border-radius: 7px;
           text-decoration: none;
           transition: background .18s;
           -webkit-tap-highlight-color: transparent;
         }
         .mob-qnav-item:active { opacity: 0.7; }
-        .mob-qnav-icon { font-size: 14px; line-height: 1; }
-          .mob-qnav-pi { font-size: 18px !important; font-weight: 900; color: #D4A017; font-family: serif; }
+        .mob-qnav-icon { font-size: 13px; line-height: 1; height: 16px; display: flex; align-items: center; justify-content: center; }
+          .mob-qnav-pi { font-size: 15px !important; font-weight: 900; color: #ffffff; font-family: serif; line-height: 1; }
         .mob-qnav-label {
-          font-size: 7px; font-weight: 800; letter-spacing: 0.6px;
+          font-size: 6.5px; font-weight: 800; letter-spacing: 0.4px;
           font-family: 'DM Sans', sans-serif; white-space: nowrap;
         }
 
@@ -273,9 +273,9 @@ export default function Navbar() {
           .mobile-search-bar{display:none !important;}
           .mobile-search-results{display:none !important;}
           .search-word{display:inline !important;}
-          .logo-wordmark{font-size:21px !important;}
-          .logo-sub{font-size:7.5px !important;}
-          .logo-svg{width:36px !important;height:36px !important;}
+          .logo-wordmark{font-size:19px !important;}
+          .logo-sub{font-size:7px !important; letter-spacing:2.5px !important;}
+          .logo-svg{width:30px !important;height:30px !important;}
           .nav-btn{border:1px solid rgba(212,160,23,0.2) !important;background:rgba(212,160,23,0.07) !important;}
           .theme-btn-desktop{display:flex !important;}
           .theme-btn-mobile{display:none !important;}
@@ -367,7 +367,7 @@ export default function Navbar() {
             </svg>
             <div>
               <div className="logo-wordmark" style={{ fontSize:24, fontWeight:800, letterSpacing:"0.4px", color:GOLD, fontFamily:"'Playfair Display',serif", lineHeight:1 }}>VANTAGE CAPITAL</div>
-              <div className="logo-sub" style={{ fontSize:12.5, letterSpacing:"3px", color:"rgba(212,160,23,0.42)", fontFamily:"'DM Sans',sans-serif", fontWeight:700, marginTop:2, textTransform:"uppercase" }}>INVESTMENTS</div>
+              <div className="logo-sub" style={{ fontSize:12.5, letterSpacing:"3px", color:"rgba(212,160,23,0.28)", fontFamily:"'DM Sans',sans-serif", fontWeight:700, marginTop:2, textTransform:"uppercase" }}>INVESTMENTS</div>
             </div>
           </Link>
 

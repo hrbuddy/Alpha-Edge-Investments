@@ -6,7 +6,7 @@
 // ============================================================
 
 import { useState, useRef, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import {
   BarChart, Bar, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend,
   ResponsiveContainer, RadarChart, PolarGrid, PolarAngleAxis,
@@ -216,7 +216,8 @@ const SEG_COLORS = [BLUE, TEAL, GREEN, ORANGE, RED, GOLD];
 // ── Main export ─────────────────────────────────────────────────────────────
 
 export default function StockDashboard({ stock }) {
-  const [tab, setTab] = useState(0);
+  const [tab, setTab]   = useState(0);
+  const navigate        = useNavigate();
 
   useEffect(() => { window.scrollTo(0, 0); }, []);
 
@@ -292,6 +293,26 @@ export default function StockDashboard({ stock }) {
           {stock.metrics.map((m, i) => (
             <MetricCard key={i} label={m.label} value={m.value} sub={m.sub} color={m.color} />
           ))}
+        </div>
+
+        {/* DCF Model CTA */}
+        <div style={{ marginTop: 12, display: "flex", gap: 8 }}>
+          <button
+            onClick={() => navigate(`/dcf/${stock.nse}`)}
+            style={{
+              padding: "9px 20px", borderRadius: 999,
+              background: "rgba(212,160,23,0.1)",
+              border: `1.5px solid ${GOLD}`,
+              color: GOLD, fontSize: 12, fontWeight: 800,
+              letterSpacing: "0.4px", cursor: "pointer",
+              fontFamily: "'DM Sans', sans-serif",
+              transition: "all .15s",
+            }}
+            onMouseEnter={e => e.currentTarget.style.background = "rgba(212,160,23,0.2)"}
+            onMouseLeave={e => e.currentTarget.style.background = "rgba(212,160,23,0.1)"}
+          >
+            📊 Build DCF Model
+          </button>
         </div>
 
         {/* Tabs — scroll wrapper with fade+arrow hint */}

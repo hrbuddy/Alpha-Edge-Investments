@@ -17,10 +17,13 @@ import QuantPage from "./QuantPage";
 import SizeDashboard from "./SizeDashboard";
 import ValueDashboard from "./ValueDashboard";
 import PortfolioSimulator from "./PortfolioSimulator";
+import GenericDCFTemplate from "./GenericDCFTemplate";
 
 // ── New scalable dashboard system ──
 import { STOCKS, STOCK_ROUTES } from "./dashboards/stocksDB";
 import StockDashboard from "./dashboards/StockDashboard";
+
+// ── DCF Lab — all stocks including covered use GenericDCFTemplate ──
 
 export const ThemeContext = createContext();
 
@@ -58,6 +61,9 @@ function App() {
               <Route path="/value"             element={<ValueDashboard />} />
               <Route path="/discover"          element={<FlashCard />} />
               <Route path="/portfolio"         element={<PortfolioSimulator />} />
+         
+              {/* DCF Lab — GenericDCFTemplate handles all tickers, covered or not */}
+              <Route path="/dcf/:ticker" element={<GenericDCFTemplate />} />
 
               {STOCK_ROUTES.map(({ path, stockId }) => (
                 <Route

@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
-import { useContext, useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useRef, useState, useMemo } from "react";
 import { ThemeContext } from "./App";
+import { useAuth } from "./AuthContext";
 import { STOCKS, STOCK_ROUTES } from "./dashboards/stocksDB";
 
 const NAVY  = "#0D1B2A";
@@ -161,23 +162,58 @@ function StockTile({ stock, delay = 0, pal }) {
   );
 }
 
-// ── Request tile ──────────────────────────────────────────────────────────────
-function RequestTile({ pal }) {
-  const [hov, setHov] = useState(false);
-  return (
-    <a
-      href="mailto:research@alphaedge.in?subject=Stock%20Request"
-      style={{ textDecoration: "none" }}
-      onMouseEnter={() => setHov(true)} onMouseLeave={() => setHov(false)}
-    >
-      <div style={{
-        background: hov ? "rgba(212,160,23,0.05)" : pal.cardBg,
-        border: `1px dashed ${hov ? GOLD : "rgba(212,160,23,0.3)"}`,
-        borderRadius: 14, padding: "28px 18px", cursor: "pointer",
-        textAlign: "center", transition: "all .25s", boxSizing: "border-box",
-        display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 10,
-        minHeight: 120,
-      }}>
+// ── Request Form (collapsed tile → expands on click) ─────────────────────────
+function RequestForm({ pal, isDark }) {
+  const { user } = useAuth();
+  const [open,    setOpen]    = useState(false);
+  const [hov,     setHov]     = useState(false);
+  const [stock,   setStock]   = useState("");
+  const [ticker,  setTicker]  = useState("");
+  const [email,   setEmail]   = useState(user?.email ?? "");
+  const [note,    setNote]    = useState("");
+  const [sent,    setSent]    = useState(false);
+  const [focused, setFocused] = useState(null);
+
+  useEffect(() => { if (user?.email) setEmail(user.email); }, [user]);
+
+  function handleSubmit() {
+    if (!stock.trim() || !email.trim()) return;
+    const subject = encodeURIComponent(`Stock Request: ${stock.trim()}`);
+    const body = encodeURIComponent(
+      `Stock Name: ${stock.trim()}\nTicker: ${ticker.trim() || "N/A"}\nEmail: ${email.trim()}\nNote: ${note.trim() || "—"}`
+    );
+    window.location.href = `mailto:research@alphaedge.in?subject=${subject}&body=${body}`;
+    setSent(true);
+    setTimeout(() => { setSent(false); setOpen(false); setStock(""); setTicker(""); setNote(""); }, 3500);
+  }
+
+  const inputStyle = (f) => ({
+    width: "100%", padding: "10px 13px", boxSizing: "border-box",
+    background: focused === f
+      ? (isDark ? "rgba(212,160,23,0.06)" : "rgba(212,160,23,0.08)")
+      : (isDark ? "rgba(255,255,255,0.03)" : "rgba(13,27,42,0.03)"),
+    border: `1px solid ${focused === f ? "rgba(212,160,23,0.55)" : "rgba(212,160,23,0.18)"}`,
+    borderRadius: 8, outline: "none",
+    color: pal.text, fontSize: 13,
+    fontFamily: "'DM Sans',sans-serif",
+    transition: "all .18s",
+  });
+
+  // ── Collapsed tile ──
+  if (!open) {
+    return (
+      <div
+        onMouseEnter={() => setHov(true)} onMouseLeave={() => setHov(false)}
+        onClick={() => setOpen(true)}
+        style={{
+          background: hov ? "rgba(212,160,23,0.05)" : pal.cardBg,
+          border: `1px dashed ${hov ? GOLD : "rgba(212,160,23,0.3)"}`,
+          borderRadius: 14, padding: "28px 18px", cursor: "pointer",
+          textAlign: "center", transition: "all .25s", boxSizing: "border-box",
+          display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 10,
+          minHeight: 120,
+        }}
+      >
         <div style={{ fontSize: 28, opacity: hov ? 1 : 0.5, transition: "opacity .2s" }}>＋</div>
         <div style={{ fontSize: 14, fontWeight: 800, color: hov ? GOLD : pal.muted, fontFamily: "'Playfair Display',serif", transition: "color .2s" }}>
           Request a Stock
@@ -186,17 +222,119 @@ function RequestTile({ pal }) {
           Don't see a stock you're tracking?<br/>Tell us and we'll add it to our pipeline.
         </div>
       </div>
-    </a>
+    );
+  }
+
+  // ── Expanded form ──
+  return (
+    <div style={{
+      background: isDark ? "rgba(255,255,255,0.02)" : "rgba(13,27,42,0.03)",
+      border: `1px dashed rgba(212,160,23,0.28)`,
+      borderRadius: 14, padding: "28px 26px",
+      animation: "ruFormOpen .22s cubic-bezier(.22,1,.36,1)",
+    }}>
+      <style>{`@keyframes ruFormOpen { from { opacity:0; transform:translateY(8px) } to { opacity:1; transform:none } }`}</style>
+
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 18 }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+          <span style={{ fontSize: 22 }}>＋</span>
+          <div>
+            <div style={{ fontSize: 14, fontWeight: 800, color: GOLD, fontFamily: "'Playfair Display',serif" }}>Request a Stock</div>
+            <div style={{ fontSize: 11, color: pal.muted, fontFamily: "'DM Sans',sans-serif", marginTop: 2 }}>
+              Don't see a stock you're tracking? Tell us and we'll add it to our pipeline.
+            </div>
+          </div>
+        </div>
+        <button onClick={() => setOpen(false)} style={{ background: "none", border: "none", cursor: "pointer", color: "rgba(212,160,23,0.45)", fontSize: 20, lineHeight: 1, padding: 4 }}>×</button>
+      </div>
+
+      {sent ? (
+        <div style={{ textAlign: "center", padding: "18px 0" }}>
+          <div style={{ fontSize: 28, marginBottom: 8 }}>✅</div>
+          <div style={{ fontSize: 13, fontWeight: 700, color: "#27AE60", fontFamily: "'DM Sans',sans-serif" }}>Request sent — we'll be in touch!</div>
+        </div>
+      ) : (
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+          <div style={{ gridColumn: "1 / -1" }}>
+            <label style={{ fontSize: 9, letterSpacing: "1.4px", color: "rgba(212,160,23,0.7)", fontWeight: 700, display: "block", marginBottom: 5, fontFamily: "'DM Sans',sans-serif" }}>
+              STOCK NAME <span style={{ color: "#C0392B" }}>*</span>
+            </label>
+            <input type="text" value={stock} placeholder="e.g. Zomato Ltd"
+              onChange={e => setStock(e.target.value)}
+              onFocus={() => setFocused("stock")} onBlur={() => setFocused(null)}
+              style={inputStyle("stock")} autoFocus/>
+          </div>
+          <div>
+            <label style={{ fontSize: 9, letterSpacing: "1.4px", color: "rgba(212,160,23,0.7)", fontWeight: 700, display: "block", marginBottom: 5, fontFamily: "'DM Sans',sans-serif" }}>NSE TICKER</label>
+            <input type="text" value={ticker} placeholder="e.g. ZOMATO"
+              onChange={e => setTicker(e.target.value)}
+              onFocus={() => setFocused("ticker")} onBlur={() => setFocused(null)}
+              style={inputStyle("ticker")}/>
+          </div>
+          <div>
+            <label style={{ fontSize: 9, letterSpacing: "1.4px", color: "rgba(212,160,23,0.7)", fontWeight: 700, display: "block", marginBottom: 5, fontFamily: "'DM Sans',sans-serif" }}>
+              YOUR EMAIL <span style={{ color: "#C0392B" }}>*</span>
+              {user?.email && <span style={{ color: "rgba(212,160,23,0.45)", marginLeft: 6, fontWeight: 400, textTransform: "none", letterSpacing: 0 }}>pre-filled</span>}
+            </label>
+            <input type="email" value={email} placeholder="you@example.com"
+              onChange={e => setEmail(e.target.value)}
+              onFocus={() => setFocused("email")} onBlur={() => setFocused(null)}
+              style={{ ...inputStyle("email"), opacity: user?.email ? 0.75 : 1 }}/>
+          </div>
+          <div style={{ gridColumn: "1 / -1" }}>
+            <label style={{ fontSize: 9, letterSpacing: "1.4px", color: "rgba(212,160,23,0.7)", fontWeight: 700, display: "block", marginBottom: 5, fontFamily: "'DM Sans',sans-serif" }}>
+              WHY THIS STOCK? (optional)
+            </label>
+            <textarea value={note} placeholder="Strong moat, missed by market, interesting sector..."
+              onChange={e => setNote(e.target.value)}
+              onFocus={() => setFocused("note")} onBlur={() => setFocused(null)}
+              rows={2} style={{ ...inputStyle("note"), resize: "none", lineHeight: 1.6 }}/>
+          </div>
+          <div style={{ gridColumn: "1 / -1" }}>
+            <button onClick={handleSubmit} disabled={!stock.trim() || !email.trim()} style={{
+              background: (!stock.trim() || !email.trim()) ? "rgba(212,160,23,0.25)" : GOLD,
+              color: NAVY, border: "none", borderRadius: 8, padding: "11px 28px",
+              fontWeight: 800, fontSize: 11, letterSpacing: "1.4px",
+              cursor: (!stock.trim() || !email.trim()) ? "not-allowed" : "pointer",
+              fontFamily: "'DM Sans',sans-serif", transition: "background .2s",
+            }}>
+              SUBMIT REQUEST →
+            </button>
+            <span style={{ fontSize: 10, color: pal.muted, marginLeft: 14, fontFamily: "'DM Sans',sans-serif" }}>
+              We read every request personally.
+            </span>
+          </div>
+        </div>
+      )}
+    </div>
   );
 }
 
 // ── Page ──────────────────────────────────────────────────────────────────────
+const LOAD_STEP = 4;
+
 export default function ResearchUniverse() {
   const { theme } = useContext(ThemeContext);
   const isDark = theme === "dark";
   const pal = isDark ? DARK_PAL : LIGHT_PAL;
-  const [visible, setVisible] = useState(false);
+  const [visible,      setVisible]      = useState(false);
+  const [searchQuery,  setSearchQuery]  = useState("");
+  const [visibleCount, setVisibleCount] = useState(LOAD_STEP);
+  const [searchFocused, setSearchFocused] = useState(false);
   useEffect(() => { window.scrollTo(0, 0); setTimeout(() => setVisible(true), 80); }, []);
+
+  const filteredStocks = useMemo(() => {
+    if (!searchQuery.trim()) return activeStocks;
+    const q = searchQuery.toLowerCase();
+    return activeStocks.filter(s =>
+      s.name.toLowerCase().includes(q) ||
+      s.ticker.toLowerCase().includes(q) ||
+      (s.sector || "").toLowerCase().includes(q)
+    );
+  }, [searchQuery]);
+
+  const visibleStocks = filteredStocks.slice(0, visibleCount);
+  const hasMore = visibleCount < filteredStocks.length && !searchQuery.trim();
 
   const fu = (d = 0) => ({
     opacity:   visible ? 1 : 0,
@@ -250,13 +388,51 @@ export default function ResearchUniverse() {
         </section>
 
         {/* ── CONTENT ── */}
-        <div style={{ maxWidth: 1360, margin: "0 auto", padding: "56px 18px 80px" }}>
+        <div style={{ maxWidth: 1360, margin: "0 auto", padding: "16px 18px 80px" }}>
+
+          {/* Search bar */}
+          <div style={{ marginBottom: 20, ...fu(0) }}>
+            <div style={{
+              display: "flex", alignItems: "center", gap: 10,
+              background: searchFocused
+                ? (isDark ? "rgba(212,160,23,0.07)" : "rgba(212,160,23,0.09)")
+                : (isDark ? "rgba(255,255,255,0.03)" : "rgba(13,27,42,0.04)"),
+              border: `1px solid ${searchFocused ? "rgba(212,160,23,0.55)" : "rgba(212,160,23,0.2)"}`,
+              borderRadius: 10, padding: "10px 14px",
+              transition: "all .2s", maxWidth: 480,
+            }}>
+              <svg width="13" height="13" viewBox="0 0 13 13" fill="none" style={{ flexShrink: 0 }}>
+                <circle cx="5.5" cy="5.5" r="4" stroke={searchFocused ? GOLD : "rgba(212,160,23,0.5)"} strokeWidth="1.4"/>
+                <path d="M8.5 8.5L11.5 11.5" stroke={searchFocused ? GOLD : "rgba(212,160,23,0.5)"} strokeWidth="1.4" strokeLinecap="round"/>
+              </svg>
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={e => { setSearchQuery(e.target.value); setVisibleCount(LOAD_STEP); }}
+                onFocus={() => setSearchFocused(true)}
+                onBlur={() => setSearchFocused(false)}
+                placeholder="Search published reports by name, ticker or sector…"
+                style={{
+                  flex: 1, border: "none", outline: "none", background: "transparent",
+                  color: pal.text, fontSize: 13, fontFamily: "'DM Sans',sans-serif",
+                }}
+              />
+              {searchQuery && (
+                <button onClick={() => setSearchQuery("")} style={{
+                  background: "none", border: "none", cursor: "pointer",
+                  color: "rgba(212,160,23,0.5)", fontSize: 16, padding: 0, lineHeight: 1,
+                }}>×</button>
+              )}
+            </div>
+          </div>
 
           {/* Live reports label */}
-          <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 20, ...fu(0) }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 20 }}>
             <div style={{ width: 6, height: 6, borderRadius: "50%", background: GREEN, boxShadow: `0 0 8px ${GREEN}` }}/>
             <span style={{ fontSize: 10, fontWeight: 700, letterSpacing: "0.26em", color: GREEN, fontFamily: "'DM Sans',sans-serif" }}>
-              LIVE — {activeStocks.length} REPORTS PUBLISHED
+              {searchQuery.trim()
+                ? `${filteredStocks.length} RESULT${filteredStocks.length !== 1 ? "S" : ""} FOUND`
+                : `LIVE — ${activeStocks.length} REPORTS PUBLISHED`}
             </span>
           </div>
 
@@ -264,12 +440,41 @@ export default function ResearchUniverse() {
           <div className="ru-active-grid" style={{
             display: "grid",
             gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 340px), 1fr))",
-            gap: 16, marginBottom: 32,
+            gap: 16, marginBottom: 20,
           }}>
-            {activeStocks.map((s, i) => (
-              <StockTile key={s.name} stock={s} delay={i * 90} pal={pal}/>
-            ))}
+            {visibleStocks.length > 0
+              ? visibleStocks.map((s, i) => (
+                  <StockTile key={s.name} stock={s} delay={i * 90} pal={pal}/>
+                ))
+              : (
+                <div style={{ gridColumn: "1 / -1", textAlign: "center", padding: "32px 0", color: pal.muted, fontFamily: "'DM Sans',sans-serif", fontSize: 13 }}>
+                  No reports match "{searchQuery}". Try a different search.
+                </div>
+              )
+            }
           </div>
+
+          {/* Load More */}
+          {hasMore && (
+            <div style={{ textAlign: "center", marginBottom: 32 }}>
+              <button
+                onClick={() => setVisibleCount(c => c + LOAD_STEP)}
+                style={{
+                  background: "transparent",
+                  border: `1px solid rgba(212,160,23,0.35)`,
+                  color: "rgba(212,160,23,0.8)",
+                  padding: "10px 32px", borderRadius: 999,
+                  fontWeight: 700, fontSize: 11, letterSpacing: "1.4px",
+                  cursor: "pointer", fontFamily: "'DM Sans',sans-serif",
+                  transition: "all .2s",
+                }}
+                onMouseEnter={e => { e.target.style.background = "rgba(212,160,23,0.08)"; e.target.style.borderColor = GOLD; }}
+                onMouseLeave={e => { e.target.style.background = "transparent"; e.target.style.borderColor = "rgba(212,160,23,0.35)"; }}
+              >
+                LOAD MORE ({filteredStocks.length - visibleCount} remaining)
+              </button>
+            </div>
+          )}
 
           {/* Coming soon label */}
           <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 16, marginTop: 8 }}>
@@ -292,7 +497,7 @@ export default function ResearchUniverse() {
 
           {/* Request tile — spans below */}
           <div style={{ marginTop: 12 }}>
-            <RequestTile pal={pal}/>
+            <RequestForm pal={pal} isDark={isDark}/>
           </div>
 
           {/* Back to home */}
