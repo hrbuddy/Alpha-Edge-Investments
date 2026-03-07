@@ -7,6 +7,8 @@ import { useNavigate } from "react-router-dom";
 import { doc, getDoc, collection, getDocs, setDoc, deleteDoc } from "firebase/firestore";
 import { db }       from "./firebase";
 import { useAuth }  from "./AuthContext";
+import { useAccess } from "./AccessContext";
+import PaywallOverlay from "./PaywallOverlay";
 import { AreaChart, Area, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceLine, Cell, Legend } from "recharts";
 
 const NAVY="#0D1B2A",GOLD="#D4A017",GREEN="#27AE60",RED="#C0392B",TEAL="#00BFA5",BLUE="#2E75B6",PURPLE="#8E44AD",ORANGE="#E67E22",MUTED="#3d5570",SUB="#5a7a94";
@@ -176,7 +178,9 @@ function SaveDialog({onSave,onClose,saving,error}){
 export default function PortfolioSimulator(){
   const navigate=useNavigate();
   const{user}=useAuth();
+  const{ checkPortfolio, recordPortfolioRun }=useAccess();
   const userKey=user?.email?user.email.replace(/[.#$[\]]/g,"_"):null;
+  const[paywall,setPaywall]=useState(null);
 
   const[universe,setUniverse]=useState([]);
   const[suggestions,setSuggestions]=useState([]);
@@ -303,6 +307,20 @@ export default function PortfolioSimulator(){
   async function simulate(){
     if(stocks.length<1)return;
     if(!weightOk){setSimError(`Weights sum to ${(totalWeight*100).toFixed(0)}% - must equal 100%.`);return;}
+
+    // ── Access check ──────────────────────────────────────────────────────────
+    const access = checkPortfolio();
+    if(!access.allowed){
+      setPaywall({
+        type:  access.requiresSignup ? "signup" : "portfolio",
+        used:  access.used  ?? 0,
+        total: access.total ?? 10,
+      });
+      return;
+    }
+    await recordPortfolioRun();
+    // ─────────────────────────────────────────────────────────────────────────
+
     setSimulating(true);setSimError(null);setResult(null);
     try{
       const priceMap={};
@@ -379,6 +397,9 @@ export default function PortfolioSimulator(){
     <div style={{background:`linear-gradient(160deg,${NAVY} 0%,#060e1a 100%)`,minHeight:"100vh",color:"#e2e8f0",fontFamily:"'DM Sans',sans-serif",paddingTop:92}}>
       <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;600;700;800&family=Playfair+Display:wght@700;800&display=swap" rel="stylesheet"/>
       <style>{`@keyframes pSpin{to{transform:rotate(360deg)}}input[type=range]{height:4px;cursor:pointer}input[type=number]::-webkit-inner-spin-button{opacity:0.5}@media(max-width:760px){.pm-layout{flex-direction:column!important}.pm-left{width:100%!important}.pm-stats{display:grid!important;grid-template-columns:1fr 1fr 1fr!important;gap:6px!important}.pm-stats>div{padding:8px 8px!important}.pm-stats .pm-val{font-size:13px!important}.pm-stats .pm-bm{font-size:11px!important}.pm-header{padding:22px 16px 16px!important}.pm-header-divider{display:none!important}.pm-layout{padding:14px 14px 80px!important}}`}</style>
+
+      {/* Paywall overlay */}
+      {paywall && <PaywallOverlay config={paywall} onClose={()=>setPaywall(null)} />}
 
       {/* Header */}
       <div className="pm-header" style={{padding:"52px 28px 28px",borderBottom:"1px solid rgba(212,160,23,0.15)",textAlign:"center"}}>

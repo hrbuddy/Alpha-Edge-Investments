@@ -131,14 +131,17 @@ export const STOCKS = {
       ],
       conclusion: "Base Case FY30 Target: ₹1,700–2,100 (12–17% CAGR from ₹1,100). Investment portfolio (₹36,855 Cr) provides additional margin of safety.",
     },
-  dcf: {
-    wacc:       11.0,
-    termGrowth: 7.0,
-    interestRate: 0,    // near-zero debt
-    isNBFC:     false,
-    note:       "BUY, ₹1,700–2,100 target (12–17% CAGR). Naukri monopoly + investment portfolio ₹36,855 Cr. Margin expansion to 42% by FY30 via operating leverage.",
-  },
-  },
+  
+    dcf: {
+      wacc:         13.0,
+      termGrowth:   8.0,
+      isNBFC:       false,
+      wcRev:        0,
+      taxRate:      25,
+      interestRate: 0,
+      note: "Asset-light internet classifieds. Zero net debt. Terminal growth 8% reflects digital hiring TAM.",
+    },
+},
 
 
   // ─────────────────────────────────────────────
@@ -255,14 +258,17 @@ export const STOCKS = {
       ],
       conclusion: "Base Case FY30 Target: ₹12,500–15,000 (14–16% CAGR from ₹8,190). At CMP, FY30E P/E of ~21x is attractive for a 30% ROCE franchise.",
     },
-  dcf: {
-    wacc:       11.5,
-    termGrowth: 6.5,
-    interestRate: 0,    // near-zero net debt
-    isNBFC:     false,
-    note:       "BUY, ₹12,500–15,000 target (14–16% CAGR). RE dominance 250-750cc + INT 650 + VECV optionality. FY30E P/E ~21x undemanding for 30% ROCE franchise.",
-  },
-  },
+  
+    dcf: {
+      wacc:         12.0,
+      termGrowth:   7.0,
+      isNBFC:       false,
+      wcRev:        2.0,
+      taxRate:      25,
+      interestRate: 0,
+      note: "Premium motorcycle franchise with zero net debt. CoE 12% reflects quality premium. Terminal growth 7% equals nominal GDP.",
+    },
+},
 
 
   // ─────────────────────────────────────────────
@@ -374,14 +380,17 @@ export const STOCKS = {
       ],
       conclusion: "Base Case FY30 Target: ₹550–700 (14–20% CAGR from ₹330). LGD certification structural tailwind provides visibility that is not yet fully priced in.",
     },
-  dcf: {
-    wacc:       11.0,
-    termGrowth: 7.0,
-    interestRate: 5.0,  // moderate debt
-    isNBFC:     false,
-    note:       "BUY, ₹550–700 target (14–20% CAGR). LGD certification structural tailwind + NABL expansion. Asset-light 50%+ ROCE not priced in.",
-  },
-  },
+  
+    dcf: {
+      wacc:         13.5,
+      termGrowth:   7.0,
+      isNBFC:       false,
+      wcRev:        3.0,
+      taxRate:      25,
+      interestRate: 7,
+      note: "Mid-cap gems and jewellery. Higher CoE reflects sector cyclicality and smaller scale.",
+    },
+},
 
   // ─────────────────────────────────────────────
   //  MCX — Multi Commodity Exchange of India Ltd
@@ -511,14 +520,17 @@ export const STOCKS = {
       ],
       conclusion: "Base Case FY30 Target: ₹5,150 (+111% from ₹2,447, 21% CAGR). Even Bear case at 35x EPS ₹80 = ₹2,800 — still above CMP, making downside structurally protected. Institutional participation catalyst (not priced in) = path to Bull case.",
     },
-  dcf: {
-    wacc:       10.5,
-    termGrowth: 7.0,
-    interestRate: 0,    // no debt
-    isNBFC:     false,
-    note:       "BUY, ₹5,150 target (21% CAGR). Commodity exchange monopoly + new platform. 70%+ EBITDA margins + 95% ROCE by FY30. Institutional participation catalyst not priced in.",
-  },
-  },
+  
+    dcf: {
+      wacc:         13.0,
+      termGrowth:   7.5,
+      isNBFC:       false,
+      wcRev:        0,
+      taxRate:      25,
+      interestRate: 0,
+      note: "Asset-light exchange model. Zero debt. Terminal growth 7.5% reflects commodity trading TAM expansion.",
+    },
+},
 
 // ─────────────────────────────────────────────
 //  YATHARTH HOSPITAL & TRAUMA CARE SERVICES
@@ -641,13 +653,16 @@ export const STOCKS = {
     ],
     conclusion: "12-Month Target: ₹850–950 (BUY). Base Case FY27E at 35x EPS ₹22.9 = ₹802; Bull Case ₹1,040. On FY28E EPS ₹33.4 at 28x = ₹935 (4-analyst consensus). Bear case ₹450 represents -36% downside — key risk is execution failure on new hospital ramp and prolonged CGHS receivable issues.",
   },
-dcf: {
-  wacc:       12.5,
-  termGrowth: 6.5,
-    interestRate: 8.0,  // hospital capex debt
-  isNBFC:     false,
-  note:       "BUY, ₹850–950 target. Hospital ramp-up + CGHS resolution are key catalysts. FY28E re-rating as ROE normalises to 18–22%. Higher WACC reflects execution risk.",
-},
+
+  dcf: {
+    wacc:         14.0,
+    termGrowth:   7.0,
+    isNBFC:       false,
+    wcRev:        4.0,
+    taxRate:      25,
+    interestRate: 8,
+    note: "Healthcare and hospitals. Higher discount rate reflects capex intensity and execution risk.",
+  },
 },
 
 
@@ -763,13 +778,16 @@ dcf: {
     ],
     conclusion: "Base Case FY30 Target: ₹800–1,000 (12–18% CAGR from ₹454). Order book + policy tailwinds provide multi-year visibility that is not fully priced in at current 55x TTM P/E.",
   },
-dcf: {
-  wacc:       11.5,
-  termGrowth: 7.0,
-    interestRate: 5.0,  // government-backed low rate
-  isNBFC:     false,
-  note:       "BUY, ₹800–1,000 target (12–18% CAGR). Order book ₹73,015 Cr (2.8× TTM). Indigenisation + QRSAM + Kusha execution drive margin expansion to 30% by FY30.",
-},
+
+  dcf: {
+    wacc:         12.0,
+    termGrowth:   7.0,
+    isNBFC:       false,
+    wcRev:        2.5,
+    taxRate:      25,
+    interestRate: 0,
+    note: "Defence PSU with strong order book. Zero net debt. CoE 12% reflects Navratna quality and stable cash flows.",
+  },
 },
 
 // ─────────────────────────────────────────────
@@ -880,13 +898,16 @@ dcf: {
     ],
     conclusion: "Base Case FY30 Target: ₹1,600–1,800 (13–16% CAGR from ₹978). 30x FY30 EPS on ₹61 (22% AUM CAGR + 20% ROE). Orderly MSME tightening + new verticals provide multi-year visibility not fully priced at current 33x TTM.",
   },
-dcf: {
-  wacc:       10.0,
-  termGrowth: 7.5,
-    interestRate: 0,    // NBFC — interest is revenue, not expense
-  isNBFC:     true,
-  note:       "BUY, ₹1,600–1,800 target (13–16% CAGR). 115MM customer flywheel + FINAI moat. 22% AUM CAGR + 20% ROE sustainable. MSME tightening = prudence, not weakness.",
-},
+
+  dcf: {
+    wacc:         13.0,
+    termGrowth:   8.0,
+    isNBFC:       true,
+    wcRev:        0,
+    taxRate:      25,
+    interestRate: 0,
+    note: "FCFE-based DCF. Cost of Equity 13% reflects NBFC risk premium. Terminal growth 8% anchored to nominal GDP.",
+  },
 },
 
 
@@ -998,13 +1019,16 @@ dcf: {
     ],
     conclusion: "Base Case FY30 Target: ₹5,800–7,000 (16–20% CAGR from ₹3,813). 35–38x FY30 EPS on ₹240 (19% revenue CAGR + 14.8% EBITDA + 30% ROCE). Market share gains, EV leadership, and Norton pipeline provide multi-year visibility not fully priced at current levels.",
   },
-dcf: {
-  wacc:       11.5,
-  termGrowth: 6.5,
-    interestRate: 8.5,  // vehicle financing debt
-  isNBFC:     false,
-  note:       "BUY, ₹5,800–7,000 target (16–20% CAGR). EV leadership iQube + Norton premium + 3W exports. Margin expansion 12.3% → 14.8% by FY30 not fully priced in.",
-},
+
+  dcf: {
+    wacc:         12.5,
+    termGrowth:   7.0,
+    isNBFC:       false,
+    wcRev:        2.0,
+    taxRate:      25,
+    interestRate: 7,
+    note: "Two and three wheeler leader. CoE 12.5% reflects auto sector cyclicality offset by premium brand mix.",
+  },
 },
 
 
@@ -1114,13 +1138,16 @@ dcf: {
     ],
     conclusion: "Base Case FY30 Target: ₹4,200–5,200 (17–22% CAGR from ₹1,940). 45-55x FY30 EPS on ₹95 (store-led 25%+ revenue CAGR + 17.5% EBITDA + rising ROCE). Aggressive expansion + SSSG momentum + operating leverage provide multi-year visibility in under-penetrated value retail segment.",
   },
-dcf: {
-  wacc:       13.0,
-  termGrowth: 7.0,
-    interestRate: 10.0, // working capital heavy
-  isNBFC:     false,
-  note:       "BUY, ₹4,200–5,200 target (17–22% CAGR). 25%+ CAGR via Tier 2/3 store expansion. EBITDA margin → 17.5% + ROCE inflection. Under-penetrated value retail structural play.",
-},
+
+  dcf: {
+    wacc:         14.5,
+    termGrowth:   8.0,
+    isNBFC:       false,
+    wcRev:        3.0,
+    taxRate:      25,
+    interestRate: 8,
+    note: "High-growth value fashion. Higher CoE reflects small-cap risk and early-stage unit economics.",
+  },
 },
 
 

@@ -7,6 +7,9 @@
 
 import { useState, useRef, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { useAccess } from "../AccessContext";
+import { useAuth }   from "../AuthContext";
+import PaywallOverlay from "../PaywallOverlay";
 import {
   BarChart, Bar, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend,
   ResponsiveContainer, RadarChart, PolarGrid, PolarAngleAxis,
@@ -219,7 +222,41 @@ export default function StockDashboard({ stock }) {
   const [tab, setTab]   = useState(0);
   const navigate        = useNavigate();
 
-  useEffect(() => { window.scrollTo(0, 0); }, []);
+  const { user }                                                        = useAuth();
+  const { checkReport, recordReport, checkDCF, recordDCF,
+          loading: accessLoading }                                       = useAccess();
+  const [paywall, setPaywall] = useState(null);
+
+  // ── Gate: check report access on mount — wait for access data ────────────
+  useEffect(() => {
+    if (!stock || accessLoading) return;
+    const access = checkReport(stock.nse);
+    if (!access.allowed) {
+      setPaywall({
+        type:  user ? "report" : "signup",
+        used:  access.used  ?? 0,
+        total: access.total ?? 3,
+      });
+    } else {
+      recordReport(stock.nse);
+    }
+  }, [stock?.nse, accessLoading]); // eslint-disable-line
+
+  // ── Gate: DCF button ───────────────────────────────────────────────────────
+  function handleDCFClick() {
+    const access = checkDCF(stock.nse);
+    if (!access.allowed) {
+      setPaywall({
+        type:   access.requiresSignup ? "dcf_teaser" : "dcf",
+        used:   access.used  ?? 0,
+        total:  access.total ?? 3,
+        ticker: stock.nse,
+      });
+      return;
+    }
+    recordDCF(stock.nse);
+    navigate(`/dcf/${stock.nse}`);
+  }
 
   if (!stock) {
     return (
@@ -229,6 +266,21 @@ export default function StockDashboard({ stock }) {
           <Link to="/" style={{ color: "#94a3b8" }}>← Back to Alpha Edge</Link>
         </div>
       </div>
+    );
+  }
+
+  // ── Paywall overlay — blurs the page content behind it ────────────────────
+  if (paywall) {
+    return (
+      <>
+        <div style={{ filter:"blur(6px)", pointerEvents:"none", userSelect:"none",
+          minHeight:"100vh", background:`linear-gradient(135deg,${NAVY} 0%,#0a1628 100%)`,
+          paddingTop:96, padding:"96px 22px 40px" }}>
+          <div style={{ fontSize:22, fontWeight:800, color:"#fff", marginBottom:8 }}>{stock.name}</div>
+          <div style={{ fontSize:12, color:"#94a3b8" }}>NSE: {stock.nse}</div>
+        </div>
+        <PaywallOverlay config={paywall} onClose={() => navigate(-1)} />
+      </>
     );
   }
 
@@ -298,7 +350,7 @@ export default function StockDashboard({ stock }) {
         {/* DCF Model CTA */}
         <div style={{ marginTop: 12, display: "flex", gap: 8 }}>
           <button
-            onClick={() => navigate(`/dcf/${stock.nse}`)}
+            onClick={handleDCFClick}
             style={{
               padding: "9px 20px", borderRadius: 999,
               background: "rgba(212,160,23,0.1)",

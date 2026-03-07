@@ -9,7 +9,7 @@ const NAVY = "#0D1B2A";
 export default function SignUp() {
   const { theme }        = useContext(ThemeContext);
   const isDark           = theme === "dark";
-  const { user, signUp } = useAuth();
+  const { user, signUp, signInWithGoogle } = useAuth();
   const navigate         = useNavigate();
 
   const [name,     setName]    = useState("");
@@ -67,15 +67,23 @@ export default function SignUp() {
     setTimeout(() => navigate("/"), 2200);
   }
 
-  // Social login — requires OAuth provider setup (Google / Facebook)
-  // Wire these up in AuthContext with your preferred provider (Firebase, Auth0, Supabase etc.)
-  function handleGoogleLogin() {
-    setSocialMsg("Google login coming soon. Set up OAuth in AuthContext to enable.");
-    setTimeout(() => setSocialMsg(""), 3000);
+  async function handleGoogleLogin() {
+    try {
+      await signInWithGoogle();
+      // onAuthStateChanged in AuthContext updates user state → triggers navigate("/")
+    } catch (e) {
+      setError(
+        e.code === "auth/popup-closed-by-user"
+          ? "Sign-in cancelled."
+          : e.code === "auth/popup-blocked"
+          ? "Popup blocked — please allow popups for this site."
+          : "Google sign-in failed. Please try again."
+      );
+    }
   }
 
   function handleFacebookLogin() {
-    setSocialMsg("Facebook login coming soon. Set up OAuth in AuthContext to enable.");
+    setSocialMsg("Facebook login coming soon.");
     setTimeout(() => setSocialMsg(""), 3000);
   }
 

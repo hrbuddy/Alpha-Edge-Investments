@@ -11,19 +11,18 @@ import ResearchUniverse from "./ResearchUniverse";
 import MacroBoard from "./MacroBoard";
 import MomentumDashboard from "./MomentumDashboard";
 import FlashCard from "./FlashCard";
-import { AuthProvider } from "./AuthContext";
-import { StockModalProvider } from "./StockModal";
-import QuantPage from "./QuantPage";
-import SizeDashboard from "./SizeDashboard";
-import ValueDashboard from "./ValueDashboard";
 import PortfolioSimulator from "./PortfolioSimulator";
-import GenericDCFTemplate from "./GenericDCFTemplate";
-
-// ── New scalable dashboard system ──
+import { AuthProvider } from "./AuthContext";
+import { AccessProvider } from "./AccessContext";
+import { StockModalProvider } from "./StockModal";
 import { STOCKS, STOCK_ROUTES } from "./dashboards/stocksDB";
 import StockDashboard from "./dashboards/StockDashboard";
+import GenericDCFTemplate from "./GenericDCFTemplate";
+import UpgradePage from "./UpgradePage";
 
-// ── DCF Lab — all stocks including covered use GenericDCFTemplate ──
+import QuantPage      from "./QuantPage";
+import ValueDashboard from "./ValueDashboard";
+import SizeDashboard  from "./SizeDashboard";
 
 export const ThemeContext = createContext();
 
@@ -45,7 +44,9 @@ function App() {
     <ThemeContext.Provider value={{ theme, toggleTheme }}>
       <AuthProvider>
         <Router>
-          <StockModalProvider>
+          <AccessProvider>
+            {/* StockModalProvider must be inside Router so it can useNavigate */}
+            <StockModalProvider>
             <Navbar />
             <Routes>
               <Route path="/"                  element={<Home />} />
@@ -54,17 +55,18 @@ function App() {
               <Route path="/terms"             element={<TermsConditions />} />
               <Route path="/philosophy"        element={<InvestmentPhilosophy />} />
               <Route path="/research-universe" element={<ResearchUniverse />} />
+              <Route path="/my-research"        element={<ResearchUniverse />} />
               <Route path="/macro"             element={<MacroBoard />} />
               <Route path="/momentum"          element={<MomentumDashboard />} />
               <Route path="/quant"             element={<QuantPage />} />
               <Route path="/size"              element={<SizeDashboard />} />
               <Route path="/value"             element={<ValueDashboard />} />
-              <Route path="/discover"          element={<FlashCard />} />
               <Route path="/portfolio"         element={<PortfolioSimulator />} />
-         
-              {/* DCF Lab — GenericDCFTemplate handles all tickers, covered or not */}
-              <Route path="/dcf/:ticker" element={<GenericDCFTemplate />} />
+              <Route path="/discover"          element={<FlashCard />} />
+              <Route path="/dcf/:ticker"       element={<GenericDCFTemplate />} />
+              <Route path="/upgrade"           element={<UpgradePage />} />
 
+              {/* Auto-generated stock routes */}
               {STOCK_ROUTES.map(({ path, stockId }) => (
                 <Route
                   key={stockId}
@@ -75,6 +77,7 @@ function App() {
             </Routes>
             <Footer />
           </StockModalProvider>
+          </AccessProvider>
         </Router>
       </AuthProvider>
     </ThemeContext.Provider>

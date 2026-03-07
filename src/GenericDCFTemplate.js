@@ -6,7 +6,9 @@
  */
 
 import React, { useState, useMemo, useCallback, useEffect, useRef } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useNavigate } from "react-router-dom";
+import { useAccess } from "./AccessContext";
+import PaywallOverlay from "./PaywallOverlay";
 import {
   ComposedChart, Bar, Line, XAxis, YAxis, CartesianGrid,
   Tooltip, Legend, ResponsiveContainer, Cell,
@@ -164,9 +166,18 @@ function ErrorState({ ticker, message }) {
 }
 
 // ── Inline editable cell — identical to BajajFinanceDCFModel ─────────────────
-function EditCell({ rawValue, displayValue, onCommit, isModified }) {
+function EditCell({ rawValue, displayValue, onCommit, isModified, disabled }) {
   const [draft, setDraft] = useState(null);
   const commit = () => { if (draft !== null) onCommit(draft); setDraft(null); };
+  if (disabled) {
+    return (
+      <span style={{
+        display:"block", width:"100%", textAlign:"right", padding:"0 2px",
+        color: isModified ? GOLD : GREEN, fontWeight: isModified ? 700 : 500,
+        fontSize:13, cursor:"not-allowed", opacity:0.5,
+      }}>{displayValue}</span>
+    );
+  }
   return (
     <input
       type="text" inputMode="decimal"
@@ -188,7 +199,7 @@ function EditCell({ rawValue, displayValue, onCommit, isModified }) {
 
 // ── StatTable — identical logic to BajajFinanceDCFModel ──────────────────────
 // Adapted to accept dynamic histYears / projYears arrays
-function StatTable({ rows, histYears = [], projYears = [], projOnly = false }) {
+function StatTable({ rows, histYears = [], projYears = [], projOnly = false, viewOnly = false }) {
   const HIST_BG  = "#090f1a";
   const PROJ_BG  = "#0d1b2e";
   const EDIT_BG  = "#0e2030";
@@ -290,7 +301,7 @@ function StatTable({ rows, histYears = [], projYears = [], projOnly = false }) {
                     }}>
                       {isEdit ? (
                         <EditCell rawValue={v} displayValue={disp} isModified={isM}
-                          onCommit={raw => row.onEdit(ci, raw)} />
+                          disabled={viewOnly} onCommit={raw => row.onEdit(ci, raw)} />
                       ) : (
                         <span style={{ color: isM ? GOLD : base, fontWeight: isM ? 700 : fw,
                                        fontStyle: isRat ? "italic" : "normal" }}>{disp}</span>
@@ -371,16 +382,17 @@ function NoteButton({ text }) {
 }
 
 // ── SliderRow — identical to BajajFinanceDCFModel ────────────────────────────
-function SliderRow({ label, value, min, max, step = 0.5, onChange, modified, suffix = "%" }) {
+function SliderRow({ label, value, min, max, step = 0.5, onChange, modified, suffix = "%", disabled = false }) {
   return (
-    <div style={{ marginBottom:6 }}>
+    <div style={{ marginBottom:6, opacity: disabled ? 0.45 : 1 }}>
       <div style={{ display:"flex", justifyContent:"space-between", marginBottom:2 }}>
         <span style={{ fontSize:10.5, color:MUTED }}>{label}</span>
         <span style={{ fontSize:11, fontWeight:700, color: modified ? BLUE : GOLD }}>{value}{suffix}</span>
       </div>
       <input type="range" min={min} max={max} step={step} value={value}
-        onChange={e => onChange(+e.target.value)}
-        style={{ width:"100%", accentColor: modified ? BLUE : GOLD, height:3, cursor:"pointer" }} />
+        onChange={e => !disabled && onChange(+e.target.value)}
+        disabled={disabled}
+        style={{ width:"100%", accentColor: modified ? BLUE : GOLD, height:3, cursor: disabled ? "not-allowed" : "pointer" }} />
     </div>
   );
 }
@@ -416,6 +428,34 @@ const ChartTooltip = ({ active, payload, label }) => {
 export default function GenericDCFTemplate() {
   const { ticker: rawTicker } = useParams();
   const ticker = rawTicker?.toUpperCase() || "";
+  const navigate = useNavigate();
+
+  const { checkDCF, recordDCF, loading: accessLoading } = useAccess();
+  const [paywall,  setPaywall]  = useState(null);
+  const [viewOnly, setViewOnly] = useState(false);
+
+  // Reset on ticker change — component stays mounted between /dcf/A → /dcf/B
+  useEffect(() => {
+    setViewOnly(false);
+    setPaywall(null);
+  }, [ticker]);
+
+  // Gate — fires after reset and after Firestore loads
+  useEffect(() => {
+    if (!ticker || accessLoading) return;
+    const access = checkDCF(ticker);
+    if (!access.allowed) {
+      setPaywall({
+        type:   access.requiresSignup ? "dcf_teaser" : "dcf",
+        used:   access.used  ?? 0,
+        total:  access.total ?? 3,
+        ticker,
+      });
+    } else {
+      setViewOnly(!!access.viewOnly);
+      recordDCF(ticker);
+    }
+  }, [ticker, accessLoading]); // eslint-disable-line
 
   // ── Data ──────────────────────────────────────────────────────────────────
   const { data, loading, error } = useDCFData(ticker);
@@ -638,26 +678,78 @@ export default function GenericDCFTemplate() {
       <ErrorState ticker={ticker} message={error || "No data found."} />
     </div>
   );
-  if (!assumptions || !model) return null;
+  // If paywall triggered before data loads, show paywall immediately
+  if (!assumptions || !model) {
+    if (paywall) return (
+      <>
+        <div style={{ background: NAVY, minHeight: "100vh" }} />
+        <PaywallOverlay config={paywall} onClose={() => navigate(-1)} />
+      </>
+    );
+    return null;
+  }
 
+  // ── Paywall overlay ────────────────────────────────────────────────────────
+  // paywall renders ON TOP of full page — removed early return for FOMO blur effect
 
-  // ── Assumption Panel (identical structure to BajajFinanceDCFModel) ─────────
+  // ── View-only banner (anon users) ──────────────────────────────────────────
+  const ViewOnlyBanner = viewOnly ? (
+    <div style={{
+      background:"rgba(212,160,23,0.08)", borderBottom:"1px solid rgba(212,160,23,0.2)",
+      padding:"9px 20px", display:"flex", alignItems:"center", justifyContent:"space-between",
+      flexWrap:"wrap", gap:8,
+    }}>
+      <span style={{ fontSize:11, color:"#D4A017", fontWeight:700 }}>
+        👁 View-only mode — sign in to edit assumptions
+      </span>
+      <button
+        onClick={() => navigate("/signup")}
+        style={{ fontSize:10, fontWeight:800, color:"#0D1B2A", background:"#D4A017",
+          border:"none", borderRadius:999, padding:"5px 14px", cursor:"pointer", letterSpacing:"0.5px" }}
+      >
+        SIGN IN FREE
+      </button>
+    </div>
+  ) : null;
   const AssumptionPanel = (
     <div style={{ width:272, flexShrink:0, background:CARD, borderLeft:`1px solid ${GOLD}20`,
-                  overflowY:"auto", padding:"14px 14px 80px", fontSize:11 }}>
+                  overflowY:"auto", padding:"14px 14px 80px", fontSize:11, position:"relative" }}>
+
+      {/* View-only blocker — prevents ALL interaction with sliders */}
+      {viewOnly && (
+        <div onClick={() => navigate("/signup")} style={{
+          position:"absolute", inset:0, zIndex:999, cursor:"pointer",
+          background:"rgba(8,15,26,0.6)", backdropFilter:"blur(2px)",
+          display:"flex", flexDirection:"column",
+          alignItems:"center", justifyContent:"center", gap:10, padding:"20px",
+        }}>
+          <span style={{ fontSize:20 }}>🔐</span>
+          <span style={{ fontSize:12, fontWeight:800, color:GOLD, textAlign:"center", lineHeight:1.4 }}>
+            Sign in to edit assumptions
+          </span>
+          <span style={{ fontSize:10, color:"#5a7a94", textAlign:"center", lineHeight:1.5 }}>
+            Free account · no credit card
+          </span>
+          <button style={{
+            marginTop:4, padding:"7px 20px", borderRadius:999,
+            background:GOLD, color:NAVY, border:"none",
+            fontSize:10, fontWeight:800, letterSpacing:"0.5px", cursor:"pointer",
+          }}>SIGN IN FREE</button>
+        </div>
+      )}
 
       <div style={{ fontSize:9.5, color:DIM, marginBottom:10 }}>Blue = modified from seeded default</div>
 
       <PanelSection label="Revenue Growth (% YoY)" defaultOpen={false}>
         {P_YRS.map((y, i) => (
-          <SliderRow key={y} label={y} value={assumptions.revGrowth[i]} min={-15} max={60} step={0.1}
+          <SliderRow key={y} label={y} disabled={viewOnly} value={assumptions.revGrowth[i]} min={-15} max={60} step={0.1}
             modified={isModified("revGrowth", i)} onChange={v => set("revGrowth", v, i)} />
         ))}
       </PanelSection>
 
       <PanelSection label="EBITDA Margin (%)" defaultOpen={false}>
         {P_YRS.map((y, i) => (
-          <SliderRow key={y} label={y} value={assumptions.ebitdaMargin[i]} min={-20} max={80} step={0.1}
+          <SliderRow key={y} label={y} disabled={viewOnly} value={assumptions.ebitdaMargin[i]} min={-20} max={80} step={0.1}
             modified={isModified("ebitdaMargin", i)} onChange={v => set("ebitdaMargin", v, i)} />
         ))}
       </PanelSection>
@@ -665,27 +757,27 @@ export default function GenericDCFTemplate() {
       <PanelSection label="Operating Assumptions" defaultOpen={true}>
         <div style={{ fontSize:10, color:MUTED, marginBottom:4 }}>D&A % OF REVENUE</div>
         {P_YRS.map((y, i) => (
-          <SliderRow key={y} label={y} value={assumptions.daRev[i]} min={0} max={10} step={0.1}
+          <SliderRow key={y} label={y} disabled={viewOnly} value={assumptions.daRev[i]} min={0} max={10} step={0.1}
             modified={isModified("daRev", i)} onChange={v => set("daRev", v, i)} />
         ))}
-        <SliderRow label="Capex % of Revenue" value={assumptions.capexRev} min={0.5} max={20} step={0.1}
+        <SliderRow disabled={viewOnly} label="Capex % of Revenue" value={assumptions.capexRev} min={0.5} max={20} step={0.1}
           modified={isModified("capexRev")} onChange={v => set("capexRev", v)} />
-        <SliderRow label="ΔWC % of Rev Change" value={assumptions.wcRev} min={0} max={10} step={0.1}
+        <SliderRow disabled={viewOnly} label="ΔWC % of Rev Change" value={assumptions.wcRev} min={0} max={10} step={0.1}
           modified={isModified("wcRev")} onChange={v => set("wcRev", v)} />
-        <SliderRow label="Tax Rate" value={assumptions.taxRate} min={15} max={40} step={0.1}
+        <SliderRow disabled={viewOnly} label="Tax Rate" value={assumptions.taxRate} min={15} max={40} step={0.1}
           modified={isModified("taxRate")} onChange={v => set("taxRate", v)} />
-        <SliderRow label="Interest Rate on Debt %" value={assumptions.interestRate ?? 7} min={0} max={15} step={0.1}
+        <SliderRow disabled={viewOnly} label="Interest Rate on Debt %" value={assumptions.interestRate ?? 7} min={0} max={15} step={0.1}
           modified={isModified("interestRate")} onChange={v => set("interestRate", v)} />
       </PanelSection>
 
       <PanelSection label="WACC Build-up" defaultOpen={false}>
         <div style={{ background:"#0a1420", borderRadius:6, padding:"10px 10px 6px",
                       border:`1px solid ${BLUE}22`, marginBottom:8 }}>
-          <SliderRow label="Risk-Free Rate" value={waccInputs.rfr} min={4} max={12} step={0.1}
+          <SliderRow disabled={viewOnly} label="Risk-Free Rate" value={waccInputs.rfr} min={4} max={12} step={0.1}
             modified={waccInputs.rfr !== 7.0} onChange={v => setWacc("rfr", v)} />
-          <SliderRow label="Market Risk Premium" value={waccInputs.mrp} min={3} max={12} step={0.1}
+          <SliderRow disabled={viewOnly} label="Market Risk Premium" value={waccInputs.mrp} min={3} max={12} step={0.1}
             modified={waccInputs.mrp !== 6.4} onChange={v => setWacc("mrp", v)} />
-          <SliderRow label="Beta" value={waccInputs.beta} min={0.3} max={2.5} step={0.05}
+          <SliderRow disabled={viewOnly} label="Beta" value={waccInputs.beta} min={0.3} max={2.5} step={0.05}
             modified={waccInputs.beta !== 1.0} onChange={v => setWacc("beta", v)} />
           <div style={{ display:"flex", justifyContent:"space-between", padding:"4px 0",
                         borderTop:"1px solid rgba(255,255,255,0.06)", marginTop:4 }}>
@@ -693,16 +785,16 @@ export default function GenericDCFTemplate() {
             <span style={{ fontSize:12, fontWeight:800, color:BLUE }}>{coe}%</span>
           </div>
           <div style={{ height:1, background:"rgba(255,255,255,0.05)", margin:"8px 0" }} />
-          <SliderRow label="Pre-tax Cost of Debt" value={waccInputs.debtCost} min={1} max={15} step={0.1}
+          <SliderRow disabled={viewOnly} label="Pre-tax Cost of Debt" value={waccInputs.debtCost} min={1} max={15} step={0.1}
             modified={waccInputs.debtCost !== 8.0} onChange={v => setWacc("debtCost", v)} />
           <div style={{ display:"flex", justifyContent:"space-between", padding:"4px 0" }}>
             <span style={{ fontSize:11, color:MUTED }}>After-Tax Cost of Debt</span>
             <span style={{ fontSize:12, fontWeight:700, color:MUTED }}>{atCod}%</span>
           </div>
           <div style={{ height:1, background:"rgba(255,255,255,0.05)", margin:"8px 0" }} />
-          <SliderRow label="Total Debt (₹ Cr)" value={waccInputs.totalDebt} min={0} max={Math.max(1000000, waccInputs.totalDebt*2)} step={100}
+          <SliderRow disabled={viewOnly} label="Total Debt (₹ Cr)" value={waccInputs.totalDebt} min={0} max={Math.max(1000000, waccInputs.totalDebt*2)} step={100}
             modified={false} onChange={v => setWacc("totalDebt", v)} suffix="" />
-          <SliderRow label="Market Cap (₹ Cr)" value={waccInputs.marketCap} min={0} max={Math.max(2000000, waccInputs.marketCap*2)} step={100}
+          <SliderRow disabled={viewOnly} label="Market Cap (₹ Cr)" value={waccInputs.marketCap} min={0} max={Math.max(2000000, waccInputs.marketCap*2)} step={100}
             modified={false} onChange={v => setWacc("marketCap", v)} suffix="" />
           <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:6, marginTop:6,
                         padding:"6px 0", borderTop:"1px solid rgba(255,255,255,0.06)" }}>
@@ -726,10 +818,10 @@ export default function GenericDCFTemplate() {
       </PanelSection>
 
       <PanelSection label="Valuation" defaultOpen={false}>
-        <SliderRow label="WACC / CoE (manual)" value={assumptions.wacc} min={7} max={18} step={0.5}
+        <SliderRow disabled={viewOnly} label="WACC / CoE (manual)" value={assumptions.wacc} min={7} max={18} step={0.5}
           modified={isModified("wacc")}
           onChange={v => { set("wacc", v); setWacc("useBuildup", false); }} />
-        <SliderRow label="Terminal Growth Rate" value={assumptions.termGrowth} min={3} max={10} step={0.1}
+        <SliderRow disabled={viewOnly} label="Terminal Growth Rate" value={assumptions.termGrowth} min={3} max={10} step={0.1}
           modified={isModified("termGrowth")} onChange={v => set("termGrowth", v)} />
       </PanelSection>
 
@@ -764,7 +856,7 @@ export default function GenericDCFTemplate() {
         ? "Revenue = NII + Fees + Other Income, already net of interest expense on borrowings. EBITDA = pre-provision operating profit. Projected rows in the table are directly editable — click any green cell."
         : "Revenue = total operating revenue. EBITDA = earnings before interest, tax, D&A. FCFE = PAT + D&A − Capex − ΔNWC (equity cash flow). Projected rows are directly editable — click any green cell."
       } />
-      <StatTable histYears={H_YRS} projYears={P_YRS} rows={[
+      <StatTable histYears={H_YRS} projYears={P_YRS} viewOnly={viewOnly} rows={[
         { label:"Revenue (₹ Cr)", hist:hArr.map(r=>r.revenue), proj:model.pl.map(r=>r.rev), subtotal:true },
         { label:"  YoY Growth %", sub:true,
           hist:hArr.map((_,i)=>i===0?null:+((hArr[i].revenue/hArr[i-1].revenue-1)*100).toFixed(1)),
@@ -825,7 +917,7 @@ export default function GenericDCFTemplate() {
           : "Equity builds via 70% PAT retention. Debt scales at half the revenue growth rate. Projected balance sheet is simplified — use Bajaj Finance 3-statement model for a rigorous linked BS."
         }
       </div>
-      <StatTable histYears={H_YRS} projYears={P_YRS} rows={[
+      <StatTable histYears={H_YRS} projYears={P_YRS} viewOnly={viewOnly} rows={[
         { label:"Total Equity (₹ Cr)", hist:hArr.map(r=>r.total_equity), proj:model.bs.map(r=>r.eq), subtotal:true },
         { label:"Total Debt / Borrowings (₹ Cr)", hist:hArr.map(r=>r.total_debt), proj:model.bs.map(r=>r.bor) },
         { label:"TOTAL ASSETS (₹ Cr)",
@@ -847,7 +939,7 @@ export default function GenericDCFTemplate() {
   // ── Cash Flow Tab (mirrors BajajFinanceDCFModel CFTab) ─────────────────────
   const CFTab = (
     <div>
-      <StatTable histYears={H_YRS} projYears={P_YRS} rows={[
+      <StatTable histYears={H_YRS} projYears={P_YRS} viewOnly={viewOnly} rows={[
         { label:"PAT (₹ Cr)",           hist:hArr.map(r=>r.pat),   proj:model.pl.map(r=>r.pat) },
         { label:"  (+) D&A (₹ Cr)",     hist:hArr.map(r=>r.da),    proj:model.cf.map(r=>r.da) },
         { label:"  (-) ΔWorking Capital",
@@ -893,7 +985,7 @@ export default function GenericDCFTemplate() {
       {/* FCFE Bridge — identical to BajajFinanceDCFModel */}
       <div style={{ fontSize:11, fontWeight:700, color:MUTED, letterSpacing:"0.1em",
                     textTransform:"uppercase", marginBottom:8 }}>FCFE Bridge</div>
-      <StatTable histYears={H_YRS} projYears={P_YRS} rows={[
+      <StatTable histYears={H_YRS} projYears={P_YRS} viewOnly={viewOnly} rows={[
         { label:"EBIT (₹ Cr)",          hist:hArr.map(r=>r.ebit),  proj:model.pl.map(r=>r.ebit) },
         { label:"  (-) Tax on EBIT",    hist:hArr.map(()=>null),   proj:model.pl.map(r=>r.tax), sub:true },
         { label:"NOPAT (₹ Cr)",         hist:hArr.map(r=>r.pat),   proj:model.pl.map(r=>r.nopat), subtotal:true },
@@ -1323,9 +1415,18 @@ export default function GenericDCFTemplate() {
 
   // ── Render (identical to BajajFinanceDCFModel render) ─────────────────────
   return (
+    <>
+    {/* Content blurs when paywall active — FOMO effect */}
     <div style={{ background:`linear-gradient(135deg,${NAVY} 0%,#0a1628 100%)`,
-                  minHeight:"100vh", color:TEXT, fontFamily:"'DM Sans',sans-serif" }}>
+                  minHeight:"100vh", color:TEXT, fontFamily:"'DM Sans',sans-serif",
+                  filter: paywall ? "blur(3px) brightness(0.75)" : "none",
+                  pointerEvents: paywall ? "none" : "auto",
+                  transition: "filter 0.3s ease",
+                  userSelect: paywall ? "none" : "auto" }}>
       <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Playfair+Display:wght@700;800&display=swap" rel="stylesheet" />
+
+      {/* View-only banner for anon users */}
+      {ViewOnlyBanner}
 
       {/* ← Home — identical position to BajajFinanceDCFModel */}
       <Link to="/" style={{ position:"fixed", top:20, left:28, zIndex:10000, color:GOLD,
@@ -1567,5 +1668,8 @@ export default function GenericDCFTemplate() {
         ))}
       </div>
     </div>
+    {/* Paywall overlays blurred page — FOMO effect */}
+    {paywall && <PaywallOverlay config={paywall} onClose={() => navigate(-1)} />}
+    </>
   );
 }

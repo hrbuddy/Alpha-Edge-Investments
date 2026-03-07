@@ -16,6 +16,9 @@ import { createContext, useContext, useState, useEffect, useCallback, useRef } f
 import { useNavigate, useLocation } from "react-router-dom";
 import { doc, getDoc } from "firebase/firestore";
 import { db } from "./firebase";
+import { useAccess } from "./AccessContext";
+import { useAuth }   from "./AuthContext";
+import PaywallOverlay from "./PaywallOverlay";
 import {
   AreaChart, Area, XAxis, YAxis, Tooltip,
   ResponsiveContainer, CartesianGrid,
@@ -219,10 +222,47 @@ function StockSheet({ ticker, extraData, onClose }) {
   const [loading, setLoading] = useState(true);
   const [error, setError]     = useState(false);
   const [period, setPeriod]   = useState("1Y");
-  const [news, setNews]       = useState(null);   // null = loading, [] = none found
+  const [news, setNews]       = useState(null);
   const [factors, setFactors]         = useState(null);
   const [fundamentals, setFundamentals] = useState(null);
+  const [paywall, setPaywall]           = useState(null);
   const sheetRef                        = useRef(null);
+
+  const { user }                                                         = useAuth();
+  const { checkDCF, recordDCF, checkReport, recordReport } = useAccess();
+
+  // ── Gate: DCF button ──────────────────────────────────────────────────────
+  function handleDCFClick() {
+    const access = checkDCF(ticker);
+    if (!access.allowed) {
+      setPaywall({
+        type:   access.requiresSignup ? "dcf_teaser" : "dcf",
+        used:   access.used  ?? 0,
+        total:  access.total ?? 3,
+        ticker,
+      });
+      return;
+    }
+    recordDCF(ticker);
+    onClose();
+    navigate(`/dcf/${ticker}`);
+  }
+
+  // ── Gate: Full Research button ────────────────────────────────────────────
+  function handleResearchClick(path) {
+    const access = checkReport(ticker);
+    if (!access.allowed) {
+      setPaywall({
+        type:  user ? "report" : "signup",
+        used:  access.used  ?? 0,
+        total: access.total ?? 3,
+      });
+      return;
+    }
+    recordReport(ticker);
+    onClose();
+    navigate(path);
+  }
 
   // Fetch price data + scroll sheet to top on open
   useEffect(() => {
@@ -655,7 +695,7 @@ function StockSheet({ ticker, extraData, onClose }) {
 
             {/* Primary: DCF Model */}
             <button
-              onClick={() => { onClose(); navigate(`/dcf/${ticker}`); }}
+              onClick={handleDCFClick}
               style={{
                 width:"100%", padding:"13px 20px", borderRadius:12,
                 background:"rgba(212,160,23,0.12)",
@@ -677,7 +717,7 @@ function StockSheet({ ticker, extraData, onClose }) {
             <div style={{ display:"flex", gap:8 }}>
               {researchPath ? (
                 <button
-                  onClick={() => { onClose(); navigate(researchPath); }}
+                  onClick={() => handleResearchClick(researchPath)}
                   style={{
                     flex:1, padding:"11px 16px", borderRadius:12,
                     background: GOLD, border:"none",
@@ -730,6 +770,14 @@ function StockSheet({ ticker, extraData, onClose }) {
           </div>
         </div>
       </div>
+
+      {/* ── Paywall overlay (sits on top of sheet) ── */}
+      {paywall && (
+        <PaywallOverlay
+          config={paywall}
+          onClose={() => { setPaywall(null); onClose(); }}
+        />
+      )}
     </>
   );
 }

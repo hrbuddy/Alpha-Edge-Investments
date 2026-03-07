@@ -273,9 +273,9 @@ export default function Navbar() {
           .mobile-search-bar{display:none !important;}
           .mobile-search-results{display:none !important;}
           .search-word{display:inline !important;}
-          .logo-wordmark{font-size:19px !important;}
-          .logo-sub{font-size:7px !important; letter-spacing:2.5px !important;}
-          .logo-svg{width:30px !important;height:30px !important;}
+          .logo-wordmark{font-size:17px !important; letter-spacing:2px !important;}
+          .logo-sub{font-size:6.5px !important; letter-spacing:2.5px !important;}
+          .logo-svg{width:28px !important;height:28px !important;}
           .nav-btn{border:1px solid rgba(212,160,23,0.2) !important;background:rgba(212,160,23,0.07) !important;}
           .theme-btn-desktop{display:flex !important;}
           .theme-btn-mobile{display:none !important;}
@@ -285,9 +285,9 @@ export default function Navbar() {
           .ribbon-links{display:none !important;}
           .hamburger-btn{display:flex !important;}
           .search-word{display:none !important;}
-          .logo-wordmark{font-size:18px !important;letter-spacing:0.2px !important;}
-          .logo-sub{font-size:10px !important;letter-spacing:1.8px !important;}
-          .logo-svg{width:27px !important;height:27px !important;}
+          .logo-wordmark{font-size:14px !important;letter-spacing:1.5px !important;}
+          .logo-sub{font-size:0px !important;}
+          .logo-svg{width:22px !important;height:22px !important;}
           .nav-btn{border:none !important;background:transparent !important;padding:6px 7px !important;}
           .theme-btn-desktop{display:none !important;}
           .theme-btn-mobile{display:flex !important;}
@@ -329,8 +329,8 @@ export default function Navbar() {
           )}
 
           {/* LOGO */}
-          <Link to="/" style={{ display:"flex", alignItems:"center", gap:9, textDecoration:"none", flexShrink:0 }}>
-            <svg className="logo-svg" width="36" height="36" viewBox="0 0 44 44" fill="none">
+          <Link to="/" style={{ display:"flex", alignItems:"center", gap:8, textDecoration:"none", flexShrink:0 }}>
+            <svg className="logo-svg" width="28" height="28" viewBox="0 0 44 44" fill="none">
               <defs>
                 <filter id="navGlow" x="-80%" y="-80%" width="260%" height="260%">
                   <feGaussianBlur in="SourceGraphic" stdDeviation="1.4" result="blur"/>
@@ -365,9 +365,10 @@ export default function Navbar() {
                 <path d="M22 16.5 L24.8 21.5 L22 24.5 L20 21.5 Z" fill="white" fillOpacity="0.45"/>
               </g>
             </svg>
-            <div>
-              <div className="logo-wordmark" style={{ fontSize:24, fontWeight:800, letterSpacing:"0.4px", color:GOLD, fontFamily:"'Playfair Display',serif", lineHeight:1 }}>VANTAGE CAPITAL</div>
-              <div className="logo-sub" style={{ fontSize:12.5, letterSpacing:"3px", color:"rgba(212,160,23,0.28)", fontFamily:"'DM Sans',sans-serif", fontWeight:700, marginTop:2, textTransform:"uppercase" }}>INVESTMENTS</div>
+            <div style={{ display:"flex", flexDirection:"column", gap:0 }}>
+              <div className="logo-wordmark" style={{ fontSize:17, fontWeight:800, letterSpacing:"2px", color:GOLD, fontFamily:"'Playfair Display',serif", lineHeight:1.05 }}>VANTAGE</div>
+              <div className="logo-wordmark" style={{ fontSize:17, fontWeight:800, letterSpacing:"2px", color:GOLD, fontFamily:"'Playfair Display',serif", lineHeight:1.05 }}>CAPITAL</div>
+              <div className="logo-sub" style={{ fontSize:6.5, letterSpacing:"2.5px", color:"rgba(212,160,23,0.35)", fontFamily:"'DM Sans',sans-serif", fontWeight:700, marginTop:2, textTransform:"uppercase" }}>INVESTMENTS</div>
             </div>
           </Link>
 
@@ -417,9 +418,11 @@ export default function Navbar() {
 
             {/* Sign Up / User — desktop */}
             {user ? (
-              <button className="nav-btn theme-btn-desktop" onClick={signOut} style={{ borderRadius:8, padding:"6px 12px", cursor:"pointer", display:"flex", alignItems:"center", gap:6, fontSize:10, fontWeight:700, letterSpacing:"1px", color:"rgba(212,160,23,0.7)", fontFamily:"'DM Sans',sans-serif" }}>
-                {user.name.split(" ")[0]} · Sign Out
-              </button>
+              <div style={{ display:"flex", alignItems:"center", gap:8 }}>
+                <button className="nav-btn theme-btn-desktop" onClick={signOut} style={{ borderRadius:8, padding:"6px 12px", cursor:"pointer", display:"flex", alignItems:"center", gap:6, fontSize:10, fontWeight:700, letterSpacing:"1px", color:"rgba(212,160,23,0.7)", fontFamily:"'DM Sans',sans-serif" }}>
+                  {user.name.split(" ")[0]} · Sign Out
+                </button>
+              </div>
             ) : (
               <Link to="/signup" className="theme-btn-desktop" style={{ borderRadius:8, padding:"6px 14px", background:"rgba(212,160,23,0.12)", border:"1px solid rgba(212,160,23,0.35)", cursor:"pointer", display:"flex", alignItems:"center", fontSize:10, fontWeight:800, letterSpacing:"1.2px", color:GOLD, fontFamily:"'DM Sans',sans-serif", textDecoration:"none" }}>
                 SIGN UP
