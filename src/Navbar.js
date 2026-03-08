@@ -4,6 +4,7 @@ import { useStockModal } from "./StockModal";
 import { useContext, useState, useRef, useEffect } from "react";
 import { ThemeContext } from "./App";
 import { useAuth } from "./AuthContext";
+import { useAccess } from "./AccessContext";
 import { STOCKS, STOCK_ROUTES } from "./dashboards/stocksDB";
 
 const GOLD  = "#D4A017";
@@ -65,6 +66,7 @@ const MOBILE_QUICK_NAV = [
 export default function Navbar() {
   const { theme, toggleTheme } = useContext(ThemeContext);
   const { user, signOut }      = useAuth();
+  const { isPaid }             = useAccess();
   const { openModal }            = useStockModal();
   const navigate               = useNavigate();
   const location               = useLocation();
@@ -146,14 +148,14 @@ export default function Navbar() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  const navBg     = isDark ? "rgba(10,21,36,0.97)"  : "rgba(245,240,232,0.97)";
-  const borderCol = isDark ? "rgba(212,160,23,0.14)" : "rgba(212,160,23,0.25)";
-  const ribbonBg  = isDark ? "rgba(8,17,30,0.99)"   : "rgba(238,233,222,0.99)";
-  const dropBg    = isDark ? "rgba(10,21,36,0.98)"  : "rgba(245,240,232,0.98)";
-  const textCol   = isDark ? "rgba(212,160,23,0.82)" : "rgba(120,80,0,0.85)";
+  const navBg     = isDark ? "rgba(10,21,36,0.97)"  : "rgba(248,247,244,0.97)";
+  const borderCol = isDark ? "rgba(212,160,23,0.14)" : "rgba(184,135,10,0.18)";
+  const ribbonBg  = isDark ? "rgba(8,17,30,0.99)"   : "rgba(240,237,230,0.99)";
+  const dropBg    = isDark ? "rgba(10,21,36,0.98)"  : "#FFFFFF";
+  const textCol   = isDark ? "rgba(212,160,23,0.82)" : "#1E3A52";
   const inputText = isDark ? "#c8dae8"               : "#0D1B2A";
   const inputBg   = isDark ? "rgba(212,160,23,0.08)" : "rgba(212,160,23,0.1)";
-  const qnavBg    = isDark ? "rgba(10,21,36,0.96)"  : "rgba(242,236,224,0.96)";
+  const qnavBg    = isDark ? "rgba(10,21,36,0.96)"  : "rgba(240,237,230,0.97)";
 
   const filtered = SEARCH_ITEMS.filter(s =>
     s.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -171,22 +173,22 @@ export default function Navbar() {
 
   const SearchSVG = ({ size = 13, op = 1 }) => (
     <svg width={size} height={size} viewBox="0 0 13 13" fill="none">
-      <circle cx="5.5" cy="5.5" r="4" stroke={GOLD} strokeWidth="1.4" strokeOpacity={op}/>
-      <path d="M8.5 8.5L11.5 11.5" stroke={GOLD} strokeWidth="1.4" strokeLinecap="round" strokeOpacity={op}/>
+      <circle cx="5.5" cy="5.5" r="4" stroke={isDark?GOLD:"#B8870A"} strokeWidth="1.4" strokeOpacity={op}/>
+      <path d="M8.5 8.5L11.5 11.5" stroke={isDark?GOLD:"#B8870A"} strokeWidth="1.4" strokeLinecap="round" strokeOpacity={op}/>
     </svg>
   );
 
   const ResultsList = () => (
     <div style={{ maxHeight:280, overflowY:"auto" }}>
       {filtered.length === 0 ? (
-        <div style={{ padding:"16px", textAlign:"center", fontSize:12, color:"rgba(212,160,23,0.35)", fontFamily:"'DM Sans',sans-serif" }}>No results</div>
+        <div style={{ padding:"16px", textAlign:"center", fontSize:12, color: isDark ? "rgba(212,160,23,0.35)" : "#4A6B82", fontFamily:"'DM Sans',sans-serif" }}>No results</div>
       ) : filtered.map(item => (
         <div key={item.name} className="search-result-item" onMouseDown={e => e.stopPropagation()} onClick={() => handleSelect(item)}>
           <div>
             <div style={{ fontSize:13, fontWeight:700, color:item.active ? (isDark ? "#c8dae8" : "#0D1B2A") : "#3a5068", fontFamily:"'DM Sans',sans-serif" }}>
               {item.name}
             </div>
-            <div style={{ fontSize:10, color:"rgba(212,160,23,0.5)", letterSpacing:1, marginTop:1, fontFamily:"'DM Sans',sans-serif" }}>
+            <div style={{ fontSize:10, color: isDark ? "rgba(212,160,23,0.5)" : "#4A6B82", letterSpacing:1, marginTop:1, fontFamily:"'DM Sans',sans-serif" }}>
               {item.type === "page" ? "📄 " : ""}{item.ticker}
             </div>
           </div>
@@ -231,7 +233,7 @@ export default function Navbar() {
           display: none;
           gap: 2px;
           padding: 4px 4px 5px;
-          border-top: 1px solid rgba(212,160,23,0.08);
+          border-top: 1px solid rgba(13,27,42,0.08);
         }
         .mob-qnav-item {
           flex: 1;
@@ -247,7 +249,7 @@ export default function Navbar() {
         }
         .mob-qnav-item:active { opacity: 0.7; }
         .mob-qnav-icon { font-size: 13px; line-height: 1; height: 16px; display: flex; align-items: center; justify-content: center; }
-          .mob-qnav-pi { font-size: 15px !important; font-weight: 900; color: #ffffff; font-family: serif; line-height: 1; }
+          .mob-qnav-pi { font-size: 15px !important; font-weight: 900; font-family: serif; line-height: 1; }
         .mob-qnav-label {
           font-size: 6.5px; font-weight: 800; letter-spacing: 0.4px;
           font-family: 'DM Sans', sans-serif; white-space: nowrap;
@@ -277,6 +279,7 @@ export default function Navbar() {
           .logo-sub{font-size:6.5px !important; letter-spacing:2.5px !important;}
           .logo-svg{width:28px !important;height:28px !important;}
           .nav-btn{border:1px solid rgba(212,160,23,0.2) !important;background:rgba(212,160,23,0.07) !important;}
+          .nav-btn-light{border:1px solid rgba(13,27,42,0.10) !important;background:transparent !important;}
           .theme-btn-desktop{display:flex !important;}
           .theme-btn-mobile{display:none !important;}
         }
@@ -291,13 +294,13 @@ export default function Navbar() {
           .nav-btn{border:none !important;background:transparent !important;padding:6px 7px !important;}
           .theme-btn-desktop{display:none !important;}
           .theme-btn-mobile{display:flex !important;}
-          .mobile-search-bar{display:flex;position:absolute;top:0;left:0;right:0;height:58px;align-items:center;padding:0 12px;gap:10px;animation:searchSlideIn .2s ease;z-index:20;}
-          .mobile-search-results{display:block;position:absolute;top:58px;left:0;right:0;border-top:1px solid rgba(212,160,23,0.1);border-bottom:1px solid rgba(212,160,23,0.12);z-index:20;}
+          .mobile-search-bar{display:flex;position:absolute;top:0;left:0;right:0;height:58px;align-items:center;padding:0 12px;gap:10px;animation:searchSlideIn .2s ease;z-index:20;background:inherit;}
+          .mobile-search-results{display:block;position:absolute;top:58px;left:0;right:0;border-top:1px solid rgba(13,27,42,0.08);border-bottom:1px solid rgba(13,27,42,0.08);z-index:20;}
           .desktop-search-dropdown{display:none !important;}
         }
       `}</style>
 
-      <nav ref={menuRef} style={{ position:"fixed", top:0, left:0, right:0, zIndex:100000, background:navBg, borderBottom:`1px solid ${borderCol}`, backdropFilter:"blur(20px)", WebkitBackdropFilter:"blur(20px)" }}>
+      <nav ref={menuRef} style={{ position:"fixed", top:0, left:0, right:0, zIndex:100000, background:navBg, borderBottom:`1px solid ${borderCol}`, backdropFilter: isDark ? "blur(20px)" : "none", WebkitBackdropFilter: isDark ? "blur(20px)" : "none" }}>
 
         {/* ── TOP ROW ── */}
         <div style={{ padding:"0 16px", height:58, display:"flex", alignItems:"center", justifyContent:"space-between", position:"relative" }}>
@@ -307,7 +310,7 @@ export default function Navbar() {
             <div className="mobile-search-bar" style={{ background:ribbonBg }}>
               <button onClick={closeSearch} style={{ background:"none", border:"none", cursor:"pointer", padding:"4px 6px 4px 0", display:"flex", alignItems:"center", flexShrink:0 }}>
                 <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
-                  <path d="M11 4L6 9L11 14" stroke={GOLD} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+                  <path d="M11 4L6 9L11 14" stroke={isDark?GOLD:"#B8870A"} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
                 </svg>
               </button>
               <input
@@ -342,33 +345,33 @@ export default function Navbar() {
                 </filter>
                 <radialGradient id="nucG2" cx="40%" cy="30%" r="65%">
                   <stop offset="0%" stopColor="#ffffff"/>
-                  <stop offset="40%" stopColor={GOLD}/>
-                  <stop offset="100%" stopColor="#9a6e00"/>
+                  <stop offset="40%" stopColor={isDark?GOLD:"#0D1B2A"}/>
+                  <stop offset="100%" stopColor={isDark?"#9a6e00":"#1E3A52"}/>
                 </radialGradient>
                 <radialGradient id="eG2" cx="40%" cy="30%" r="60%">
-                  <stop offset="0%" stopColor="#ffe8a0"/>
-                  <stop offset="100%" stopColor={GOLD}/>
+                  <stop offset="0%" stopColor={isDark?"#ffe8a0":"#4A6B82"}/>
+                  <stop offset="100%" stopColor={isDark?GOLD:"#0D1B2A"}/>
                 </radialGradient>
               </defs>
-              <ellipse cx="22" cy="22" rx="17" ry="6.2" stroke={GOLD} strokeWidth="1.15" strokeOpacity="0.9" fill="none" filter="url(#navGlow)"/>
+              <ellipse cx="22" cy="22" rx="17" ry="6.2" stroke={isDark?GOLD:"#B8870A"} strokeWidth="1.15" strokeOpacity="0.5" fill="none" filter="url(#navGlow)"/>
               <g className="orbit-ring-1">
-                <ellipse cx="22" cy="22" rx="17" ry="6.2" stroke={GOLD} strokeWidth="1.0" strokeOpacity="0.55" fill="none" transform="rotate(60 22 22)"/>
+                <ellipse cx="22" cy="22" rx="17" ry="6.2" stroke={isDark?GOLD:"#B8870A"} strokeWidth="1.0" strokeOpacity="0.35" fill="none" transform="rotate(60 22 22)"/>
                 <circle cx="38.4" cy="17.4" r="2.6" fill="url(#eG2)" filter="url(#navGlow)"/>
               </g>
               <g className="orbit-ring-2">
-                <ellipse cx="22" cy="22" rx="17" ry="6.2" stroke={GOLD} strokeWidth="0.85" strokeOpacity="0.32" fill="none" transform="rotate(-60 22 22)"/>
-                <circle cx="5.8" cy="27.2" r="2.2" fill={GOLD} fillOpacity="0.65"/>
+                <ellipse cx="22" cy="22" rx="17" ry="6.2" stroke={isDark?GOLD:"#B8870A"} strokeWidth="0.85" strokeOpacity="0.2" fill="none" transform="rotate(-60 22 22)"/>
+                <circle cx="5.8" cy="27.2" r="2.2" fill={isDark?GOLD:"#0D1B2A"} fillOpacity={isDark?0.65:0.4}/>
               </g>
-              <circle cx="38.6" cy="22" r="2.4" fill={GOLD} filter="url(#navGlow)"/>
+              <circle cx="38.6" cy="22" r="2.4" fill={isDark?GOLD:"#0D1B2A"} filter="url(#navGlow)"/>
               <g filter="url(#coreGlow)">
                 <path d="M22 15.5 L26.2 22 L22 28.5 L17.8 22 Z" fill="url(#nucG2)"/>
                 <path d="M22 16.5 L24.8 21.5 L22 24.5 L20 21.5 Z" fill="white" fillOpacity="0.45"/>
               </g>
             </svg>
             <div style={{ display:"flex", flexDirection:"column", gap:0 }}>
-              <div className="logo-wordmark" style={{ fontSize:17, fontWeight:800, letterSpacing:"2px", color:GOLD, fontFamily:"'Playfair Display',serif", lineHeight:1.05 }}>VANTAGE</div>
-              <div className="logo-wordmark" style={{ fontSize:17, fontWeight:800, letterSpacing:"2px", color:GOLD, fontFamily:"'Playfair Display',serif", lineHeight:1.05 }}>CAPITAL</div>
-              <div className="logo-sub" style={{ fontSize:6.5, letterSpacing:"2.5px", color:"rgba(212,160,23,0.35)", fontFamily:"'DM Sans',sans-serif", fontWeight:700, marginTop:2, textTransform:"uppercase" }}>INVESTMENTS</div>
+              <div className="logo-wordmark" style={{ fontSize:17, fontWeight:800, letterSpacing:"2px", color:isDark ? GOLD : "#B8870A", fontFamily:"'Playfair Display',serif", lineHeight:1.05 }}>VANTAGE</div>
+              <div className="logo-wordmark" style={{ fontSize:17, fontWeight:800, letterSpacing:"2px", color:isDark ? GOLD : "#B8870A", fontFamily:"'Playfair Display',serif", lineHeight:1.05 }}>CAPITAL</div>
+              <div className="logo-sub" style={{ fontSize:6.5, letterSpacing:"2.5px", color: isDark ? "rgba(212,160,23,0.35)" : "rgba(13,27,42,0.35)", fontFamily:"'DM Sans',sans-serif", fontWeight:700, marginTop:2, textTransform:"uppercase" }}>INVESTMENTS</div>
             </div>
           </Link>
 
@@ -381,13 +384,13 @@ export default function Navbar() {
                 setWishlistItems(tickers);
                 setWishlistOpen(true);
               }} className="hamburger-btn"
-              style={{ alignItems:"center", justifyContent:"center", position:"relative", borderRadius:8, padding:"6px 8px", background:"none", border:"none", color:GOLD, cursor:"pointer" }}
+              style={{ alignItems:"center", justifyContent:"center", position:"relative", borderRadius:8, padding:"6px 8px", background:"none", border:"none", color:isDark?GOLD:"#B8870A", cursor:"pointer" }}
               title="Saved stocks">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke={GOLD} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke={isDark?GOLD:"#B8870A"} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
               </svg>
               {wishlistCount > 0 && (
-                <span style={{ position:"absolute", top:2, right:2, minWidth:16, height:16, borderRadius:8, background:GOLD, color:"#0D1B2A", fontSize:9, fontWeight:900, display:"flex", alignItems:"center", justifyContent:"center", padding:"0 3px", lineHeight:1 }}>
+                <span style={{ position:"absolute", top:2, right:2, minWidth:16, height:16, borderRadius:8, background: isDark ? GOLD : "#0D1B2A", color: isDark ? "#0D1B2A" : "#FFFFFF", fontSize:9, fontWeight:900, display:"flex", alignItems:"center", justifyContent:"center", padding:"0 3px", lineHeight:1 }}>
                   {wishlistCount}
                 </span>
               )}
@@ -397,7 +400,7 @@ export default function Navbar() {
             <div ref={searchRef} style={{ position:"relative" }}>
               <button className="nav-btn" onClick={() => setSearchOpen(o => !o)} style={{ borderRadius:8, padding:"6px 10px", cursor:"pointer", display:"flex", alignItems:"center", gap:5, transition:"background .2s" }}>
                 <SearchSVG size={20}/>
-                <span className="search-word" style={{ fontSize:11, fontWeight:700, color:textCol, letterSpacing:1, fontFamily:"'DM Sans',sans-serif" }}>SEARCH</span>
+                <span className="search-word" style={{ fontSize:11, fontWeight:700, color:textCol, letterSpacing:"0.08em", fontFamily:"'DM Sans',sans-serif" }}>Search</span>
               </button>
               {searchOpen && (
                 <div className="desktop-search-dropdown" style={{ position:"absolute", top:"calc(100% + 8px)", right:0, width:320, background:dropBg, border:`1px solid ${borderCol}`, borderRadius:12, boxShadow:"0 16px 48px rgba(0,0,0,0.5)", overflow:"hidden", animation:"searchDrop .2s ease", zIndex:10 }}>
@@ -418,22 +421,52 @@ export default function Navbar() {
 
             {/* Sign Up / User — desktop */}
             {user ? (
-              <div style={{ display:"flex", alignItems:"center", gap:8 }}>
-                <button className="nav-btn theme-btn-desktop" onClick={signOut} style={{ borderRadius:8, padding:"6px 12px", cursor:"pointer", display:"flex", alignItems:"center", gap:6, fontSize:10, fontWeight:700, letterSpacing:"1px", color:"rgba(212,160,23,0.7)", fontFamily:"'DM Sans',sans-serif" }}>
-                  {user.name.split(" ")[0]} · Sign Out
+              <div className="theme-btn-desktop" style={{ display:"flex", alignItems:"center", gap:6 }}>
+                <button onClick={() => navigate("/profile")}
+                  style={{ borderRadius:8, padding:"6px 10px", cursor:"pointer", display:"flex", alignItems:"center", gap:5, fontSize:10, fontWeight:700, letterSpacing:"1px", color: isDark ? (isPaid ? GOLD : "rgba(212,160,23,0.7)") : "#0D1B2A", fontFamily:"'DM Sans',sans-serif", background:"none", border:"none" }}>
+                  {isPaid && <span style={{ fontSize:10 }}>★</span>}
+                  {user.name.split(" ")[0]}
+                </button>
+                {!isPaid && (
+                  <button onClick={() => navigate("/upgrade")} style={{ borderRadius:99, padding:"5px 11px", cursor:"pointer", fontSize:9, fontWeight:800, letterSpacing:"1.2px", color:NAVY, background:GOLD, border:"none", fontFamily:"'DM Sans',sans-serif" }}>
+                    UPGRADE
+                  </button>
+                )}
+                <button onClick={signOut} style={{ borderRadius:8, padding:"6px 8px", cursor:"pointer", fontSize:10, fontWeight:600, color:"rgba(90,122,148,0.8)", fontFamily:"'DM Sans',sans-serif", background:"none", border:"none" }}>
+                  Sign Out
                 </button>
               </div>
             ) : (
-              <Link to="/signup" className="theme-btn-desktop" style={{ borderRadius:8, padding:"6px 14px", background:"rgba(212,160,23,0.12)", border:"1px solid rgba(212,160,23,0.35)", cursor:"pointer", display:"flex", alignItems:"center", fontSize:10, fontWeight:800, letterSpacing:"1.2px", color:GOLD, fontFamily:"'DM Sans',sans-serif", textDecoration:"none" }}>
+              <Link to="/signup" className="theme-btn-desktop" style={{ borderRadius:8, padding:"6px 14px", background: isDark ? "rgba(212,160,23,0.12)" : GOLD, border: isDark ? "1px solid rgba(212,160,23,0.35)" : "none", cursor:"pointer", display:"flex", alignItems:"center", fontSize:10, fontWeight:800, letterSpacing:"1.2px", color: isDark ? GOLD : NAVY, fontFamily:"'DM Sans',sans-serif", textDecoration:"none" }}>
                 SIGN UP
               </Link>
             )}
 
-            {/* Hamburger — mobile */}
-            <button className="hamburger-btn nav-btn" onClick={() => setMenuOpen(o => !o)} style={{ borderRadius:8, padding:"8px 8px", cursor:"pointer", flexDirection:"column", gap:4, alignItems:"center", justifyContent:"center" }}>
-              <span className="hamburger-line" style={{ background:textCol, ...(menuOpen ? { transform:"rotate(45deg) translate(4px,4px)" } : {}) }}/>
-              <span className="hamburger-line" style={{ background:textCol, ...(menuOpen ? { opacity:0 } : {}) }}/>
-              <span className="hamburger-line" style={{ background:textCol, ...(menuOpen ? { transform:"rotate(-45deg) translate(4px,-4px)" } : {}) }}/>
+            {/* Account icon / close — mobile */}
+            <button className="hamburger-btn nav-btn" onClick={() => setMenuOpen(o => !o)}
+              style={{ borderRadius:"50%", width:38, height:38, padding:0, cursor:"pointer",
+                alignItems:"center", justifyContent:"center",
+                background: user
+                ? (menuOpen
+                    ? (isDark ? "rgba(212,160,23,0.15)" : "rgba(184,135,10,0.12)")
+                    : (isDark ? "rgba(212,160,23,0.12)" : "rgba(184,135,10,0.08)"))
+                : (isDark ? "rgba(255,255,255,0.06)" : "rgba(13,27,42,0.06)"),
+                border: user
+                  ? `1.5px solid ${menuOpen ? (isDark ? GOLD : "#B8870A") : (isDark ? "rgba(212,160,23,0.5)" : "rgba(184,135,10,0.35)")}`
+                  : `1.5px solid ${isDark ? "rgba(255,255,255,0.15)" : "rgba(13,27,42,0.15)"}`,
+                transition:"all .2s ease",
+              }}>
+              {menuOpen ? (
+                <span style={{ fontSize:18, color:isDark?GOLD:"#B8870A", lineHeight:1, fontWeight:300 }}>×</span>
+              ) : user ? (
+                <span style={{ fontSize:14, fontWeight:800, color:isDark?GOLD:"#B8870A", fontFamily:"'DM Sans',sans-serif", lineHeight:1 }}>
+                  {user.name.charAt(0).toUpperCase()}
+                </span>
+              ) : (
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={isDark ? "rgba(255,255,255,0.5)" : "rgba(13,27,42,0.5)"} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
+                </svg>
+              )}
             </button>
           </div>
         </div>
@@ -459,10 +492,10 @@ export default function Navbar() {
                 }}
               >
                 {item.highlight && !isCurrentRoute && (
-                  <span style={{ position:"absolute", top:-4, right:-4, width:8, height:8, borderRadius:"50%", background:"#27AE60", border:"1.5px solid " + (isDark ? "#0a1628" : "#F5F0E8"), boxShadow:"0 0 6px #27AE60" }}/>
+                  <span style={{ position:"absolute", top:-4, right:-4, width:8, height:8, borderRadius:"50%", background:"#27AE60", border:"1.5px solid " + (isDark ? "#0a1628" : "#F8F7F4"), boxShadow:"0 0 6px #27AE60" }}/>
                 )}
-                <span className={item.icon === "π" ? "mob-qnav-icon mob-qnav-pi" : "mob-qnav-icon"}>{item.icon}</span>
-                <span className="mob-qnav-label" style={{ color: isCurrentRoute ? GOLD : item.highlight ? "rgba(212,160,23,0.75)" : item.active ? GOLD : textCol, fontWeight: isCurrentRoute ? 800 : item.highlight ? 800 : 700 }}>
+                <span className={item.icon === "π" ? "mob-qnav-icon mob-qnav-pi" : "mob-qnav-icon"} style={item.icon === "π" ? { color: isDark ? "#ffffff" : "#B8870A" } : {}}>{item.icon}</span>
+                <span className="mob-qnav-label" style={{ color: isCurrentRoute ? (isDark ? GOLD : "#B8870A") : item.highlight ? (isDark ? "rgba(212,160,23,0.75)" : "#B8870A") : item.active ? (isDark ? GOLD : "#B8870A") : textCol, fontWeight: isCurrentRoute ? 800 : item.highlight ? 800 : 700 }}>
                   {item.label}
                   {item.highlight && !isCurrentRoute && <span style={{ fontSize:6, marginLeft:3, color:"#27AE60", letterSpacing:"0.5px" }}>NEW</span>}
                 </span>
@@ -486,18 +519,18 @@ export default function Navbar() {
           {/* Quant dropdown */}
           <div ref={quantRef} style={{ position:"relative" }}>
             <button onClick={() => setQuantOpen(o => !o)} className="nav-link"
-              style={{ background:"none", border:"none", cursor:"pointer", color: quantOpen ? GOLD : textCol, display:"flex", alignItems:"center", gap:4, fontFamily:"inherit", fontSize:"inherit", fontWeight:"inherit", padding:0 }}>
+              style={{ background:"none", border:"none", cursor:"pointer", color: quantOpen ? (isDark ? GOLD : "#B8870A") : textCol, display:"flex", alignItems:"center", gap:4, fontFamily:"inherit", fontSize:"inherit", fontWeight:"inherit", padding:0 }}>
               Quant Hub
               <span style={{ fontSize:9, transition:"transform .2s", display:"inline-block", transform: quantOpen ? "rotate(180deg)" : "rotate(0deg)", marginLeft:2 }}>▼</span>
             </button>
             {quantOpen && (
-              <div style={{ position:"absolute", top:"calc(100% + 10px)", left:0, minWidth:180, background: isDark ? "rgba(6,14,26,0.98)" : "rgba(238,233,222,0.98)", border:`1px solid rgba(212,160,23,0.18)`, borderRadius:10, boxShadow:"0 8px 32px rgba(0,0,0,0.4)", backdropFilter:"blur(12px)", overflow:"hidden", zIndex:99999 }}>
+              <div style={{ position:"absolute", top:"calc(100% + 10px)", left:0, minWidth:180, background: isDark ? "rgba(6,14,26,0.98)" : "rgba(255,255,255,0.99)", border:`1px solid rgba(212,160,23,0.18)`, borderRadius:10, boxShadow:"0 8px 32px rgba(0,0,0,0.4)", backdropFilter:"blur(12px)", overflow:"hidden", zIndex:99999 }}>
                 <Link to="/quant" onClick={() => setQuantOpen(false)}
                   style={{ display:"flex", alignItems:"center", gap:10, padding:"10px 16px", borderBottom:`1px solid rgba(212,160,23,0.10)`, textDecoration:"none", background:"transparent" }}
                   onMouseEnter={e => e.currentTarget.style.background="rgba(212,160,23,0.07)"}
                   onMouseLeave={e => e.currentTarget.style.background="transparent"}>
-                  <span style={{ fontSize:14, fontWeight:900, color:GOLD, fontFamily:"serif" }}>π</span>
-                  <span style={{ fontSize:11, fontWeight:800, color:GOLD, letterSpacing:"0.5px" }}>Quant Hub</span>
+                  <span style={{ fontSize:14, fontWeight:900, color:isDark ? GOLD : "#B8870A", fontFamily:"serif" }}>π</span>
+                  <span style={{ fontSize:11, fontWeight:800, color:isDark ? GOLD : "#0D1B2A", letterSpacing:"0.5px" }}>Quant Hub</span>
                 </Link>
                 {QUANT_SUB_LINKS.map(q => (
                   <Link key={q.label} to={q.path} onClick={() => { if(q.live) setQuantOpen(false); }}
@@ -519,12 +552,12 @@ export default function Navbar() {
           {/* About Us dropdown */}
           <div ref={aboutRef} style={{ position:"relative" }}>
             <button onClick={() => setAboutOpen(o => !o)} className="nav-link"
-              style={{ background:"none", border:"none", cursor:"pointer", color: aboutOpen ? GOLD : textCol, display:"flex", alignItems:"center", gap:4, fontFamily:"inherit", fontSize:"inherit", fontWeight:"inherit", padding:0 }}>
+              style={{ background:"none", border:"none", cursor:"pointer", color: aboutOpen ? (isDark ? GOLD : "#B8870A") : textCol, display:"flex", alignItems:"center", gap:4, fontFamily:"inherit", fontSize:"inherit", fontWeight:"inherit", padding:0 }}>
               About Us
               <span style={{ fontSize:9, transition:"transform .2s", display:"inline-block", transform: aboutOpen ? "rotate(180deg)" : "rotate(0deg)", marginLeft:2 }}>▼</span>
             </button>
             {aboutOpen && (
-              <div style={{ position:"absolute", top:"calc(100% + 10px)", left:0, minWidth:200, background: isDark ? "rgba(6,14,26,0.98)" : "rgba(238,233,222,0.98)", border:`1px solid rgba(212,160,23,0.18)`, borderRadius:10, boxShadow:"0 8px 32px rgba(0,0,0,0.4)", backdropFilter:"blur(12px)", overflow:"hidden", zIndex:99999 }}>
+              <div style={{ position:"absolute", top:"calc(100% + 10px)", left:0, minWidth:200, background: isDark ? "rgba(6,14,26,0.98)" : "rgba(255,255,255,0.99)", border:`1px solid rgba(212,160,23,0.18)`, borderRadius:10, boxShadow:"0 8px 32px rgba(0,0,0,0.4)", backdropFilter:"blur(12px)", overflow:"hidden", zIndex:99999 }}>
                 {ABOUT_SUB_LINKS.map(a => (
                   <Link key={a.label} to={a.path} onClick={() => setAboutOpen(false)}
                     style={{ display:"flex", alignItems:"center", gap:10, padding:"10px 16px", borderBottom:`1px solid rgba(255,255,255,0.04)`, textDecoration:"none", background:"transparent" }}
@@ -541,7 +574,7 @@ export default function Navbar() {
           {/* All Stocks dropdown */}
           <div ref={stocksRef} style={{ position:"relative" }}>
             <button onClick={() => setStocksOpen(o => !o)} className="nav-link"
-              style={{ background:"none", border:"none", cursor:"pointer", color:stocksOpen ? GOLD : textCol, display:"flex", alignItems:"center", gap:5, padding:0 }}>
+              style={{ background:"none", border:"none", cursor:"pointer", color:stocksOpen ? (isDark ? GOLD : "#B8870A") : textCol, display:"flex", alignItems:"center", gap:5, padding:0 }}>
               All Stocks
               <span style={{ fontSize:9, transition:"transform .2s", display:"inline-block", transform:stocksOpen?"rotate(180deg)":"rotate(0deg)" }}>▼</span>
             </button>
@@ -556,9 +589,9 @@ export default function Navbar() {
                       onMouseLeave={e => e.currentTarget.style.background="transparent"}>
                       <div>
                         <div style={{ fontSize:12, fontWeight:700, color: isDark ? "#c8dae8" : "#0D1B2A", fontFamily:"'DM Sans',sans-serif" }}>{s.name}</div>
-                        <div style={{ fontSize:9, color:"rgba(212,160,23,0.55)", letterSpacing:1, marginTop:1, fontFamily:"'DM Sans',sans-serif" }}>NSE: {s.nse}</div>
+                        <div style={{ fontSize:9, color: isDark ? "rgba(212,160,23,0.55)" : "#4A6B82", letterSpacing:1, marginTop:1, fontFamily:"'DM Sans',sans-serif" }}>NSE: {s.nse}</div>
                       </div>
-                      <span style={{ fontSize:9, fontWeight:700, color:GOLD, background:"rgba(212,160,23,0.1)", padding:"3px 10px", borderRadius:999, letterSpacing:1, fontFamily:"'DM Sans',sans-serif", whiteSpace:"nowrap", flexShrink:0, display:"inline-flex", alignItems:"center" }}>GO →</span>
+                      <span style={{ fontSize:9, fontWeight:700, color: isDark ? GOLD : "#B8870A", background: isDark ? "rgba(212,160,23,0.12)" : "rgba(184,135,10,0.08)", padding:"3px 10px", borderRadius:999, letterSpacing:1, fontFamily:"'DM Sans',sans-serif", whiteSpace:"nowrap", flexShrink:0, display:"inline-flex", alignItems:"center" }}>GO →</span>
                     </Link>
                   );
                 })}
@@ -569,7 +602,69 @@ export default function Navbar() {
 
         {/* ── MOBILE DRAWER ── */}
         {menuOpen && (
-          <div className="mobile-menu" style={{ borderTop:`1px solid rgba(212,160,23,0.10)`, background:ribbonBg, padding:"4px 0 8px", boxShadow:"0 8px 32px rgba(0,0,0,0.5)", animation:"menuSlide .25s ease forwards" }}>
+          <div className="mobile-menu" style={{ borderTop:`1px solid ${isDark ? "rgba(212,160,23,0.10)" : "rgba(13,27,42,0.08)"}`, background:ribbonBg, padding:"0 0 8px", boxShadow:"0 8px 32px rgba(0,0,0,0.5)", animation:"menuSlide .25s ease forwards" }}>
+
+            {/* ── ACCOUNT BLOCK — top ── */}
+            {user ? (
+              <div style={{ padding:"16px 20px 14px", borderBottom:`1px solid ${isDark ? 'rgba(212,160,23,0.12)' : 'rgba(13,27,42,0.07)'}` }}>
+                {/* Name + plan row */}
+                <div style={{ display:"flex", alignItems:"center", gap:12, marginBottom:12 }}>
+                  <div style={{ width:40, height:40, borderRadius:"50%", flexShrink:0,
+                    background: isDark ? "rgba(212,160,23,0.12)" : "rgba(13,27,42,0.07)",
+                    border: isDark ? "1.5px solid rgba(212,160,23,0.5)" : "1.5px solid rgba(13,27,42,0.2)",
+                    display:"flex", alignItems:"center", justifyContent:"center" }}>
+                    <span style={{ fontSize:16, fontWeight:800, color: isDark ? GOLD : "#0D1B2A", fontFamily:"'DM Sans',sans-serif" }}>
+                      {user.name.charAt(0).toUpperCase()}
+                    </span>
+                  </div>
+                  <div>
+                    <div style={{ fontSize:14, fontWeight:700, color:textCol, fontFamily:"'DM Sans',sans-serif" }}>{user.name}</div>
+                    <div style={{ fontSize:10, color: isDark ? "rgba(212,160,23,0.5)" : "#4A6B82", letterSpacing:"0.5px", fontFamily:"'DM Sans',sans-serif", marginTop:1 }}>
+                      {isPaid ? "★ Premium Member" : "Free Plan"}
+                    </div>
+                  </div>
+                </div>
+                {/* Profile + Upgrade side by side */}
+                <div style={{ display:"flex", gap:8 }}>
+                  <button onClick={() => { navigate("/profile"); setMenuOpen(false); }}
+                    style={{ flex:1, padding:"10px 12px",
+                      background: isDark ? "rgba(212,160,23,0.08)" : "rgba(13,27,42,0.05)",
+                      border: isDark ? "1px solid rgba(212,160,23,0.25)" : "1px solid rgba(13,27,42,0.15)",
+                      borderRadius:8, cursor:"pointer",
+                      fontSize:12, fontWeight:700, color: isDark ? GOLD : "#0D1B2A", fontFamily:"'DM Sans',sans-serif",
+                      letterSpacing:"0.3px", display:"flex", alignItems:"center", justifyContent:"center", gap:6 }}>
+                    👤 My Profile
+                  </button>
+                  {!isPaid && (
+                    <button onClick={() => { navigate("/upgrade"); setMenuOpen(false); }}
+                      style={{ flex:1, padding:"10px 12px",
+                        background:"linear-gradient(135deg,#f8dc72,#D4A017)",
+                        border:"none", borderRadius:8, cursor:"pointer",
+                        fontSize:12, fontWeight:800, color:NAVY, fontFamily:"'DM Sans',sans-serif",
+                        letterSpacing:"0.3px", display:"flex", alignItems:"center", justifyContent:"center", gap:6 }}>
+                      ⚡ Upgrade
+                    </button>
+                  )}
+                </div>
+              </div>
+            ) : (
+              <div style={{ padding:"14px 20px", borderBottom:`1px solid ${isDark ? 'rgba(212,160,23,0.12)' : 'rgba(13,27,42,0.07)'}` }}>
+                <Link to="/signup" onClick={() => setMenuOpen(false)}
+                  style={{ display:"block", textAlign:"center",
+                    background: isDark ? "rgba(212,160,23,0.12)" : "#0D1B2A",
+                    color: isDark ? GOLD : "#FFFFFF",
+                    border: isDark ? "1px solid rgba(212,160,23,0.3)" : "none", borderRadius:8,
+                    padding:"11px 18px", fontSize:11, fontWeight:800, letterSpacing:"1px",
+                    fontFamily:"'DM Sans',sans-serif", textDecoration:"none" }}>
+                  CREATE FREE ACCOUNT
+                </Link>
+                <div style={{ textAlign:"center", marginTop:8, fontSize:11, color: isDark ? "rgba(212,160,23,0.45)" : "#4A6B82", fontFamily:"'DM Sans',sans-serif" }}>
+                  Already a member?{" "}
+                  <span onClick={() => { navigate("/signup"); setMenuOpen(false); }}
+                    style={{ color: isDark ? GOLD : "#B8870A", cursor:"pointer", fontWeight:700 }}>Sign in</span>
+                </div>
+              </div>
+            )}
 
             {/* Home */}
             <Link to="/" className="nav-link" onClick={() => setMenuOpen(false)}
@@ -592,7 +687,7 @@ export default function Navbar() {
             {/* Quant submenu */}
             <div>
               <button onClick={() => setMobileQuantOpen(o => !o)}
-                style={{ width:"100%", textAlign:"left", background:"none", border:"none", borderBottom:`1px solid rgba(212,160,23,0.06)`, padding:"13px 24px", fontSize:12, color: mobileQuantOpen ? GOLD : textCol, fontWeight:700, cursor:"pointer", display:"flex", justifyContent:"space-between", alignItems:"center", fontFamily:"'DM Sans',sans-serif", letterSpacing:"1.6px" }}>
+                style={{ width:"100%", textAlign:"left", background:"none", border:"none", borderBottom:`1px solid ${isDark ? "rgba(212,160,23,0.06)" : "rgba(13,27,42,0.07)"}`, padding:"13px 24px", fontSize:12, color: mobileQuantOpen ? (isDark ? GOLD : "#B8870A") : textCol, fontWeight:700, cursor:"pointer", display:"flex", justifyContent:"space-between", alignItems:"center", fontFamily:"'DM Sans',sans-serif", letterSpacing:"0" }}>
                 Quant Hub
                 <span style={{ fontSize:10, transition:"transform .2s", display:"inline-block", transform: mobileQuantOpen ? "rotate(180deg)" : "rotate(0deg)" }}>▼</span>
               </button>
@@ -602,8 +697,8 @@ export default function Navbar() {
                     style={{ display:"flex", alignItems:"center", gap:10, padding:"10px 32px", borderBottom:`1px solid rgba(212,160,23,0.05)`, textDecoration:"none" }}
                     onMouseEnter={e => e.currentTarget.style.background="rgba(212,160,23,0.07)"}
                     onMouseLeave={e => e.currentTarget.style.background="transparent"}>
-                    <span style={{ fontSize:14, fontWeight:900, color:GOLD, fontFamily:"serif" }}>π</span>
-                    <span style={{ fontSize:12, fontWeight:800, color:GOLD }}>Quant Hub</span>
+                    <span style={{ fontSize:14, fontWeight:900, color:isDark ? GOLD : "#B8870A", fontFamily:"serif" }}>π</span>
+                    <span style={{ fontSize:12, fontWeight:800, color:isDark ? GOLD : "#0D1B2A" }}>Quant Hub</span>
                   </Link>
                   {QUANT_SUB_LINKS.map(q => (
                     <Link key={q.label} to={q.live ? q.path : "/quant"} onClick={() => { if(q.live){ setMenuOpen(false); setMobileQuantOpen(false); } }}
@@ -628,7 +723,7 @@ export default function Navbar() {
             {/* About Us submenu */}
             <div>
               <button onClick={() => setMobileAboutOpen(o => !o)}
-                style={{ width:"100%", textAlign:"left", background:"none", border:"none", borderBottom:`1px solid rgba(212,160,23,0.06)`, padding:"13px 24px", fontSize:12, color: mobileAboutOpen ? GOLD : textCol, fontWeight:700, cursor:"pointer", display:"flex", justifyContent:"space-between", alignItems:"center", fontFamily:"'DM Sans',sans-serif", letterSpacing:"1.6px" }}>
+                style={{ width:"100%", textAlign:"left", background:"none", border:"none", borderBottom:`1px solid ${isDark ? "rgba(212,160,23,0.06)" : "rgba(13,27,42,0.07)"}`, padding:"13px 24px", fontSize:12, color: mobileAboutOpen ? (isDark ? GOLD : "#B8870A") : textCol, fontWeight:700, cursor:"pointer", display:"flex", justifyContent:"space-between", alignItems:"center", fontFamily:"'DM Sans',sans-serif", letterSpacing:"0" }}>
                 About Us
                 <span style={{ fontSize:10, transition:"transform .2s", display:"inline-block", transform: mobileAboutOpen ? "rotate(180deg)" : "rotate(0deg)" }}>▼</span>
               </button>
@@ -650,7 +745,7 @@ export default function Navbar() {
             {/* All Stocks submenu */}
             <div>
               <button onClick={() => setMobileStocksOpen(o => !o)}
-                style={{ width:"100%", textAlign:"left", background:"none", border:"none", borderBottom:`1px solid rgba(212,160,23,0.06)`, padding:"13px 24px", fontSize:12, fontWeight:700, letterSpacing:"1.6px", color:mobileStocksOpen ? GOLD : textCol, fontFamily:"'DM Sans',sans-serif", cursor:"pointer", display:"flex", justifyContent:"space-between", alignItems:"center" }}>
+                style={{ width:"100%", textAlign:"left", background:"none", border:"none", borderBottom:`1px solid ${isDark ? "rgba(212,160,23,0.06)" : "rgba(13,27,42,0.07)"}`, padding:"13px 24px", fontSize:12, fontWeight:700, letterSpacing:"0", color:mobileStocksOpen ? (isDark ? GOLD : "#B8870A") : textCol, fontFamily:"'DM Sans',sans-serif", cursor:"pointer", display:"flex", justifyContent:"space-between", alignItems:"center" }}>
                 All Stocks
                 <span style={{ fontSize:10, transition:"transform .2s", display:"inline-block", transform:mobileStocksOpen?"rotate(180deg)":"rotate(0deg)" }}>▼</span>
               </button>
@@ -666,7 +761,7 @@ export default function Navbar() {
                           <div style={{ fontSize:13, fontWeight:700, color: isDark ? "#c8dae8" : "#0D1B2A", fontFamily:"'DM Sans',sans-serif" }}>{s.name}</div>
                           <div style={{ fontSize:9, color:"rgba(212,160,23,0.5)", letterSpacing:1, marginTop:2, fontFamily:"'DM Sans',sans-serif" }}>NSE: {s.nse}</div>
                         </div>
-                        <span style={{ fontSize:10, fontWeight:700, color:GOLD, background:"rgba(212,160,23,0.1)", padding:"4px 10px", borderRadius:999, letterSpacing:1, fontFamily:"'DM Sans',sans-serif", flexShrink:0, whiteSpace:"nowrap", display:"inline-flex", alignItems:"center" }}>GO →</span>
+                        <span style={{ fontSize:10, fontWeight:700, color: isDark ? GOLD : "#B8870A", background: isDark ? "rgba(212,160,23,0.12)" : "rgba(184,135,10,0.08)", padding:"4px 10px", borderRadius:999, letterSpacing:1, fontFamily:"'DM Sans',sans-serif", flexShrink:0, whiteSpace:"nowrap", display:"inline-flex", alignItems:"center" }}>GO →</span>
                       </Link>
                     );
                   })}
@@ -674,17 +769,17 @@ export default function Navbar() {
               )}
             </div>
 
-            <div style={{ padding:"12px 24px", borderTop:`1px solid rgba(212,160,23,0.08)`, marginTop:4 }}>
-              {user ? (
-                <button onClick={() => { signOut(); setMenuOpen(false); }} style={{ background:"none", border:"1px solid rgba(212,160,23,0.2)", borderRadius:8, padding:"10px 18px", cursor:"pointer", fontSize:11, fontWeight:700, letterSpacing:"1.4px", color:"rgba(212,160,23,0.6)", fontFamily:"'DM Sans',sans-serif", width:"100%" }}>
-                  Signed in as {user.name.split(" ")[0]} · SIGN OUT
+            {/* Sign Out — bottom, low emphasis */}
+            {user && (
+              <div style={{ padding:"12px 20px", borderTop:`1px solid rgba(212,160,23,0.06)`, marginTop:4 }}>
+                <button onClick={() => { signOut(); setMenuOpen(false); }}
+                  style={{ background:"none", border:"none", padding:"8px 0", cursor:"pointer",
+                    fontSize:11, fontWeight:500, color:"rgba(212,160,23,0.35)",
+                    fontFamily:"'DM Sans',sans-serif", letterSpacing:"0.5px" }}>
+                  Sign out of {user.name.split(" ")[0]}'s account
                 </button>
-              ) : (
-                <Link to="/signup" onClick={() => setMenuOpen(false)} style={{ display:"block", textAlign:"center", background:"rgba(212,160,23,0.92)", color:NAVY, borderRadius:8, padding:"11px 18px", fontSize:11, fontWeight:800, letterSpacing:"1.4px", fontFamily:"'DM Sans',sans-serif", textDecoration:"none" }}>
-                  UNLOCK ALL RESEARCH →
-                </Link>
-              )}
-            </div>
+              </div>
+            )}
 
             <div className="theme-btn-mobile" style={{ padding:"14px 24px", borderTop:`1px solid rgba(212,160,23,0.08)`, marginTop:4, alignItems:"center", justifyContent:"space-between" }}>
               <span style={{ fontSize:10, fontWeight:700, letterSpacing:"1.6px", color:"rgba(212,160,23,0.55)", fontFamily:"'DM Sans',sans-serif" }}>
@@ -703,7 +798,7 @@ export default function Navbar() {
         <div onClick={() => setWishlistOpen(false)} style={{ position:"fixed", inset:0, zIndex:200000, background:"rgba(0,0,0,0.55)" }}/>
         <div style={{ position:"fixed", bottom:0, left:0, right:0, zIndex:200001, background:"#0a1526", borderRadius:"20px 20px 0 0", border:"1px solid rgba(212,160,23,0.2)", maxHeight:"70vh", display:"flex", flexDirection:"column", fontFamily:"'DM Sans',sans-serif" }}>
           <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", padding:"16px 20px 12px", borderBottom:"1px solid rgba(212,160,23,0.1)" }}>
-            <div style={{ fontSize:11, fontWeight:800, color:"#D4A017", letterSpacing:"0.15em" }}>❤️ SAVED STOCKS · {wishlistItems.length}</div>
+            <div style={{ fontSize:11, fontWeight:800, color: isDark ? "#D4A017" : "#0D1B2A", letterSpacing:"0.15em" }}>❤️ SAVED STOCKS · {wishlistItems.length}</div>
             <button onClick={() => setWishlistOpen(false)} style={{ background:"none", border:"none", color:"rgba(255,255,255,0.4)", fontSize:20, cursor:"pointer", padding:"0 4px" }}>×</button>
           </div>
           <div style={{ overflowY:"auto", flex:1 }}>

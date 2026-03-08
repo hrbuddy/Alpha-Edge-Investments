@@ -678,11 +678,33 @@ export default function GenericDCFTemplate() {
       <ErrorState ticker={ticker} message={error || "No data found."} />
     </div>
   );
-  // If paywall triggered before data loads, show paywall immediately
+  // If paywall triggered before data loads — show blurred skeleton + overlay
   if (!assumptions || !model) {
     if (paywall) return (
       <>
-        <div style={{ background: NAVY, minHeight: "100vh" }} />
+        <div style={{
+          background: NAVY, minHeight: "100vh", paddingTop: 96,
+          filter: "blur(4px) brightness(0.6)", pointerEvents: "none",
+          fontFamily: "'DM Sans',sans-serif", padding: "96px 28px 40px",
+        }}>
+          {/* Skeleton header */}
+          <div style={{ maxWidth: 900, margin: "0 auto" }}>
+            <div style={{ height: 14, width: 220, background: "rgba(212,160,23,0.3)", borderRadius: 4, marginBottom: 12 }} />
+            <div style={{ height: 28, width: 340, background: "rgba(255,255,255,0.08)", borderRadius: 6, marginBottom: 8 }} />
+            <div style={{ height: 12, width: 180, background: "rgba(255,255,255,0.04)", borderRadius: 4, marginBottom: 28 }} />
+            {/* Skeleton assumption rows */}
+            {[1,2,3,4,5].map(i => (
+              <div key={i} style={{ display:"flex", justifyContent:"space-between", alignItems:"center",
+                padding:"12px 0", borderBottom:"1px solid rgba(255,255,255,0.05)" }}>
+                <div style={{ height: 11, width: 160, background: "rgba(255,255,255,0.06)", borderRadius: 3 }} />
+                <div style={{ height: 16, width: 70, background: "rgba(212,160,23,0.15)", borderRadius: 4 }} />
+              </div>
+            ))}
+            {/* Skeleton chart area */}
+            <div style={{ height: 220, background: "rgba(255,255,255,0.03)", borderRadius: 8, marginTop: 28,
+              border: "1px solid rgba(255,255,255,0.05)" }} />
+          </div>
+        </div>
         <PaywallOverlay config={paywall} onClose={() => navigate(-1)} />
       </>
     );

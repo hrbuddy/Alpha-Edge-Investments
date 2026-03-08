@@ -223,7 +223,7 @@ export default function StockDashboard({ stock }) {
   const navigate        = useNavigate();
 
   const { user }                                                        = useAuth();
-  const { checkReport, recordReport, checkDCF, recordDCF,
+  const { checkReport, recordReport,
           loading: accessLoading }                                       = useAccess();
   const [paywall, setPaywall] = useState(null);
 
@@ -242,19 +242,8 @@ export default function StockDashboard({ stock }) {
     }
   }, [stock?.nse, accessLoading]); // eslint-disable-line
 
-  // ── Gate: DCF button ───────────────────────────────────────────────────────
+  // ── DCF button — gate is handled inside GenericDCFTemplate ─────────────
   function handleDCFClick() {
-    const access = checkDCF(stock.nse);
-    if (!access.allowed) {
-      setPaywall({
-        type:   access.requiresSignup ? "dcf_teaser" : "dcf",
-        used:   access.used  ?? 0,
-        total:  access.total ?? 3,
-        ticker: stock.nse,
-      });
-      return;
-    }
-    recordDCF(stock.nse);
     navigate(`/dcf/${stock.nse}`);
   }
 
@@ -269,20 +258,7 @@ export default function StockDashboard({ stock }) {
     );
   }
 
-  // ── Paywall overlay — blurs the page content behind it ────────────────────
-  if (paywall) {
-    return (
-      <>
-        <div style={{ filter:"blur(6px)", pointerEvents:"none", userSelect:"none",
-          minHeight:"100vh", background:`linear-gradient(135deg,${NAVY} 0%,#0a1628 100%)`,
-          paddingTop:96, padding:"96px 22px 40px" }}>
-          <div style={{ fontSize:22, fontWeight:800, color:"#fff", marginBottom:8 }}>{stock.name}</div>
-          <div style={{ fontSize:12, color:"#94a3b8" }}>NSE: {stock.nse}</div>
-        </div>
-        <PaywallOverlay config={paywall} onClose={() => navigate(-1)} />
-      </>
-    );
-  }
+
 
   const { finData, segData, segmentKeys, segmentLabels, porterData, porterKeys, porterLabels,
           porterNarrative, porterConclusion, qualityData, qualitySummary, sensitivity } = stock;
@@ -294,12 +270,17 @@ export default function StockDashboard({ stock }) {
   }));
 
   return (
+    <>
     <div className="ae-sd-root" style={{
       background: `linear-gradient(135deg, ${NAVY} 0%, #0a1628 100%)`,
       minHeight: "100vh",
       color: "#e2e8f0",
       fontFamily: "'DM Sans', sans-serif",
       paddingTop: 96,
+      filter: paywall ? "blur(4px) brightness(0.7)" : "none",
+      pointerEvents: paywall ? "none" : "auto",
+      userSelect: paywall ? "none" : "auto",
+      transition: "filter 0.3s ease",
     }}>
       <style>{GLOBAL_STYLES}</style>
 
@@ -670,5 +651,7 @@ export default function StockDashboard({ stock }) {
 
       </div>
     </div>
+    {paywall && <PaywallOverlay config={paywall} onClose={() => navigate(-1)} />}
+    </>
   );
 }

@@ -1,6 +1,6 @@
 import { createContext, useContext, useState, useEffect, useRef } from "react";
 import { onAuthStateChanged, signInWithPopup, signOut as fbSignOut } from "firebase/auth";
-import { doc, setDoc, serverTimestamp } from "firebase/firestore";
+import { doc, setDoc, getDoc, serverTimestamp } from "firebase/firestore";
 import { auth, googleProvider, db } from "./firebase";
 import { flushAnonReports } from "./anonSession";
 import { mergeAnonReports, getOrCreateUsage } from "./usageService";
@@ -104,6 +104,30 @@ export function AuthProvider({ children }) {
     }
   }
 
+  // ── Email Sign-In — looks up existing user in Firestore ───────────────────
+  async function signIn(email) {
+    try {
+      const key = email.toLowerCase().replace(/[.#$[\]]/g, "_");
+      const snap = await getDoc(doc(db, "users", key));
+      if (snap.exists()) {
+        const data = snap.data();
+        const u = {
+          name:     data.name     || email.split("@")[0],
+          email:    data.email    || email,
+          joinedAt: data.joinedAt || new Date().toISOString(),
+        };
+        setUser(u);
+        localStorage.setItem("ae_user", JSON.stringify(u));
+        return "ok";
+      } else {
+        return "not_found";
+      }
+    } catch(e) {
+      console.warn("signIn error:", e);
+      return "error";
+    }
+  }
+
   // ── Sign Out ────────────────────────────────────────────────────────────────
   async function signOut() {
     try { await fbSignOut(auth); } catch {}
@@ -112,7 +136,7 @@ export function AuthProvider({ children }) {
   }
 
   return (
-    <AuthContext.Provider value={{ user, loading, signUp, signInWithGoogle, signOut }}>
+    <AuthContext.Provider value={{ user, loading, signUp, signIn, signInWithGoogle, signOut }}>
       {children}
     </AuthContext.Provider>
   );

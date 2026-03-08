@@ -23,12 +23,12 @@ const COPY = {
     signupLabel: "CREATE FREE ACCOUNT",
   },
   dcf_teaser: {
-    icon:  "🔐",
-    title: (ticker) => `See ${ticker}'s intrinsic value`,
-    sub:   "Our DCF model calculates a fair value estimate using live financials. Sign in to unlock it — free.",
+    icon:  "📊",
+    title: (ticker) => `Build ${ticker}'s Intrinsic Value`,
+    sub:   "Use our inbuilt DCF model to calculate your own fair value estimate — edit assumptions, run scenarios, and see what the stock is really worth. Sign in to unlock it — free.",
     cta:   null,
     counter: null,
-    signupLabel: "SIGN IN TO UNLOCK DCF",
+    signupLabel: "SIGN IN TO BUILD DCF",
   },
   report: {
     icon:  "🔒",
@@ -93,8 +93,8 @@ export default function PaywallOverlay({ config, onClose, onSignUp }) {
         onClick={onClose}
         style={{
           position: "fixed", inset: 0, zIndex: 90000,
-          backdropFilter: "blur(8px)", WebkitBackdropFilter: "blur(8px)",
-          background: "rgba(10,21,36,0.75)",
+          backdropFilter: "blur(12px) brightness(0.6)", WebkitBackdropFilter: "blur(12px) brightness(0.6)",
+          background: "rgba(8,18,32,0.45)",
           animation: "pwFadeIn .25s ease",
         }}
       />

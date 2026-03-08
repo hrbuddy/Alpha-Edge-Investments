@@ -19,6 +19,7 @@ import { STOCKS, STOCK_ROUTES } from "./dashboards/stocksDB";
 import StockDashboard from "./dashboards/StockDashboard";
 import GenericDCFTemplate from "./GenericDCFTemplate";
 import UpgradePage from "./UpgradePage";
+import ProfilePage from "./ProfilePage";
 
 import QuantPage      from "./QuantPage";
 import ValueDashboard from "./ValueDashboard";
@@ -65,6 +66,7 @@ function App() {
               <Route path="/discover"          element={<FlashCard />} />
               <Route path="/dcf/:ticker"       element={<GenericDCFTemplate />} />
               <Route path="/upgrade"           element={<UpgradePage />} />
+              <Route path="/profile"           element={<ProfilePage />} />
 
               {/* Auto-generated stock routes */}
               {STOCK_ROUTES.map(({ path, stockId }) => (

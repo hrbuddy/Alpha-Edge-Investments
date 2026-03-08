@@ -5,8 +5,6 @@ import { DiscoverFAB } from "./FlashCard";
 
 const NAVY  = "#0D1B2A";
 const GOLD  = "#D4A017";
-const GREEN = "#27AE60";
-const TEAL  = "#0E7C7B";
 
 // ─── Committed design system palettes ──────────────────────────────────────
 //  DARK  → deep navy background, gold accents, muted blue-grey text
@@ -19,7 +17,7 @@ const DARK_PAL = {
   muted:           "#3d5570",
   cardBg:          "rgba(255,255,255,0.025)",
   cardBorder:      "rgba(212,160,23,0.38)",
-  stripBg:         "rgba(212,160,23,0.022)",
+  stripBg:         "rgba(212,160,23,0.04)",
   // inactive tiles
   inactiveBorder:  "rgba(255,255,255,0.07)",
   inactiveBg:      "rgba(255,255,255,0.015)",
@@ -39,29 +37,45 @@ const DARK_PAL = {
 };
 
 const LIGHT_PAL = {
-  bg:              "#F5F0E8",
-  text:            "#0D1B2A",
-  subText:         "#3a5068",
-  muted:           "#7a8a9a",
-  cardBg:          "rgba(13,27,42,0.04)",
-  cardBorder:      "rgba(212,160,23,0.38)",
-  stripBg:         "rgba(212,160,23,0.07)",
-  // inactive tiles
-  inactiveBorder:  "rgba(13,27,42,0.10)",
-  inactiveBg:      "rgba(13,27,42,0.02)",
-  inactiveDivider: "rgba(13,27,42,0.08)",
-  inactiveBoxBg:   "rgba(13,27,42,0.04)",
-  inactiveBoxBdr:  "rgba(13,27,42,0.10)",
-  inactiveLabel:   "#7a8a9a",
-  // carousel
-  carouselBg:      "rgba(13,27,42,0.03)",
-  carouselBorder:  "rgba(212,160,23,0.20)",
+  // ─── Backgrounds ────────────────────────────────────────────
+  bg:              "#F8F7F4",   // page bg — near-white with 1% warmth
+  bgSection:       "#F0EDE6",   // strips, alt sections
+  // ─── Text ───────────────────────────────────────────────────
+  text:            "#0D1B2A",   // primary
+  subText:         "#1E3A52",   // secondary
+  muted:           "#4A6B82",   // muted labels / captions
+  faint:           "#8FA5B8",   // placeholders / disabled
+  // ─── Cards ──────────────────────────────────────────────────
+  cardBg:          "#FFFFFF",
+  cardBorder:      "rgba(13,27,42,0.09)",
+  cardBorderHover: "rgba(184,135,10,0.45)",
+  stripBg:         "#F0EDE6",
+  // ─── Gold ───────────────────────────────────────────────────
+  gold:            "#B8870A",   // text/icon gold — WCAG AA on white
+  goldWarm:        "#D4A017",   // fill gold — buttons, badges
+  goldBg:          "rgba(184,135,10,0.08)",
+  goldBorder:      "rgba(184,135,10,0.22)",
+  // ─── Borders ────────────────────────────────────────────────
+  border:          "rgba(13,27,42,0.09)",
+  borderMed:       "rgba(13,27,42,0.14)",
+  divider:         "rgba(13,27,42,0.06)",
+  // ─── Status ─────────────────────────────────────────────────
+  green:           "#1A7A45",
+  teal:            "#0B6B6A",
+  // ─── Carousel (Home.js compat) ──────────────────────────────
+  carouselBg:      "#F0EDE6",
+  carouselBorder:  "rgba(184,135,10,0.22)",
   carouselTitle:   "#0D1B2A",
-  carouselBody:    "#3a5068",
-  // stats
-  statLabel:       "#5a7a94",
-  // section underlay
-  sectionBg:       "#F5F0E8",
+  carouselBody:    "#4A6B82",
+  statLabel:       "#4A6B82",
+  sectionBg:       "#F8F7F4",
+  // ─── Inactive tile tokens ────────────────────────────────────
+  inactiveBorder:  "rgba(13,27,42,0.08)",
+  inactiveBg:      "rgba(13,27,42,0.02)",
+  inactiveDivider: "rgba(13,27,42,0.06)",
+  inactiveBoxBg:   "rgba(13,27,42,0.04)",
+  inactiveBoxBdr:  "rgba(13,27,42,0.09)",
+  inactiveLabel:   "#8FA5B8",
 };
 
 // ─── Home page shows 3 live + 6 coming-soon ────────────────────────────────
@@ -349,11 +363,23 @@ function DashboardCard({ card, pal, isDark }) {
         onMouseEnter={() => setHov(true)}
         onMouseLeave={() => setHov(false)}
         style={{
-          background: hov ? `rgba(${card.color === "#D4A017" ? "212,160,23" : card.color === "#27AE60" ? "39,174,96" : "46,117,182"},0.07)` : pal.cardBg,
-          border: `1px solid ${hov ? card.color : pal.cardBorder}`,
+          background: hov
+            ? isDark
+              ? `rgba(${card.color === "#D4A017" ? "212,160,23" : card.color === "#27AE60" ? "39,174,96" : "46,117,182"},0.07)`
+              : "rgba(13,27,42,0.02)"
+            : pal.cardBg,
+          border: `1px solid ${hov
+            ? isDark ? card.color : "rgba(184,135,10,0.4)"
+            : pal.cardBorder}`,
           borderRadius: 14, padding: "24px 20px",
           transition: "all .25s cubic-bezier(.4,0,.2,1)",
-          boxShadow: hov ? `0 12px 32px rgba(0,0,0,.18), 0 0 0 1px ${card.color}22` : "0 4px 18px rgba(0,0,0,.1)",
+          boxShadow: hov
+            ? isDark
+              ? `0 12px 32px rgba(0,0,0,.18), 0 0 0 1px ${card.color}22`
+              : "0 8px 32px rgba(13,27,42,0.12), 0 2px 8px rgba(13,27,42,0.06)"
+            : isDark
+              ? "0 4px 18px rgba(0,0,0,.1)"
+              : "0 2px 12px rgba(13,27,42,0.07), 0 1px 3px rgba(13,27,42,0.04)",
           cursor: "pointer", position: "relative", overflow: "hidden",
           minHeight: 180,
         }}
@@ -362,7 +388,7 @@ function DashboardCard({ card, pal, isDark }) {
         <div style={{
           position: "absolute", top: 0, left: 0, right: 0, height: 2,
           background: card.color,
-          opacity: hov ? 1 : 0.35,
+          opacity: hov ? 1 : isDark ? 0.35 : 0,
           transition: "opacity .25s",
         }}/>
 
@@ -374,29 +400,37 @@ function DashboardCard({ card, pal, isDark }) {
             fontSize: 8, fontWeight: 800, letterSpacing: "1.5px",
             padding: "3px 8px", borderRadius: 999,
             fontFamily: "'DM Sans',sans-serif",
-            boxShadow: "0 0 10px rgba(39,174,96,0.5)",
+            boxShadow: "0 0 10px rgba(39,174,96,0.4)",
           }}>
             {card.badge}
           </div>
         )}
 
-        <div style={{ fontSize: 28, marginBottom: 12 }}>{card.icon}</div>
-        <div style={{ fontSize: 8, letterSpacing: "2px", color: card.color, fontWeight: 700, marginBottom: 6, fontFamily: "'DM Sans',sans-serif", opacity: 0.8 }}>
+        <div style={{ fontSize: 26, marginBottom: 12 }}>{card.icon}</div>
+        {/* Label — muted navy in light (gold fails contrast on white) */}
+        <div style={{
+          fontSize: 10, letterSpacing: "0.18em", fontWeight: 700, marginBottom: 8,
+          color: isDark ? card.color : "#4A6B82",
+          fontFamily: "'DM Sans',sans-serif", textTransform: "uppercase",
+        }}>
           {card.label}
         </div>
-        <div style={{ fontSize: 16, fontWeight: 800, color: pal.text, fontFamily: "'Playfair Display',serif", lineHeight: 1.25, marginBottom: 10 }}>
+        <div style={{ fontSize: 17, fontWeight: 800, color: pal.text, fontFamily: "'Playfair Display',serif", lineHeight: 1.25, marginBottom: 10 }}>
           {card.title}
         </div>
-        <p style={{ fontSize: 12, color: pal.muted, lineHeight: 1.7, margin: "0 0 16px", fontFamily: "'DM Sans',sans-serif" }}>
+        <p style={{ fontSize: 13, color: pal.muted, lineHeight: 1.7, margin: "0 0 16px", fontFamily: "'DM Sans',sans-serif" }}>
           {card.desc}
         </p>
         <div style={{
           display: "inline-flex", alignItems: "center", gap: 6,
-          fontSize: 10, fontWeight: 800, letterSpacing: "1.2px",
-          color: card.color, fontFamily: "'DM Sans',sans-serif",
-          opacity: hov ? 1 : 0.7, transition: "opacity .2s",
+          fontSize: 11, fontWeight: 700, letterSpacing: "0.06em",
+          color: isDark ? card.color : "#B8870A",
+          background: (!isDark && hov) ? "rgba(212,160,23,0.10)" : "transparent",
+          padding: "6px 10px", borderRadius: 8, marginLeft: -10,
+          fontFamily: "'DM Sans',sans-serif",
+          transition: "all .2s",
         }}>
-          OPEN DASHBOARD <span style={{ transform: hov ? "translateX(3px)" : "none", transition: "transform .2s", display:"inline-block" }}>→</span>
+          Open Dashboard <span style={{ transform: hov ? "translateX(3px)" : "none", transition: "transform .2s", display:"inline-block" }}>→</span>
         </div>
       </div>
     </Link>
@@ -416,7 +450,7 @@ function useReveal(threshold=.08) {
 }
 
 // ─── Stock tile ─────────────────────────────────────────────────────────────
-function StockTile({stock, delay=0, pal}) {
+function StockTile({stock, delay=0, pal, isDark=false}) {
   const [hov,setHov]=useState(false);
   const [ref,vis]=useReveal(.05);
 
@@ -429,72 +463,99 @@ function StockTile({stock, delay=0, pal}) {
         <div
           onMouseEnter={()=>setHov(true)} onMouseLeave={()=>setHov(false)}
           style={{
-            background: stock.active ? (hov?"rgba(212,160,23,0.05)":pal.cardBg) : pal.cardBg,
-            border:`1px solid ${stock.active?(hov?GOLD:pal.cardBorder):pal.cardBorder}`,
+            background: pal.cardBg,
+            border:`1px solid ${hov && stock.active
+              ? isDark ? "rgba(212,160,23,0.5)" : "rgba(13,27,42,0.22)"
+              : isDark ? "rgba(212,160,23,0.18)" : "rgba(13,27,42,0.09)"}`,
             borderRadius:14, padding:"20px 18px", height:"100%", boxSizing:"border-box",
             transition:"all .25s cubic-bezier(.4,0,.2,1)",
-            boxShadow:hov&&stock.active
-              ?"0 0 0 1px rgba(212,160,23,.25),0 14px 36px rgba(212,160,23,.09),0 4px 16px rgba(0,0,0,.25)"
-              :"0 4px 18px rgba(0,0,0,.12)",
+            boxShadow: hov && stock.active
+              ? isDark
+                ? "0 0 0 1px rgba(212,160,23,.2),0 14px 36px rgba(212,160,23,.09)"
+                : "0 8px 28px rgba(13,27,42,0.12), 0 2px 8px rgba(13,27,42,0.06)"
+              : isDark
+                ? "0 4px 18px rgba(0,0,0,.12)"
+                : "0 2px 12px rgba(13,27,42,0.07)",
             cursor:stock.active?"pointer":"default",
             position:"relative", overflow:"hidden",
           }}
         >
+          {/* top accent — gold in dark, subtle navy in light */}
           {stock.active && (
             <div style={{
-              position:"absolute",top:0,left:0,right:0,height:1,
-              background:`linear-gradient(90deg,transparent,${GOLD},transparent)`,
+              position:"absolute",top:0,left:0,right:0,height:2,
+              background: isDark
+                ? `linear-gradient(90deg,transparent,${GOLD},transparent)`
+                : "linear-gradient(90deg,transparent,rgba(13,27,42,0.15),transparent)",
               opacity:hov?1:0,transition:"opacity .3s",
             }}/>
           )}
 
-          <div style={{fontSize:9,color:GOLD,letterSpacing:2.5,fontWeight:700,marginBottom:9,fontFamily:"'DM Sans',sans-serif"}}>
-            VANTAGE CAPITAL INVESTMENTS
+          {/* Category label — always muted, never gold on light */}
+          <div style={{
+            fontSize:10, letterSpacing:"0.12em", fontWeight:700, marginBottom:9,
+            color: isDark ? "rgba(212,160,23,0.75)" : "#4A6B82",
+            fontFamily:"'DM Sans',sans-serif", textTransform:"uppercase",
+          }}>
+            Vantage Capital Research
           </div>
+
+          {/* Stock name */}
           <div style={{fontSize:17,fontWeight:800,color:pal.text,fontFamily:"'Playfair Display',serif",lineHeight:1.3,marginBottom:4}}>
             {stock.name}
           </div>
-          <div style={{fontSize:11,color:pal.muted,letterSpacing:.3,fontFamily:"'DM Sans',sans-serif"}}>
+
+          {/* Ticker */}
+          <div style={{fontSize:11,color:isDark?"#5a7a94":"#4A6B82",letterSpacing:.3,fontFamily:"'DM Sans',sans-serif"}}>
             {stock.ticker}
           </div>
 
           {stock.active ? (
             <>
-              <div style={{height:1,background:"rgba(212,160,23,0.12)",margin:"14px 0"}}/>
+              {/* Divider */}
+              <div style={{height:1,background:isDark?"rgba(255,255,255,0.07)":"rgba(13,27,42,0.08)",margin:"14px 0"}}/>
+
+              {/* Rating + Target row */}
               <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-end",marginBottom:5,gap:8}}>
                 <div>
-                  <div style={{fontSize:9,color:pal.muted,letterSpacing:1,marginBottom:3,fontFamily:"'DM Sans',sans-serif"}}>RATING</div>
-                  <div style={{fontSize:17,fontWeight:800,color:GREEN,letterSpacing:1,fontFamily:"'DM Sans',sans-serif"}}>{stock.rating}</div>
+                  <div style={{fontSize:9,color:isDark?"#3d5570":"#8FA5B8",letterSpacing:"0.12em",marginBottom:4,fontFamily:"'DM Sans',sans-serif",textTransform:"uppercase"}}>Rating</div>
+                  <div style={{fontSize:17,fontWeight:800,color:"#1A7A45",fontFamily:"'DM Sans',sans-serif"}}>{stock.rating}</div>
                 </div>
                 <div style={{textAlign:"right"}}>
-                  <div style={{fontSize:9,color:pal.muted,letterSpacing:1,marginBottom:3,fontFamily:"'DM Sans',sans-serif"}}>TARGET</div>
+                  <div style={{fontSize:9,color:isDark?"#3d5570":"#8FA5B8",letterSpacing:"0.12em",marginBottom:4,fontFamily:"'DM Sans',sans-serif",textTransform:"uppercase"}}>Target</div>
                   <div style={{fontSize:13,fontWeight:800,color:pal.text,fontFamily:"'DM Sans',sans-serif"}}>{stock.target}</div>
                 </div>
               </div>
+
+              {/* CAGR */}
               {stock.cagr && (
-                <div style={{fontSize:11,color:TEAL,marginBottom:14,fontFamily:"'DM Sans',sans-serif"}}>{stock.cagr}</div>
+                <div style={{fontSize:11,color:isDark?"#0E7C7B":"#0B6B6A",marginBottom:14,fontFamily:"'DM Sans',sans-serif"}}>{stock.cagr}</div>
               )}
+
+              {/* CTA button — gold fill works fine in both themes */}
               <div style={{
-                padding:"10px 14px",background:GOLD,color:NAVY,textAlign:"center",
-                borderRadius:8,fontWeight:800,fontSize:11,letterSpacing:1.5,
-                fontFamily:"'DM Sans',sans-serif",opacity:hov?1:.88,transition:"opacity .2s",
+                padding:"10px 14px", background:GOLD, color:NAVY,
+                textAlign:"center", borderRadius:8,
+                fontWeight:800, fontSize:11, letterSpacing:"0.12em",
+                fontFamily:"'DM Sans',sans-serif",
+                opacity:hov?1:.88, transition:"opacity .2s",
               }}>
-                VIEW FULL DASHBOARD →
+                View Full Dashboard →
               </div>
             </>
           ) : (
             <>
-              <div style={{height:1,background:"rgba(212,160,23,0.10)",margin:"12px 0"}}/>
+              <div style={{height:1,background:isDark?"rgba(255,255,255,0.05)":"rgba(13,27,42,0.07)",margin:"12px 0"}}/>
               <div style={{
-                display:"inline-block",
-                padding:"4px 10px",
-                background:"rgba(212,160,23,0.08)",
-                border:"1px solid rgba(212,160,23,0.2)",
-                borderRadius:999,fontSize:9,
-                color:"rgba(212,160,23,0.65)",letterSpacing:2,fontWeight:700,
+                display:"inline-block", padding:"4px 12px",
+                background:isDark?"rgba(212,160,23,0.06)":"rgba(13,27,42,0.05)",
+                border:isDark?"1px solid rgba(212,160,23,0.15)":"1px solid rgba(13,27,42,0.10)",
+                borderRadius:999, fontSize:10,
+                color:isDark?"rgba(212,160,23,0.5)":"#8FA5B8",
+                letterSpacing:"0.12em", fontWeight:600,
                 fontFamily:"'DM Sans',sans-serif",
               }}>
-                COMING SOON
+                Coming Soon
               </div>
             </>
           )}
@@ -513,15 +574,15 @@ function RequestStockTile({ pal, onOpen }) {
       onClick={onOpen}
       style={{
         background: hov?"rgba(212,160,23,0.05)":pal.cardBg,
-        border:`1px dashed ${hov?GOLD:"rgba(212,160,23,0.3)"}`,
+        border:`1px dashed ${hov?(pal.goldWarm||GOLD):"rgba(212,160,23,0.3)"}`,
         borderRadius:14, padding:"28px 18px",
         cursor:"pointer", textAlign:"center",
         transition:"all .25s", boxSizing:"border-box",
         display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",gap:10,
       }}
     >
-      <div style={{fontSize:28,opacity:hov?1:0.5,transition:"opacity .2s"}}>＋</div>
-      <div style={{fontSize:14,fontWeight:800,color:hov?GOLD:pal.muted,fontFamily:"'Playfair Display',serif",transition:"color .2s"}}>
+      <div style={{fontSize:28,opacity:hov?1:0.5,transition:"opacity .2s",color:hov?(pal.goldWarm||GOLD):pal.muted}}>＋</div>
+      <div style={{fontSize:14,fontWeight:800,color:hov?(pal.gold||GOLD):pal.muted,fontFamily:"'Playfair Display',serif",transition:"color .2s"}}>
         Request a Stock
       </div>
       <div style={{fontSize:11,color:pal.muted,fontFamily:"'DM Sans',sans-serif",lineHeight:1.5}}>
@@ -563,7 +624,7 @@ function RequestStockPopup({ pal, isDark, onClose }) {
       display:"flex",alignItems:"center",justifyContent:"center",padding:16,
     }} onClick={e=>e.target===e.currentTarget&&onClose()}>
       <div style={{
-        background: isDark?"#0D1B2A":"#f5f0e8",
+        background: isDark?"#0D1B2A":"#FFFFFF",
         border:`1px solid rgba(212,160,23,0.25)`,
         borderRadius:16, padding:"32px 28px",
         width:"100%", maxWidth:420,
@@ -635,7 +696,7 @@ function DisclaimerPopup({ pal, isDark, onAccept }) {
       display:"flex",alignItems:"center",justifyContent:"center",padding:16,
     }}>
       <div style={{
-        background: isDark?"#0D1B2A":"#f5f0e8",
+        background: isDark?"#0D1B2A":"#FFFFFF",
         border:`1px solid rgba(212,160,23,0.3)`,
         borderRadius:16, padding:"36px 28px",
         width:"100%", maxWidth:480,
@@ -708,7 +769,7 @@ const EDGE_SLIDES = [
   },
 ];
 
-function EdgeCarousel({ pal }) {
+function EdgeCarousel({ pal, isDark }) {
   const [active, setActive] = useState(0);
   const [paused, setPaused] = useState(false);
   const timerRef = useRef(null);
@@ -741,8 +802,8 @@ function EdgeCarousel({ pal }) {
           alignItems:"center", justifyContent:"center",
         }}
       >
-        <div style={{fontSize:9,letterSpacing:"0.38em",color:GOLD,fontWeight:700,marginBottom:20,fontFamily:"'DM Sans',sans-serif"}}>
-          OUR EDGE
+        <div style={{fontSize:10,letterSpacing:"0.22em",color:isDark?GOLD:"#B8870A",fontWeight:700,marginBottom:20,fontFamily:"'DM Sans',sans-serif",textTransform:"uppercase"}}>
+          Our Edge
         </div>
 
         {/* Slide content — fade-up transition */}
@@ -774,7 +835,7 @@ function EdgeCarousel({ pal }) {
               onClick={()=>goTo(i)}
               style={{
                 width:i===active?22:7, height:7, borderRadius:999,
-                background:i===active?GOLD:"rgba(212,160,23,0.25)",
+                background: i===active ? (isDark?GOLD:"#B8870A") : (isDark?"rgba(212,160,23,0.25)":"rgba(13,27,42,0.18)"),
                 border:"none", cursor:"pointer", padding:0,
                 transition:"width .35s ease, background .35s ease",
               }}
@@ -784,8 +845,8 @@ function EdgeCarousel({ pal }) {
 
         {/* Progress bar */}
         {!paused && (
-          <div style={{position:"absolute",bottom:0,left:0,right:0,height:2,borderRadius:"0 0 16px 16px",overflow:"hidden",background:"rgba(212,160,23,0.08)"}}>
-            <div key={active} style={{height:"100%",background:GOLD,animation:"edgeProgress 4s linear forwards"}}/>
+          <div style={{position:"absolute",bottom:0,left:0,right:0,height:2,borderRadius:"0 0 16px 16px",overflow:"hidden",background: isDark?"rgba(212,160,23,0.08)":"rgba(13,27,42,0.06)"}}>
+            <div key={active} style={{height:"100%",background:isDark?GOLD:"#B8870A",animation:"edgeProgress 4s linear forwards"}}/>
           </div>
         )}
       </div>
@@ -870,6 +931,7 @@ export default function Home() {
           .hero-eyebrow{font-size:11px !important;letter-spacing:0.22em !important;margin-bottom:25px !important;}
           .active-grid{grid-template-columns:1fr !important;}
           .inactive-grid{grid-template-columns:1fr 1fr !important;}
+          .tools-grid{grid-template-columns:1fr !important;}
           .sec-h2{font-size:22px !important;}
           .stat-item{width:42% !important;text-align:center !important;}
           .stat-label{font-size:9px !important;letter-spacing:0.10em !important;}
@@ -877,6 +939,7 @@ export default function Home() {
         @media(min-width:601px) and (max-width:900px){
           .active-grid{grid-template-columns:1fr !important;}
           .inactive-grid{grid-template-columns:1fr 1fr !important;}
+          .tools-grid{grid-template-columns:1fr !important;}
         }
       `}</style>
 
@@ -1027,8 +1090,8 @@ export default function Home() {
 
         {/* ══════════ STATS STRIP ══════════ */}
         <div ref={stripRef} style={{
-          borderTop:`1px solid rgba(212,160,23,.11)`,
-          borderBottom:`1px solid rgba(212,160,23,.11)`,
+          borderTop:`1px solid ${isDark ? "rgba(212,160,23,.11)" : pal.border}`,
+          borderBottom:`1px solid ${isDark ? "rgba(212,160,23,.11)" : pal.border}`,
           background:pal.stripBg,
           padding:"22px 36px",
           display:"flex", justifyContent:"center",
@@ -1036,11 +1099,11 @@ export default function Home() {
           opacity:stripVis?1:0, transform:stripVis?"none":"translateY(14px)",
           transition:"opacity .7s,transform .7s",
         }}>
-          {[["∞","Growing Universe"],["FY30","Projection Horizon"],["₹0","Paid Subscription"],["100%","Independent Research"]].map(([v,l]) => (
+          {[["6","Platform Tools"],["9+","Stocks Covered"],["₹0","To Start"],["FY30","Projection Horizon"]].map(([v,l]) => (
             <div key={l} className="stat-item" style={{textAlign:"center"}}>
               <div style={{
                 fontSize:"clamp(20px,2.8vw,28px)",
-                fontWeight:800, color:GOLD,
+                fontWeight:800, color:isDark?GOLD:"#B8870A",
                 fontFamily:"'Playfair Display',serif",
               }}>
                 {v}
@@ -1057,69 +1120,125 @@ export default function Home() {
         </div>
 
         {/* ══════════ RESEARCH PHILOSOPHY CAROUSEL ══════════ */}
-        <EdgeCarousel pal={pal}/>
+        <EdgeCarousel pal={pal} isDark={isDark}/>
 
-        {/* ══════════ DASHBOARDS ══════════ */}
-        <section style={{
-          padding:"56px 18px 0",
-          maxWidth:1360, margin:"0 auto",
-        }}>
-          <div style={{
-            textAlign:"center", marginBottom:36,
-          }}>
-            <div style={{
-              fontSize:9, letterSpacing:"0.38em", color:GOLD,
-              fontWeight:700, marginBottom:10,
-              fontFamily:"'DM Sans',sans-serif",
-            }}>
-              LIVE DASHBOARDS
+        {/* ══════════ PLATFORM TOOLS ══════════ */}
+        <section style={{ padding:"72px 18px 0", maxWidth:1360, margin:"0 auto" }}>
+
+          {/* Section header */}
+          <div style={{ textAlign:"center", marginBottom:48 }}>
+            <div style={{ fontSize:10, letterSpacing:"0.22em", color:isDark?GOLD:"#0D1B2A", fontWeight:700, marginBottom:10, fontFamily:"'DM Sans',sans-serif", textTransform:"uppercase" }}>
+              Everything You Need
             </div>
-            <h2 style={{
-              fontSize:"clamp(22px,3.5vw,36px)",
-              fontWeight:800, color:pal.text,
-              fontFamily:"'Playfair Display',serif",
-              margin:0, lineHeight:1.2,
-            }}>
-              Explore Our Tools
+            <h2 style={{ fontSize:"clamp(22px,3.5vw,36px)", fontWeight:800, color:pal.text, fontFamily:"'Playfair Display',serif", margin:0, lineHeight:1.2 }}>
+              The Full Platform
             </h2>
-            <div style={{width:44,height:2,background:GOLD,margin:"14px auto 0",borderRadius:2}}/>
+            <p style={{ fontSize:13, color:pal.muted, marginTop:10, marginBottom:0, fontFamily:"'DM Sans',sans-serif", lineHeight:1.65 }}>
+              Six interconnected tools — all free to start, no login required for research.
+            </p>
+            <div style={{ width:44, height:2, background:isDark?GOLD:"#0D1B2A", margin:"14px auto 0", borderRadius:2 }}/>
           </div>
 
-          <div style={{
-            display:"grid",
-            gridTemplateColumns:"repeat(auto-fit,minmax(min(100%,280px),1fr))",
-            gap:16,
-          }}>
+          {/* Primary tools — 3 col */}
+          <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fit,minmax(min(100%,300px),1fr))", gap:16, marginBottom:16 }}>
             {[
-              {
-                icon:"📡",
-                label:"MACRO DASHBOARD",
-                title:"India Macro Board",
-                desc:"GDP, inflation, rates, FII flows, INR. The macro context every equity investor needs — updated live.",
-                path:"/macro",
-                color:"#2E75B6",
-                badge:null,
-              },
-              {
-                icon:"⚡",
-                label:"MOMENTUM DASHBOARD",
-                title:"Momentum Screener",
-                desc:"Price momentum, RSI, 52-week ranks, sector rotation — quantitative signals refreshed daily.",
-                path:"/momentum",
-                color:"#27AE60",
-                badge:"NEW",
-              },
               {
                 icon:"🔬",
                 label:"RESEARCH UNIVERSE",
-                title:"Stock Dashboards",
-                desc:"Deep-dive fundamental reports. DCF, Porter's 5 Forces, quality scores and FY30 price targets.",
+                title:"Stock Deep-Dives",
+                desc:"Institutional-grade reports on India's finest compounders — DCF, Porter's 5 Forces, quality scores, and FY30 targets.",
                 path:"/research-universe",
                 color:GOLD,
                 badge:null,
               },
+              {
+                icon:"🗂️",
+                label:"PORTFOLIO SIMULATOR",
+                title:"Build & Backtest Portfolios",
+                desc:"Construct custom portfolios, assign weights, compare against Nifty benchmarks and simulate multi-year historical returns.",
+                path:"/portfolio",
+                color:"#2E75B6",
+                badge:null,
+              },
+              {
+                icon:"📐",
+                label:"DCF LAB",
+                title:"Custom Valuation Models",
+                desc:"Build your own discounted cash flow models. Adjust growth, margins and discount rate to stress-test any valuation thesis.",
+                path:"/research-universe",
+                color:"#0E7C7B",
+                badge:null,
+              },
             ].map(card => (
               <DashboardCard key={card.title} card={card} pal={pal} isDark={isDark} />
+            ))}
+          </div>
+
+          {/* Secondary tools — 3 col */}
+          <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fit,minmax(min(100%,300px),1fr))", gap:16 }}>
+            {[
+              {
+                icon:"π",
+                label:"QUANT HUB",
+                title:"Factor Models",
+                desc:"Fama-French inspired factor screens — Momentum, Value, and Size dashboards — to identify systematic mispricings across NSE.",
+                path:"/quant",
+                color:"#9B59B6",
+                badge:"NEW",
+              },
+              {
+                icon:"📡",
+                label:"MACRO DASHBOARD",
+                title:"India Macro Board",
+                desc:"GDP, inflation, rates, FII flows, INR and credit cycles — the macro backdrop every equity investor needs, updated live.",
+                path:"/macro",
+                color:"#E67E22",
+                badge:null,
+              },
+              {
+                icon:"⚡",
+                label:"DISCOVER",
+                title:"Swipe to Discover Stocks",
+                desc:"Tinder-style stock discovery. Swipe through our coverage universe, save ideas to your watchlist, and deep-dive in one tap.",
+                path:"/discover",
+                color:"#27AE60",
+                badge:null,
+              },
+            ].map(card => (
+              <DashboardCard key={card.title} card={card} pal={pal} isDark={isDark} />
+            ))}
+          </div>
+        </section>
+
+        {/* ══════════ WHY VANTAGE ══════════ */}
+        <section style={{ padding:"72px 18px 0", maxWidth:1100, margin:"0 auto" }}>
+          <div style={{ textAlign:"center", marginBottom:40 }}>
+            <div style={{ fontSize:10, letterSpacing:"0.22em", color:isDark?GOLD:"#0D1B2A", fontWeight:700, marginBottom:10, fontFamily:"'DM Sans',sans-serif", textTransform:"uppercase" }}>
+              Why Vantage Capital
+            </div>
+            <h2 style={{ fontSize:"clamp(20px,3vw,32px)", fontWeight:800, color:pal.text, fontFamily:"'Playfair Display',serif", margin:0 }}>
+              Built different
+            </h2>
+            <div style={{ width:44, height:2, background:isDark?GOLD:"#0D1B2A", margin:"14px auto 0", borderRadius:2 }}/>
+          </div>
+
+          <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fit,minmax(min(100%,220px),1fr))", gap:12 }}>
+            {[
+              { icon:"🆓", title:"Free to Start", desc:"Full research access with no paywall. Premium tools unlock more — but the fundamentals are always free." },
+              { icon:"🏛️", title:"Institutional Grade", desc:"The same analytical frameworks used by fund managers — DCF, Fama-French factors, macro overlays." },
+              { icon:"🔢", title:"Quantitative Edge", desc:"Factor models surface what the eye misses. Our quant screens run nightly across the entire NSE universe." },
+              { icon:"🎯", title:"Long-Term Focus", desc:"FY30 targets. We don't chase quarters — every model is built around 5-year compounding conviction." },
+            ].map(f => (
+              <div key={f.title} style={{
+                background: pal.cardBg,
+                border:`1px solid ${isDark ? "rgba(212,160,23,0.15)" : pal.border}`,
+                borderRadius:14, padding:"24px 20px",
+                display:"flex", flexDirection:"column", gap:10,
+              }}>
+                <div style={{ fontSize:26 }}>{f.icon}</div>
+                <div style={{ fontSize:14, fontWeight:800, color:pal.text, fontFamily:"'Playfair Display',serif", lineHeight:1.2 }}>{f.title}</div>
+                <p style={{ fontSize:12, color:pal.muted, lineHeight:1.7, margin:0, fontFamily:"'DM Sans',sans-serif" }}>{f.desc}</p>
+              </div>
             ))}
           </div>
         </section>
@@ -1136,11 +1255,11 @@ export default function Home() {
             transition:"opacity .7s,transform .7s",
           }}>
             <div style={{
-              fontSize:9, letterSpacing:"0.38em", color:GOLD,
+              fontSize:10, letterSpacing:"0.22em", color:isDark?GOLD:"#0D1B2A",
               fontWeight:700, marginBottom:10,
-              fontFamily:"'DM Sans',sans-serif",
+              fontFamily:"'DM Sans',sans-serif", textTransform:"uppercase",
             }}>
-              CURATED EQUITY RESEARCH
+              Curated Equity Research
             </div>
             <h2 className="sec-h2" style={{
               fontSize:"clamp(22px,3.5vw,36px)",
@@ -1151,9 +1270,9 @@ export default function Home() {
               Featured Research
             </h2>
             <p style={{fontSize:13,color:pal.muted,marginTop:10,marginBottom:0,fontFamily:"'DM Sans',sans-serif",lineHeight:1.65}}>
-              3 live dashboards · more always in the pipeline
+              9 stocks covered · universe growing every quarter
             </p>
-            <div style={{width:44,height:2,background:GOLD,margin:"14px auto 0",borderRadius:2}}/>
+            <div style={{width:44,height:2,background:isDark?GOLD:"#B8870A",margin:"14px auto 0",borderRadius:2}}/>
           </div>
 
           {/* Active dashboards */}
@@ -1163,7 +1282,7 @@ export default function Home() {
             gap:16, marginBottom:20,
           }}>
             {stocks.filter(s=>s.active).map((s,i) => (
-              <StockTile key={s.name} stock={s} delay={i*100} pal={pal}/>
+              <StockTile key={s.name} stock={s} delay={i*100} pal={pal} isDark={isDark}/>
             ))}
           </div>
 
@@ -1174,7 +1293,7 @@ export default function Home() {
             gap:11, marginBottom:11,
           }}>
             {stocks.filter(s=>!s.active).map((s,i) => (
-              <StockTile key={s.name} stock={s} delay={80+i*45} pal={pal}/>
+              <StockTile key={s.name} stock={s} delay={80+i*45} pal={pal} isDark={isDark}/>
             ))}
           </div>
 
@@ -1190,9 +1309,9 @@ export default function Home() {
             </p>
             <Link to="/research-universe" style={{
               display:"inline-block",
-              background:"transparent",
-              border:`1px solid ${GOLD}`,
-              color:GOLD,
+              background: isDark ? "transparent" : GOLD,
+              border: isDark ? `1px solid ${GOLD}` : "none",
+              color: isDark ? GOLD : NAVY,
               padding:"12px 38px", borderRadius:999,
               fontWeight:800, fontSize:11, letterSpacing:"0.18em",
               textDecoration:"none", fontFamily:"'DM Sans',sans-serif",
