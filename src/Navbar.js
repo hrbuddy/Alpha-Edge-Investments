@@ -59,7 +59,7 @@ const MOBILE_QUICK_NAV = [
   { label:"Stocks",    icon:"📈", path:"/research-universe", active:true,  highlight:true  },
   { label:"Quant",     icon:"π",  path:"/quant",             active:true,  highlight:false },
   { label:"Macro",     icon:"📊", path:"/macro",             active:true,  highlight:false },
-  { label:"Portfolio", icon:"🗂️", path:"/portfolio",         active:true,  highlight:false },
+  { label:"Portfolio", icon:"🗂️", path:"/my-portfolio",      active:true,  highlight:false },
   { label:"Discover",  icon:"⚡", path:"/discover",          active:true,  highlight:false },
 ];
 
@@ -693,11 +693,11 @@ export default function Navbar() {
                     onMouseLeave={e => e.currentTarget.style.background="transparent"}>
                     <span style={{ fontSize:12, fontWeight:700, letterSpacing:"1.6px", color:textCol, fontFamily:"'DM Sans',sans-serif" }}>Run Simulation</span>
                   </Link>
-                  <Link to="/portfolio?tab=load" onClick={() => { setMenuOpen(false); setMobilePortfolioOpen(false); }}
+                  <Link to="/my-portfolio" onClick={() => { setMenuOpen(false); setMobilePortfolioOpen(false); }}
                     style={{ display:"flex", alignItems:"center", padding:"11px 32px", borderBottom:`1px solid rgba(212,160,23,0.05)`, textDecoration:"none" }}
                     onMouseEnter={e => e.currentTarget.style.background="rgba(212,160,23,0.07)"}
                     onMouseLeave={e => e.currentTarget.style.background="transparent"}>
-                    <span style={{ fontSize:12, fontWeight:700, letterSpacing:"1.6px", color:textCol, fontFamily:"'DM Sans',sans-serif" }}>Load Portfolios</span>
+                    <span style={{ fontSize:12, fontWeight:700, letterSpacing:"1.6px", color:textCol, fontFamily:"'DM Sans',sans-serif" }}>My Portfolios</span>
                   </Link>
                 </div>
               )}

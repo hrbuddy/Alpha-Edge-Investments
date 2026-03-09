@@ -3,7 +3,7 @@
  */
 
 import { useState, useEffect, useCallback, useRef } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { doc, getDoc, collection, getDocs, setDoc, deleteDoc } from "firebase/firestore";
 import { db }       from "./firebase";
 import { useAuth }  from "./AuthContext";
@@ -156,20 +156,29 @@ function SavedSheet({portfolios,onLoad,onDelete,onClose}){
   );
 }
 
-function SaveDialog({onSave,onClose,saving,error}){
-  const [name,setName]=useState("");
+function SaveDialog({onSave,onClose,saving,error,initialName,isDuplicate,onConfirmOverwrite}){
+  const [name,setName]=useState(initialName||"");
   return(
     <div style={{position:"fixed",inset:0,background:"rgba(0,0,0,0.7)",zIndex:999999,display:"flex",alignItems:"center",justifyContent:"center"}}>
-      <div style={{background:"#0d1b2a",border:`1px solid rgba(212,160,23,0.3)`,borderRadius:14,padding:"28px 32px",width:320}}>
+      <div style={{background:"#0d1b2a",border:`1px solid rgba(212,160,23,0.3)`,borderRadius:14,padding:"28px 32px",width:320,fontFamily:"'DM Sans',sans-serif"}}>
         <div style={{fontSize:14,fontWeight:800,color:GOLD,fontFamily:"'Playfair Display',serif",marginBottom:16}}>Save Portfolio</div>
         <input value={name} onChange={e=>setName(e.target.value)} placeholder="Portfolio name" onKeyDown={e=>e.key==="Enter"&&name.trim()&&onSave(name.trim())} style={{width:"100%",background:"rgba(255,255,255,0.06)",border:`1px solid rgba(212,160,23,0.3)`,borderRadius:8,padding:"5px 10px",color:"#e2e8f0",fontSize:16,fontFamily:"'DM Sans',sans-serif",outline:"none",boxSizing:"border-box",marginBottom:16}}/>
-        {error&&<div style={{fontSize:11,color:"#E74C3C",marginBottom:12,padding:"8px 10px",background:"rgba(192,57,43,0.1)",border:"1px solid rgba(192,57,43,0.3)",borderRadius:6,lineHeight:1.5}}>{error}</div>}
-          {error&&<div style={{fontSize:11,color:"#E74C3C",marginBottom:12,padding:"8px 10px",background:"rgba(192,57,43,0.1)",border:"1px solid rgba(192,57,43,0.3)",borderRadius:6,lineHeight:1.5}}>{error}</div>}
-          {error&&<div style={{fontSize:11,color:"#E74C3C",marginBottom:12,padding:"8px 10px",background:"rgba(192,57,43,0.1)",border:"1px solid rgba(192,57,43,0.3)",borderRadius:6,lineHeight:1.5}}>{error}</div>}
+        {isDuplicate&&(
+          <div style={{fontSize:11,color:"#F39C12",marginBottom:12,padding:"10px 12px",background:"rgba(243,156,18,0.08)",border:"1px solid rgba(243,156,18,0.3)",borderRadius:6,lineHeight:1.6}}>
+            ⚠️ A portfolio named <strong>"{name}"</strong> already exists. Do you want to overwrite it?
+            <div style={{display:"flex",gap:8,marginTop:10}}>
+              <button onClick={onClose} style={{flex:1,padding:"6px",borderRadius:6,background:"transparent",border:"1px solid rgba(255,255,255,0.1)",color:SUB,fontSize:10,fontWeight:700,cursor:"pointer"}}>CANCEL</button>
+              <button onClick={onConfirmOverwrite} style={{flex:1,padding:"6px",borderRadius:6,background:"rgba(243,156,18,0.15)",border:"1px solid rgba(243,156,18,0.4)",color:"#F39C12",fontSize:10,fontWeight:800,cursor:"pointer"}}>YES, OVERWRITE</button>
+            </div>
+          </div>
+        )}
+        {!isDuplicate&&error&&<div style={{fontSize:11,color:"#E74C3C",marginBottom:12,padding:"8px 10px",background:"rgba(192,57,43,0.1)",border:"1px solid rgba(192,57,43,0.3)",borderRadius:6,lineHeight:1.5}}>{error}</div>}
+        {!isDuplicate&&(
           <div style={{display:"flex",gap:10}}>
-          <button onClick={onClose} style={{flex:1,padding:"8px",borderRadius:8,background:"transparent",border:"1px solid rgba(255,255,255,0.1)",color:SUB,fontSize:11,fontWeight:700,cursor:"pointer"}}>CANCEL</button>
-          <button onClick={()=>name.trim()&&onSave(name.trim())} disabled={saving||!name.trim()} style={{flex:1,padding:"8px",borderRadius:8,background:GOLD+"22",border:`1px solid ${GOLD}66`,color:GOLD,fontSize:11,fontWeight:800,cursor:name.trim()?"pointer":"not-allowed"}}>{saving?"SAVING...":"SAVE"}</button>
-        </div>
+            <button onClick={onClose} style={{flex:1,padding:"8px",borderRadius:8,background:"transparent",border:"1px solid rgba(255,255,255,0.1)",color:SUB,fontSize:11,fontWeight:700,cursor:"pointer"}}>CANCEL</button>
+            <button onClick={()=>name.trim()&&onSave(name.trim())} disabled={saving||!name.trim()} style={{flex:1,padding:"8px",borderRadius:8,background:GOLD+"22",border:`1px solid ${GOLD}66`,color:GOLD,fontSize:11,fontWeight:800,cursor:name.trim()?"pointer":"not-allowed"}}>{saving?"SAVING...":"SAVE"}</button>
+          </div>
+        )}
       </div>
     </div>
   );
@@ -177,6 +186,7 @@ function SaveDialog({onSave,onClose,saving,error}){
 
 export default function PortfolioSimulator(){
   const navigate=useNavigate();
+  const location=useLocation();
   const{user}=useAuth();
   const{ checkPortfolio, recordPortfolioRun }=useAccess();
   const userKey=user?.email?user.email.replace(/[.#$[\]]/g,"_"):null;
@@ -206,6 +216,7 @@ export default function PortfolioSimulator(){
   const[savedPortfolios,setSavedPortfolios]=useState([]);
   const[showSheet,setShowSheet]=useState(false);
   const[showSaveDialog,setShowSaveDialog]=useState(false);
+  const[duplicatePortfolio,setDuplicatePortfolio]=useState(null);
   const[saving,setSaving]=useState(false);
   const[saveError,setSaveError]=useState(null);
   const[portfolioName,setPortfolioName]=useState("");
@@ -277,9 +288,19 @@ export default function PortfolioSimulator(){
   useEffect(()=>{
     if(pendingSim && stocks.length>0){
       setPendingSim(false);
-      setTimeout(()=>{ if(simulateRef.current) simulateRef.current(); }, 80);
+      setTimeout(()=>{ if(simulateRef.current) simulateRef.current(); }, 200);
     }
   },[pendingSim, stocks]);
+
+  // ── Auto-load + run portfolio passed via navigation state ──────
+  useEffect(()=>{
+    const incoming = location.state?.portfolio ?? null;
+    if(incoming){
+      window.history.replaceState({}, '');
+      setTimeout(()=>{ loadPortfolio(incoming); }, 50);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  },[]);
 
   async function deleteSaved(id){
     if(!userKey)return;
@@ -289,19 +310,36 @@ export default function PortfolioSimulator(){
 
   async function savePortfolio(name){
     if(!userKey||!stocks.length)return;
+    // Check for duplicate name
+    const existing=savedPortfolios.find(p=>p.name.trim().toLowerCase()===name.trim().toLowerCase());
+    if(existing){
+      setDuplicatePortfolio(existing);
+      return;
+    }
+    await doSave(name, "port_"+Date.now());
+  }
+
+  async function doSave(name, id){
     setSaving(true);setSaveError(null);
-    console.log("[Portfolio Save] userKey=",userKey,"stocks=",stocks,"name=",name);
     try{
-      const id="port_"+Date.now();
       const data={name,stocks,weights,weightMode,created_at:new Date().toISOString()};
       await setDoc(doc(db,"portfolios",userKey,"saved",id),data);
-      setSavedPortfolios(prev=>[{id,...data},...prev]);
-      console.log("[Portfolio Save] SUCCESS id=",id);
+      setSavedPortfolios(prev=>{
+        const filtered=prev.filter(p=>p.id!==id);
+        return [{id,...data},...filtered];
+      });
+      setPortfolioName(name);
       setShowSaveDialog(false);
+      setDuplicatePortfolio(null);
     }catch(e){
       console.error("Save error:",e);
       setSaveError(e.code==="permission-denied"?"Firestore permission denied. Add portfolios rule — see docs.":e.message||"Save failed.");
     }finally{setSaving(false);}
+  }
+
+  async function overwritePortfolio(){
+    if(!duplicatePortfolio)return;
+    await doSave(duplicatePortfolio.name, duplicatePortfolio.id);
   }
 
   async function simulate(){
@@ -756,7 +794,7 @@ export default function PortfolioSimulator(){
       </div>
 
       {showSheet&&<SavedSheet portfolios={savedPortfolios} onLoad={loadPortfolio} onDelete={deleteSaved} onClose={()=>setShowSheet(false)}/>}
-      {showSaveDialog&&<SaveDialog onSave={savePortfolio} onClose={()=>{setShowSaveDialog(false);setSaveError(null);}} saving={saving} error={saveError}/>}
+      {showSaveDialog&&<SaveDialog onSave={savePortfolio} onClose={()=>{setShowSaveDialog(false);setSaveError(null);setDuplicatePortfolio(null);}} saving={saving} error={saveError} initialName={portfolioName} isDuplicate={!!duplicatePortfolio} onConfirmOverwrite={overwritePortfolio}/>}
     </div>
   );
 }

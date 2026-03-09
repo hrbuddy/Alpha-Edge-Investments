@@ -199,7 +199,7 @@ export default function MyPortfolio() {
             <SectionHeader label="QUICK ACTIONS" />
             <div style={{ display:"flex", gap:8 }}>
               <Btn gold label="RUN SIMULATION" onClick={()=>navigate("/portfolio")} />
-              <Btn label="BUILD DCF" onClick={()=>navigate("/dcf")} />
+              <Btn label="BUILD DCF" onClick={()=>navigate("/dcf/hdfcamc")} />
             </div>
           </Card>
 
@@ -254,7 +254,7 @@ export default function MyPortfolio() {
                 No saved portfolios yet.<br/>
                 <span style={{ color:"rgba(212,160,23,0.45)" }}>Build one in Portfolio Simulator and tap Save.</span>
                 <div style={{ marginTop:14, display:"flex" }}>
-                  <Btn gold label="GO TO SIMULATOR →" onClick={()=>navigate("/portfolio")} />
+                  <Btn gold label="GO TO SIMULATOR →" onClick={()=>navigate("/portfolio",{state:{portfolio:active}})} />
                 </div>
               </div>
             ) : (
