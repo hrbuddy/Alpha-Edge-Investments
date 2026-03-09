@@ -1151,6 +1151,284 @@ export const STOCKS = {
 },
 
 
+// ─────────────────────────────────────────────
+//  HDFC AMC — HDFC Asset Management Company Ltd
+// ─────────────────────────────────────────────
+"HDFCAMC": {
+  // ── Identity ──
+  id:           "HDFCAMC",
+  name:         "HDFC Asset Management Company Ltd",
+  nse:          "HDFCAMC",
+  bse:          "541729",
+  indices:      "Nifty 50 · Nifty Next 50 · Nifty 500",
+  sector:       "Asset Management / Financial Services",
+  rating:       "BUY",
+  description:  "India's largest AMC by actively managed equity AUM and #2 overall (~11.5% total market share). Manages ₹9.25 lakh Cr (Q3 FY26) across 250+ schemes under HDFC Mutual Fund. Zero debt, 80%+ EBITDA margins, 30%+ ROE, 42%+ ROCE. Pure capital-light toll-road business: earns a fee (TER) on every rupee of AUM, takes zero market risk. 15.4 million unique investors, 27.6 million live folios, backed by HDFC Bank (52.4% promoter). 1:1 bonus issue completed Nov 2025.",
+
+  // ── Header metric tiles ──
+  metrics: [
+    { label: "CMP",              value: "₹2,510",        sub: "Mar 2026 (post bonus)"            },
+    { label: "Market Cap",       value: "₹1,07,500 Cr",  sub: "~$12.8B · Nifty 50", color: "GOLD"   },
+    { label: "Target",           value: "₹3,200–4,000",  sub: "14–18% CAGR to FY30", color: "GREEN" },
+    { label: "EBITDA Margin",    value: "81.7%",          sub: "Q3 FY26 (FY30E: 80%+)", color: "BLUE"  },
+    { label: "ROCE / ROE",       value: "41% / 31%",     sub: "FY25",               color: "TEAL"   },
+    { label: "Quality",          value: "8.3/10",         sub: "Wide-Moat Compounder", color: "ORANGE" },
+  ],
+
+  // ── Investment thesis ──
+  thesis: [
+    { t: "India's Financialisation Mega-Theme",           d: "India MF AUM grew from ₹23 lakh Cr (FY20) to ₹67 lakh Cr (Q3 FY26) — a 3x in 5 years. Mutual fund penetration at 17% of GDP vs 130%+ in USA. SIP inflows hit ₹31,000 Cr/month in Dec 2025. 8.6 crore SIP accounts growing at 28% YoY. HDFC AMC is the toll-road on this structural trend." },
+    { t: "Duopoly with Near-Unassailable Moat",           d: "25+ years of brand trust, HDFC Bank's 9,455 branches as distribution backbone, and scale-driven cost advantages create a network effect moat. Top-2 AMCs (HDFC + SBI) hold ~24% of total industry AUM. Active equity market share steady at 13% — the highest-margin segment at 58 bps yield." },
+    { t: "Operating Leverage Compounding Machine",        d: "Revenue scales with AUM (fee-based), but costs are largely fixed (people + technology). EBITDA margins expand from 76% (FY22) to 80%+ now and expected to sustain at 78–82% through FY30. Cost-to-AUM is industry's lowest at 11 bps. Every incremental ₹1 of AUM revenue converts at 80–85% to EBITDA." },
+    { t: "Valuation Disconnect from Quality",             d: "At ₹2,510 and FY30E EPS of ~₹190, stock trades at ~13x FY30E — extraordinarily cheap for a 30%+ ROE compounder with zero debt. TER compression fears are overblown: HDFC AMC can offset 2–4 bps yield compression via AUM volume growth of 15–18% CAGR." },
+  ],
+
+  // ── Financial time series (₹ Cr) ──
+  // Revenue = Revenue from operations; OPM = EBITDA margin; PAT as reported
+  // CFO from cash flow statements; Capex minimal (capex ~₹35-60 Cr/yr, asset-light)
+  // ROCE per annual reports; EPS pre-bonus doubled post-bonus (1:1 Nov 2025)
+  finData: [
+    { yr:"FY20",  rev:2143, opm:71, opProfit:1522, cfo:1010, pat:1262, capex:25, fcff:985,  cfoPatPct:80,  roce:31, type:"H" },
+    { yr:"FY21",  rev:2202, opm:79, opProfit:1740, cfo:1085, pat:1326, capex:28, fcff:1057, cfoPatPct:82,  roce:37, type:"H" },
+    { yr:"FY22",  rev:2584, opm:76, opProfit:1964, cfo:1254, pat:1393, capex:32, fcff:1222, cfoPatPct:90,  roce:34, type:"H" },
+    { yr:"FY23",  rev:2645, opm:75, opProfit:1984, cfo:1149, pat:1423, capex:35, fcff:1114, cfoPatPct:81,  roce:31, type:"H" },
+    { yr:"FY24",  rev:3163, opm:76, opProfit:2398, cfo:1615, pat:1943, capex:40, fcff:1575, cfoPatPct:83,  roce:36, type:"H" },
+    { yr:"FY25",  rev:4058, opm:80, opProfit:3241, cfo:2075, pat:2460, capex:45, fcff:2030, cfoPatPct:84,  roce:41, type:"H" },
+    { yr:"FY26E", rev:4850, opm:81, opProfit:3929, cfo:2520, pat:2960, capex:50, fcff:2470, cfoPatPct:85,  roce:45, type:"P" },
+    { yr:"FY27E", rev:5600, opm:81, opProfit:4536, cfo:2950, pat:3430, capex:55, fcff:2895, cfoPatPct:86,  roce:46, type:"P" },
+    { yr:"FY28E", rev:6500, opm:82, opProfit:5330, cfo:3450, pat:4000, capex:60, fcff:3390, cfoPatPct:86,  roce:48, type:"P" },
+    { yr:"FY29E", rev:7400, opm:82, opProfit:6068, cfo:3950, pat:4550, capex:60, fcff:3890, cfoPatPct:87,  roce:49, type:"P" },
+    { yr:"FY30E", rev:8500, opm:82, opProfit:6970, cfo:4580, pat:5250, capex:65, fcff:4515, cfoPatPct:87,  roce:51, type:"P" },
+  ],
+
+  // ── Segment AUM-based revenue split (₹ Cr, proxy) ──
+  // Equity yields ~58 bps, Debt ~27-28 bps, Liquid ~12-13 bps of AUM
+  // Revenue split derived from AUM mix and segment yields
+  segmentKeys: ["equity", "debt", "liquid", "etfother"],
+  segmentLabels: { equity: "Equity-Oriented", debt: "Debt / Hybrid", liquid: "Liquid / Money Mkt", etfother: "ETF & Others" },
+  segData: [
+    { yr:"FY22",  equity:1810, debt:420,  liquid:225, etfother:129,  total:2584 },
+    { yr:"FY23",  equity:1800, debt:430,  liquid:230, etfother:185,  total:2645 },
+    { yr:"FY24",  equity:2280, debt:460,  liquid:240, etfother:183,  total:3163 },
+    { yr:"FY25",  equity:3100, debt:530,  liquid:250, etfother:178,  total:4058 },
+    { yr:"FY26E", equity:3750, debt:590,  liquid:270, etfother:240,  total:4850 },
+    { yr:"FY27E", equity:4350, debt:660,  liquid:295, etfother:295,  total:5600 },
+    { yr:"FY28E", equity:5100, debt:750,  liquid:320, etfother:330,  total:6500 },
+    { yr:"FY29E", equity:5850, debt:840,  liquid:340, etfother:370,  total:7400 },
+    { yr:"FY30E", equity:6750, debt:960,  liquid:375, etfother:415,  total:8500 },
+  ],
+
+  // ── Porter's 5 Forces ──
+  porterKeys: ["activeEquity", "passiveETF", "debt"],
+  porterLabels: { activeEquity: "Active Equity", passiveETF: "Passive / ETF", debt: "Debt / Liquid" },
+  porterData: [
+    { force:"New Entrants",   activeEquity:8,   passiveETF:5,  debt:6  },
+    { force:"Buyer Power",    activeEquity:6,   passiveETF:7,  debt:7  },
+    { force:"Supplier Power", activeEquity:8,   passiveETF:9,  debt:9  },
+    { force:"Substitutes",    activeEquity:6,   passiveETF:5,  debt:5  },
+    { force:"Rivalry",        activeEquity:7,   passiveETF:6,  debt:6  },
+  ],
+  porterNarrative: [
+    { force:"Threat of New Entrants",     lines:["Active Equity: LOW — SEBI license, HDFC brand trust, 25yr track record + HDFC Bank distribution moat create near-insurmountable barriers","Passive/ETF: MODERATE — Low-cost ETFs easier to replicate; Mirae, Nippon gaining ETF AUM","Debt: MODERATE — SBI, ICICI, Kotak all compete fiercely in debt AUM"] },
+    { force:"Bargaining Power of Buyers", lines:["Active Equity: MODERATE — Direct plans + fintech aggregators (Zerodha Coin, Groww) reduce switching costs; but HDFC brand + performance builds stickiness","Passive: HIGH — Price competition caps TER; investors commoditize index products","Debt/Liquid: HIGH — Corporate treasuries and banks toggle between AMCs on yield"] },
+    { force:"Supplier Power",             lines:["Active Equity: LOW — Fund managers are employees; HDFC Bank (distribution) is a related party = structural cost advantage","Passive/ETF: VERY LOW — Index construction is rule-based, minimal talent dependency","Debt: LOW — Fixed income is rules-driven; switching costs of distributor low"] },
+    { force:"Threat of Substitutes",      lines:["Active Equity: MODERATE — PMS, AIF, direct equities, NPS compete for the HNI wallet; but SIP culture is deeply entrenched","Passive: LOW-MOD — International ETFs emerging but domestic alternatives dominate","Debt: MODERATE — Bank FDs, bonds, G-secs increasingly accessible via RBI Retail Direct"] },
+    { force:"Competitive Rivalry",        lines:["Active Equity: MOD-HIGH — Top-5 AMCs compete intensely on alpha generation; HDFC equity mix (66% of AUM vs 56% industry) = structural advantage","Passive: HIGH — Nippon, SBI, Mirae aggressively building passive AUM","Debt: HIGH — 40+ AMCs compete; margins thin; product differentiation low"] },
+  ],
+  porterConclusion: "HDFC AMC enjoys a WIDE MOAT in active equity management — its highest-margin segment. The 25-year brand + HDFC Bank distribution network + scale economics are extremely hard to replicate. Threat exists in passive/ETF shift (structural headwind) but active equity inflows remain robust. Overall moat: WIDE, with moderate erosion risk from TER regulation and passive shift over 10+ year horizon.",
+
+  // ── Quality scorecard ──
+  qualityData: [
+    { param:"Longevity",          score:9,   full:"25yr ops since 1999; PAT positive every year; survived Dot-com, GFC, COVID; HDFC brand = 50+ year legacy" },
+    { param:"Predictable CF",     score:8,   full:"CFO/PAT consistently 80-87%; fee income scales linearly with AUM; very low capex; highly predictable cash generation" },
+    { param:"ROCE",               score:9,   full:"ROCE expanded 31% (FY21) → 41% (FY25) → 51%E (FY30); zero debt = pure equity ROCE; best-in-class capital efficiency" },
+    { param:"Revenue Resilience", score:7,   full:"16.5% revenue CAGR FY21-25; AUM fell 20% in FY20 correction but recovered; COVID-year PAT still grew; market-linked but structurally rising" },
+    { param:"EPS Stability",      score:7,   full:"Consistent growth except FY22-23 flattish (market downturn). EPS (post-bonus basis): FY24 ₹91 → FY25 ₹115 → FY26E ₹140 → FY30E ₹190" },
+    { param:"CFO/PAT",            score:8,   full:"80-87% CFO/PAT; clean conversion; no capital trapped in receivables (fee collected upfront/daily); minimal capex" },
+    { param:"Margins",            score:9,   full:"EBITDA 79-82%; highest sustained margin in listed Indian financials; operating leverage means margins expand with AUM scale" },
+    { param:"Reinvestment",       score:8,   full:"Capital-light; dividends 70-75% payout; AUM growth = automatic reinvestment via retained AUM compounding; alternatives & PMS expanding" },
+  ],
+  qualitySummary: {
+    consolidated: "8.3/10",
+    standalone:   "8.3/10",
+    insight:      "HDFC AMC is one of India's highest-quality listed businesses: near-monopoly brand in active equity, 80%+ EBITDA margin, zero debt, 30%+ ROE, and 25 years of PAT growth. Quality score held back by market-linked revenue risk (AUM falls in corrections) and regulatory TER compression risk. Otherwise, a near-perfect business model.",
+  },
+
+  // ── Sensitivity matrix (FY30E EPS basis, post-bonus) ──
+  sensitivity: {
+    cmp: 2510,
+    peColumns: [
+      { label:"30x (De-rate)", key:"pe30" },
+      { label:"38x (Base)",    key:"pe38" },
+      { label:"46x (Re-rate)", key:"pe46" },
+      { label:"55x (Premium)", key:"pe55" },
+    ],
+    rows: [
+      { label:"Bear ₹140",  pe30:4200, pe38:5320, pe46:6440, pe55:7700 },
+      { label:"Base ₹190",  pe30:5700, pe38:7220, pe46:8740, pe55:10450 },
+      { label:"Bull ₹230",  pe30:6900, pe38:8740, pe46:10580, pe55:12650 },
+    ],
+    scenarios: [
+      { label:"BEAR",      color:"RED",   rev:"₹6,500 Cr", opm:"78%", eps:"₹140", pe:"30–38x", target:"₹4,200–5,320", desc:"AUM growth moderates to 10% CAGR due to equity market correction. TER compression hits 6+ bps. Revenue CAGR only 8%. Market de-rates to 30x on regulatory uncertainty." },
+      { label:"BASE CASE", color:"BLUE",  rev:"₹8,500 Cr", opm:"82%", eps:"₹190", pe:"38–46x", target:"₹7,220–8,740", desc:"15–18% AUM CAGR. Equity share stays 62%+. TER compression offset by volume. PAT CAGR 16–18%. Justified 38–46x for a 30%+ ROE compounder with near-zero reinvestment need." },
+      { label:"BULL",      color:"GREEN", rev:"₹10,000 Cr",opm:"83%", eps:"₹230", pe:"46–55x", target:"₹10,580–12,650",desc:"20%+ AUM CAGR. India MF penetration re-rates upward. Alternatives/PMS scale to 5%+ of revenue. Market re-rates HDFC AMC as India's Blackrock at premium multiple." },
+    ],
+    conclusion: "Base Case FY30 Target: ₹7,200–8,700 (14–18% CAGR from ₹2,510). At CMP, FY30E P/E is only ~13x — extraordinarily cheap for a 30%+ ROE, 80%+ margin, zero-debt compounder. Even at 30x de-rate, FY30 target is ₹5,700 (12% CAGR). Downside is limited; upside is substantial if India's MF AUM grows to ₹1.5 lakh Cr+ by FY30.",
+  },
+
+  dcf: {
+    wacc:         12.5,
+    termGrowth:   8.5,
+    isNBFC:       false,
+    wcRev:        0,
+    taxRate:      25,
+    interestRate: 0,
+    note: "Asset management — zero debt, capital-light, AUM-linked recurring fee income. Terminal growth 8.5% reflects India nominal GDP growth + financialisation premium. Low WACC justified by near-zero business risk and AAA-equivalent promoter (HDFC Bank).",
+  },
+},
+
+
+
+// ─────────────────────────────────────────────
+//  ICICI PRUDENTIAL AMC — ICICI Prudential Asset Management Company Ltd
+// ─────────────────────────────────────────────
+"ICICIAMC": {
+  // ── Identity ──
+  id:           "ICICIAMC",
+  name:         "ICICI Prudential Asset Management Company Ltd",
+  nse:          "ICICIAMC",
+  bse:          "544658",
+  indices:      "BSE 500 · BSE Financial Services",
+  sector:       "Asset Management / Financial Services",
+  rating:       "BUY",
+  description:  "India's #1 AMC by active mutual fund QAAUM (₹10.76 lakh Cr, Q3 FY26), largest equity QAAUM (13.8% share), and most profitable AMC by operating profit (20% industry share). JV between ICICI Bank (51%) and Prudential Corporation Holdings (49%). Newly listed Dec 2025 (IPO price ₹2,165). Manages 143+ schemes, 278 offices, 16.2 million unique customers. Revenue CAGR 27% over FY23–25; PAT CAGR 32% over same period. 0% debt, ROE 83%, EBITDA margin 73%. Superior to HDFC AMC on absolute AUM scale and ROE; commands premium on post-IPO re-rating cycle.",
+
+  // ── Header metric tiles ──
+  metrics: [
+    { label: "CMP",              value: "₹3,010",        sub: "Mar 2026 (post-IPO)"              },
+    { label: "Market Cap",       value: "₹1,48,500 Cr",  sub: "~$17.7B · Fresh Listing Dec 2025", color: "GOLD"   },
+    { label: "Target",           value: "₹3,800–4,800",  sub: "15–20% CAGR to FY30",             color: "GREEN"  },
+    { label: "EBITDA Margin",    value: "73.0%",          sub: "FY25 (Q3 FY26: 73.3%)",           color: "BLUE"   },
+    { label: "ROE / ROCE",       value: "83% / 68%",     sub: "FY25 (highest in listed AMCs)",    color: "TEAL"   },
+    { label: "Quality",          value: "8.5/10",         sub: "Exceptional ROE Compounder",       color: "ORANGE" },
+  ],
+
+  // ── Investment thesis ──
+  thesis: [
+    { t: "India's #1 AMC — Largest, Most Profitable",    d: "Active MF QAAUM of ₹10.76 lakh Cr; 13.3% total market share; 13.8% equity market share — both industry-leading. Operating profit market share 20% in FY25, well above AUM share — testament to higher equity mix (57% vs 56% industry) and scale-driven operating leverage. India MF AUM CAGR of 18.4% over FY19–FY25 and ICICI AMC riding this perfectly." },
+    { t: "Dual-Promoter Moat: ICICI Bank + Prudential",  d: "ICICI Bank (51%) provides 6,500+ branches and 16,650+ ATMs for distribution — India's 2nd largest private bank backbone. Prudential plc (49%) contributes global investment management expertise, risk frameworks, and international product mandates. Dual-promoter JV model creates structural distribution + governance advantages that no independent AMC can replicate." },
+    { t: "Extraordinary Unit Economics — ROE 83%",       d: "FY25 ROE of 82.8% — highest among listed Indian AMCs. This is structural: asset-light model (net worth only ₹3,517 Cr vs ₹1,48,500 Cr market cap) with zero debt and high fee income. EBITDA-to-revenue yield of 0.37% on AUM; every ₹1 of incremental revenue above fixed costs converts at ~85%+ to EBITDA. Operating leverage will compound as AUM doubles from ₹10.7 lakh Cr toward ₹25 lakh Cr by FY30." },
+    { t: "Post-IPO Re-rating Catalyst + Alternates Scale", d: "Stock listed Dec 2025 at ₹2,165 (IPO). Re-rating cycle typically lasts 12–18 months as institutional ownership builds up. Additionally, Alternates (PMS ₹2,728 Cr AUM + AIF ₹1,591 Cr + Advisory ₹3,209 Cr) growing faster and at higher margins. Proposed acquisition of ICICI Venture AIF management rights (SEBI-approved Mar 2026) will accelerate alternatives scale — a structural re-rating trigger." },
+  ],
+
+  // ── Financial time series (₹ Cr) ──
+  // Revenue = Revenue from operations per IPO RHP and quarterly filings
+  // EBITDA per Outlook Money / BSE filings: FY23 ₹2,073 Cr, FY24 ₹2,780 Cr, FY25 ₹3,637 Cr
+  // PAT: FY23 ₹1,516 Cr, FY24 ₹2,050 Cr, FY25 ₹2,651 Cr; Q3FY26 ₹917 Cr (TTM ~₹3,235 Cr)
+  // ROE: FY25 82.8% (net worth ₹3,517 Cr); ROCE ~68% FY25 (computed from EBIT/CE)
+  // Capex ~₹40-60 Cr/yr (asset-light, minimal fixed assets); CFO ~88-92% of PAT (clean conversion)
+  // Shares outstanding post-IPO: ~4.93 Cr (post Rs1 FV) = 49.3 Cr shares
+  finData: [
+    { yr:"FY20",  rev:1856, opm:65, opProfit:1206, cfo:880,  pat:1020, capex:30, fcff:850,  cfoPatPct:86,  roce:52, type:"H" },
+    { yr:"FY21",  rev:1942, opm:68, opProfit:1321, cfo:930,  pat:1120, capex:32, fcff:898,  cfoPatPct:83,  roce:55, type:"H" },
+    { yr:"FY22",  rev:2380, opm:70, opProfit:1666, cfo:1100, pat:1221, capex:35, fcff:1065, cfoPatPct:90,  roce:58, type:"H" },
+    { yr:"FY23",  rev:2837, opm:73, opProfit:2073, cfo:1380, pat:1516, capex:38, fcff:1342, cfoPatPct:91,  roce:61, type:"H" },
+    { yr:"FY24",  rev:3758, opm:74, opProfit:2780, cfo:1870, pat:2050, capex:42, fcff:1828, cfoPatPct:91,  roce:65, type:"H" },
+    { yr:"FY25",  rev:4977, opm:73, opProfit:3637, cfo:2400, pat:2651, capex:48, fcff:2352, cfoPatPct:91,  roce:68, type:"H" },
+    { yr:"FY26E", rev:6000, opm:74, opProfit:4440, cfo:2950, pat:3235, capex:55, fcff:2895, cfoPatPct:91,  roce:71, type:"P" },
+    { yr:"FY27E", rev:7100, opm:74, opProfit:5254, cfo:3520, pat:3830, capex:60, fcff:3460, cfoPatPct:92,  roce:74, type:"P" },
+    { yr:"FY28E", rev:8400, opm:75, opProfit:6300, cfo:4200, pat:4550, capex:65, fcff:4135, cfoPatPct:92,  roce:77, type:"P" },
+    { yr:"FY29E", rev:9800, opm:75, opProfit:7350, cfo:4950, pat:5300, capex:70, fcff:4880, cfoPatPct:93,  roce:80, type:"P" },
+    { yr:"FY30E", rev:11500,opm:76, opProfit:8740, cfo:5900, pat:6250, capex:75, fcff:5825, cfoPatPct:94,  roce:83, type:"P" },
+  ],
+
+  // ── AUM-based revenue segment split (₹ Cr) ──
+  // Equity QAAUM ~57% of total; Debt/Hybrid ~30%; Liquid ~8%; ETF+Passive+Others ~5%
+  // Yields: Equity ~56 bps; Debt ~28 bps; Liquid ~12 bps; ETF ~7 bps
+  // Alternates (PMS+AIF+Advisory) growing rapidly — modelled separately as "Alternates"
+  segmentKeys: ["equity", "debt", "liquid", "alternates"],
+  segmentLabels: { equity: "Equity-Oriented", debt: "Debt / Hybrid", liquid: "Liquid / Passive", alternates: "Alternates (PMS/AIF)" },
+  segData: [
+    { yr:"FY22",  equity:1665, debt:497,  liquid:131, alternates:87,  total:2380 },
+    { yr:"FY23",  equity:1980, debt:589,  liquid:163, alternates:105, total:2837 },
+    { yr:"FY24",  equity:2695, debt:743,  liquid:200, alternates:120, total:3758 },
+    { yr:"FY25",  equity:3675, debt:858,  liquid:249, alternates:195, total:4977 },
+    { yr:"FY26E", equity:4450, debt:990,  liquid:280, alternates:280, total:6000 },
+    { yr:"FY27E", equity:5300, debt:1130, liquid:300, alternates:370, total:7100 },
+    { yr:"FY28E", equity:6300, debt:1300, liquid:320, alternates:480, total:8400 },
+    { yr:"FY29E", equity:7400, debt:1480, liquid:340, alternates:580, total:9800 },
+    { yr:"FY30E", equity:8700, debt:1700, liquid:360, alternates:740, total:11500 },
+  ],
+
+  // ── Porter's 5 Forces ──
+  porterKeys: ["activeEquity", "passiveETF", "alternates"],
+  porterLabels: { activeEquity: "Active Equity", passiveETF: "Passive / Liquid", alternates: "Alternates (PMS/AIF)" },
+  porterData: [
+    { force:"New Entrants",   activeEquity:8,   passiveETF:5,  alternates:7  },
+    { force:"Buyer Power",    activeEquity:6,   passiveETF:7,  alternates:5  },
+    { force:"Supplier Power", activeEquity:8,   passiveETF:9,  alternates:7  },
+    { force:"Substitutes",    activeEquity:6,   passiveETF:5,  alternates:6  },
+    { force:"Rivalry",        activeEquity:7,   passiveETF:6,  alternates:7  },
+  ],
+  porterNarrative: [
+    { force:"Threat of New Entrants",     lines:["Active Equity: LOW — SEBI license + 30-year brand + ICICI Bank distribution + ICICI Group captive AUM create a near-unassailable position. New AMCs need 5–10 years of track record","Passive/Liquid: MODERATE — Lower-cost ETFs easier to replicate. Mirae, Nippon, and Groww AMC gaining ETF market share aggressively","Alternates (PMS/AIF): LOW-MOD — SEBI-registered PMS/AIF space is competitive but ICICI Prudential's institutional trust provides differentiation"] },
+    { force:"Bargaining Power of Buyers", lines:["Active Equity: MODERATE — Direct plans + Groww/Zerodha reduce switching cost; but ICICI brand + Sankaran Naren's fund performance builds stickiness","Passive/Liquid: HIGH — Institutional treasuries commoditize liquid products; price competition caps yields at 10–12 bps","Alternates: LOW-MOD — HNI/Institutional clients sticky due to customization; relationship-driven with lower churn"] },
+    { force:"Supplier Power",             lines:["Active Equity: LOW — Sankaran Naren is a team, not a single star; institutionalized investment process reduces key-man risk","Passive/ETF: VERY LOW — Rules-based indexing needs no star managers; supply concentration near-zero","Alternates: MODERATE — Senior PMS fund managers have market alternatives; talent cost rising in alternatives space"] },
+    { force:"Threat of Substitutes",      lines:["Active Equity: MODERATE — PMS, AIF, direct equity, NPS all compete for wallet. But SIP as a habit is deeply embedded; ICICI Pru captures HNI via multiple products simultaneously","Passive/Liquid: MODERATE — Bank FDs, G-secs via RBI Retail Direct, and bonds are substitutes. But convenience and product depth retain customers","Alternates: MODERATE — IIFL Wealth, 360 One, Nuvama compete for UHNI wallet; but ICICI's institutional trust and ICICI Bank cross-sell offset this"] },
+    { force:"Competitive Rivalry",        lines:["Active Equity: MOD-HIGH — HDFC AMC, SBI AMC, Mirae, Nippon all compete fiercely on 1yr/3yr/5yr performance tables; ICICI Pru holds edge via Naren's contra-style, which works in volatile markets","Passive/Liquid: HIGH — 45+ AMCs compete; yield competition compressed margins; ICICI's scale advantage helps on cost","Alternates: HIGH — Growing number of SEBI-registered investment advisors and PMS providers; but ICICI Pru's scale = institutional mandate preference"] },
+  ],
+  porterConclusion: "ICICI Prudential AMC commands a WIDE MOAT in active equity management — the crown jewel at 57% of AUM and highest yield segment. Dual promoter structure (ICICI Bank distribution + Prudential global expertise) is the defining competitive advantage. The primary moat threats — passive shift and TER compression — are secular but slow-moving. Alternates business is emerging as a second high-margin moat. Overall: WIDE MOAT, durable for 10+ years.",
+
+  // ── Quality scorecard ──
+  qualityData: [
+    { param:"Longevity",          score:9,   full:"30yr ops since 1993; PAT positive every year; survived Asian crisis, GFC, COVID, demonetization; ICICI & Prudential = combined 100+ yr brand legacy" },
+    { param:"Predictable CF",     score:9,   full:"CFO/PAT consistently 88–94%; fee collected daily on AUM; zero capex intensity (₹48 Cr on ₹4,977 Cr revenue = 1% of sales); cash generation near-perfect" },
+    { param:"ROCE",               score:10,  full:"ROCE 68% FY25 (and still expanding); zero debt balance sheet; pre-IPO asset-light entity. ROE 82.8% = highest in listed Indian financial services. Industry benchmark." },
+    { param:"Revenue Resilience", score:8,   full:"27% revenue CAGR FY23–25; 20%+ CAGR over FY20–25; AUM-linked but SIP habit provides smoothness even in corrections. No year of absolute revenue decline in 10yr history." },
+    { param:"EPS Stability",      score:7,   full:"Consistent growth; FY23 EPS ₹37.5 → FY24 EPS ₹50.6 → FY25 EPS ₹65.5. IPO dilution marginal (OFS only = no new shares). FY26E TTM EPS ~₹80; FY30E EPS ~₹154." },
+    { param:"CFO/PAT",            score:9,   full:"88–94% CFO/PAT range; among the cleanest in Indian listed universe. No working capital trap; negligible receivables; upfront fee collection on AUM daily." },
+    { param:"Margins",            score:8,   full:"EBITDA margin 73–74%; expansion path to 75–76% by FY30 via operating leverage. Net profit margin 53.3% FY25 — one of the highest in Indian financials." },
+    { param:"Reinvestment",       score:8,   full:"Capital-light; 85–90% payout announced; Alternates expansion (PMS/AIF) is self-funded from free cash flows; ICICI Venture AIF rights acquisition a high-ROE bolt-on." },
+  ],
+  qualitySummary: {
+    consolidated: "8.5/10",
+    standalone:   "8.5/10",
+    insight:      "ICICI Prudential AMC ranks among the top 3 highest-quality businesses in Indian listed equities by financial metrics. 82.8% ROE, 68% ROCE, zero debt, 73%+ EBITDA margins, 30-year track record, dual-promoter moat, and cleanest cash conversion in the sector. Only structural risk is market-linkage of AUM and regulatory TER pressure — both manageable and well-understood.",
+  },
+
+  // ── Sensitivity matrix (FY30E EPS basis, 49.3 Cr shares) ──
+  sensitivity: {
+    cmp: 3010,
+    peColumns: [
+      { label:"28x (De-rate)", key:"pe28" },
+      { label:"36x (Base)",    key:"pe36" },
+      { label:"44x (Re-rate)", key:"pe44" },
+      { label:"55x (Premium)", key:"pe55" },
+    ],
+    rows: [
+      { label:"Bear ₹105",  pe28:2940, pe36:3780, pe44:4620, pe55:5775 },
+      { label:"Base ₹154",  pe28:4312, pe36:5544, pe44:6776, pe55:8470 },
+      { label:"Bull ₹190",  pe28:5320, pe36:6840, pe44:8360, pe55:10450 },
+    ],
+    scenarios: [
+      { label:"BEAR",      color:"RED",   rev:"₹8,500 Cr", opm:"73%", eps:"₹105", pe:"28–36x", target:"₹2,940–3,780", desc:"AUM growth moderates to 12% CAGR. TER compression hits 5–7 bps. Equity market correction reduces QAAUM. Revenue CAGR slows to 10%. Market de-rates to 28–36x on fresh-listing valuation anxiety and regulatory uncertainty." },
+      { label:"BASE CASE", color:"BLUE",  rev:"₹11,500 Cr", opm:"76%", eps:"₹154", pe:"36–44x", target:"₹5,544–6,776", desc:"17–20% AUM CAGR driven by SIP flows and equity market appreciation. ICICI Bank distribution drives B30 penetration. Alternates scale to 8–10% of revenue. PAT CAGR 20%+. 36–44x reasonable for India's most profitable AMC." },
+      { label:"BULL",      color:"GREEN", rev:"₹14,000 Cr", opm:"78%", eps:"₹190", pe:"44–55x", target:"₹8,360–10,450", desc:"25%+ AUM CAGR. ICICI Venture AIF rights generate ₹500–700 Cr incremental revenue. India MF penetration re-rates. Post-IPO institutional ownership build drives re-rating to premium multiple. ROE sustains 85%+." },
+    ],
+    conclusion: "Base Case FY30 Target: ₹5,500–6,800 (15–20% CAGR from CMP ₹3,010). At CMP, FY30E P/E is only ~19.5x — deeply undervalued for India's most profitable AMC with 83% ROE, 68% ROCE, and zero debt. Strong IPO re-rating cycle ahead; institutional ownership still nascent. 12-month target: ₹3,800 (26% upside at 44x TTM FY26E EPS ₹86).",
+  },
+
+  dcf: {
+    wacc:         12.0,
+    termGrowth:   8.5,
+    isNBFC:       false,
+    wcRev:        0,
+    taxRate:      25,
+    interestRate: 0,
+    note: "India's #1 active AMC. Zero debt, near-100% CFO conversion, negligible capex. WACC 12.0% (lower than HDFC AMC due to ICICI Bank + Prudential dual-promoter AAA backing). Terminal growth 8.5% = India nominal GDP + financialisation premium. ROE 80%+ perpetuity = moat-quality business.",
+  },
+},
+
   };
 
 
@@ -1163,7 +1441,9 @@ export const STOCKS = {
 // ─────────────────────────────────────────────────────────────────────────────
 export const STOCK_ROUTES = [
   { path: "/bajfinance",    stockId: "BAJFINANCE"  },
+  { path: "/hdfcamc",    stockId: "HDFCAMC"  },
   { path: "/bel",           stockId: "BEL"  },
+  { path: "/iciciamc",           stockId: "ICICIAMC"  },
   { path: "/tvs-motor",     stockId: "TVSMOTOR"    },
   { path: "/v2-retails",     stockId: "V2RETAIL"    },
   { path: "/info-edge",     stockId: "NAUKRI"    },
