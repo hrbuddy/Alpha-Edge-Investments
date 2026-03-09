@@ -210,7 +210,7 @@ export default function ProfilePage() {
             borderRadius: 14, padding: "8px 4px", marginBottom: 12, ...fu(160) }}>
             <div style={{ padding: "0 12px" }}><SectionHeader label="MY PORTFOLIO" /></div>
             <Row icon="⚖️" label="Portfolio Simulator" sub="Build, weight and backtest your portfolio"
-              onClick={() => navigate("/portfolio")}/>
+              onClick={() => navigate("/my-portfolio")}/>
           </div>
 
           {/* ── MY WISHLIST ── */}

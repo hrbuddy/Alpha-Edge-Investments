@@ -354,11 +354,16 @@ function CosmicCanvas() {
   return <canvas ref={canvasRef} style={{position:"absolute",inset:0,width:"100%",height:"100%",display:"block"}}/>;
 }
 
+// ─── Scroll to top on any internal navigation ───────────────────────────────
+function scrollToTop() {
+  window.scrollTo({ top: 0, behavior: "instant" });
+}
+
 // ─── Dashboard Card ─────────────────────────────────────────────────────────
 function DashboardCard({ card, pal, isDark }) {
   const [hov, setHov] = useState(false);
   return (
-    <Link to={card.path} style={{ textDecoration:"none" }}>
+    <Link to={card.path} style={{ textDecoration:"none" }} onClick={scrollToTop}>
       <div
         onMouseEnter={() => setHov(true)}
         onMouseLeave={() => setHov(false)}
@@ -459,7 +464,7 @@ function StockTile({stock, delay=0, pal, isDark=false}) {
       opacity:vis?1:0, transform:vis?"translateY(0)":"translateY(24px)",
       transition:`opacity .6s ease ${delay}ms,transform .6s cubic-bezier(.22,1,.36,1) ${delay}ms`,
     }}>
-      <Link to={stock.path} style={{textDecoration:"none"}} onClick={!stock.active?e=>e.preventDefault():undefined}>
+      <Link to={stock.path} style={{textDecoration:"none"}} onClick={!stock.active ? e=>e.preventDefault() : scrollToTop}>
         <div
           onMouseEnter={()=>setHov(true)} onMouseLeave={()=>setHov(false)}
           style={{
@@ -918,17 +923,20 @@ export default function Home() {
 
         /* ── MOBILE OVERRIDES ── */
         @media(max-width:600px){
-          .hero-section{height:auto !important;min-height:0 !important;}
-          .hero-content{padding-top:110px !important;padding-bottom:120px !important;}
+          .hero-section{min-height:auto !important;align-items:flex-start !important;}
+          .hero-content{padding-top:66px !important;padding-bottom: 60px !important;}
           .hero-h1{font-size:clamp(36px,11vw,52px) !important;letter-spacing:-.8px !important;line-height:1.0 !important;}
+          /* Cluster 1 — tight */
+          .hero-eyebrow{font-size:11px !important;letter-spacing:0.18em !important;margin-bottom:10px !important;}
           .hero-brand-alpha{margin-bottom:2px !important;}
-          .hero-brand-investments{margin-bottom:35px !important;}
-          .hero-tagline{font-size:13px !important;line-height:1.6 !important;margin-bottom:86px !important;}
-          .hero-tags-row{gap:8px !important;margin-bottom: 45px !important;}
+          /* Gap between the two clusters */
+          .hero-brand-investments{margin-bottom:10vh !important;}
+          /* Cluster 2 — tight internal spacing */
+          .hero-tagline{font-size:12px !important;line-height:1.6 !important;margin-bottom:34px !important;}
+          .hero-tags-row{gap:10px !important;margin-bottom: 48x !important;}
           .hero-tag{padding:6px 12px !important;font-size:10px !important;}
-          .hero-cta-wrapper{margin-bottom:0 !important;}
+          .hero-cta-wrapper{margin-bottom:10 !important;}
           .hero-cta-btn{padding:12px 32px !important;font-size:11px !important;}
-          .hero-eyebrow{font-size:11px !important;letter-spacing:0.22em !important;margin-bottom:25px !important;}
           .active-grid{grid-template-columns:1fr !important;}
           .inactive-grid{grid-template-columns:1fr 1fr !important;}
           .tools-grid{grid-template-columns:1fr !important;}
@@ -963,8 +971,7 @@ export default function Home() {
         */}
         <section className="hero-section" style={{
           position:"relative",
-          height:"calc(90vh - 00px)",
-          minHeight:120,
+          minHeight:"calc(100vh - 70px)",   /* always fills remaining viewport below navbar */
           display:"flex",
           alignItems:"center",
           justifyContent:"center",
@@ -986,14 +993,14 @@ export default function Home() {
             position:"relative", zIndex:2,
             maxWidth:800, padding:"0 22px", width:"100%",
             display:"flex", flexDirection:"column", alignItems:"center",
-            paddingTop:"clamp(10px, 6vh, 60px)",
-            paddingBottom:0,
+            paddingTop:"clamp(32px, 6vh, 60px)",   /* min 32px so eyebrow never clips */
+            paddingBottom:"clamp(32px, 5vh, 60px)", /* breathing room at bottom */
           }}>
 
             {/* L1 — Eyebrow */}
             <div className="hero-eyebrow" style={{
               fontSize:14, letterSpacing:"0.32em", color:GOLD,
-              fontWeight:600, marginBottom:0,
+              fontWeight:600, marginBottom:8,
               fontFamily:"'DM Sans',sans-serif",
               opacity:.95, ...fu(150),
             }}>
@@ -1012,7 +1019,7 @@ export default function Home() {
             <h2 className="hero-h1 hero-brand-investments" style={{
               fontSize:"clamp(52px,7.5vw,88px)",
               fontWeight:900, lineHeight:.93,
-              margin:"0 0 clamp(28px,23vh,198px)",
+              margin:"0 0 clamp(20px,10vh,120px)",  /* generous gap on tall screens, safe on short */
               fontFamily:"'Playfair Display',serif", letterSpacing:"-1.5px",
               background:"linear-gradient(135deg,#f8dc72 0%,#D4A017 42%,#c08a0a 100%)",
               WebkitBackgroundClip:"text", WebkitTextFillColor:"transparent", backgroundClip:"text",
@@ -1024,7 +1031,7 @@ export default function Home() {
             {/* L3 — Tagline */}
             <p className="hero-sub hero-tagline" style={{
               fontSize:"clamp(14px,1.65vw,18px)", color:"#8aacbf",
-              margin:"0 0 clamp(44px, 24vh,40px)", lineHeight:1.68, fontWeight:400,
+              margin:"0 0 clamp(24px,4vh,40px)", lineHeight:1.68, fontWeight:400,
               ...fu(560),
             }}>
               Institutional-grade equity research on India's finest compounders.<br/>
@@ -1038,7 +1045,7 @@ export default function Home() {
             <div className="hero-tags-row" style={{
               display:"flex", justifyContent:"center", flexWrap:"wrap",
               gap:"clamp(8px,2vw,28px)",
-              marginBottom:"clamp(20px,24vh,56px)",
+              marginBottom:"clamp(20px,4vh,56px)",   /* was 24vh — too large on short screens */
               ...fu(680),
             }}>
               {["MOAT","QUALITY","GROWTH","VALUATION","COMPOUNDING"].map(tag => (
@@ -1060,7 +1067,7 @@ export default function Home() {
             <div className="hero-cta-wrapper" style={fu(780)}>
               <button
                 className="hero-cta-btn"
-                onClick={()=>document.getElementById("universe").scrollIntoView({behavior:"smooth"})}
+                onClick={()=>document.getElementById("dashboards").scrollIntoView({behavior:"smooth"})}
                 style={{
                   background:GOLD, color:NAVY,
                   padding:"14px 52px", borderRadius:999,
@@ -1076,7 +1083,7 @@ export default function Home() {
 
           {/* Scroll arrow */}
           <div style={{
-            position:"absolute", bottom:20, left:"50%", transform:"translateX(-50%)",
+            position:"absolute", bottom: 10, left:"50%", transform:"translateX(-50%)",
             display:"flex", flexDirection:"column", alignItems:"center", gap:3,
             opacity:scrolled?0:heroVis?.6:0, transition:"opacity .5s", pointerEvents:"none",
             animation:heroVis?"arrowBounce 2.4s ease-in-out 2.5s infinite":"none",
@@ -1123,7 +1130,7 @@ export default function Home() {
         <EdgeCarousel pal={pal} isDark={isDark}/>
 
         {/* ══════════ PLATFORM TOOLS ══════════ */}
-        <section style={{ padding:"72px 18px 0", maxWidth:1360, margin:"0 auto" }}>
+        <section id="dashboards" style={{ padding:"72px 18px 0", maxWidth:1360, margin:"0 auto" }}>
 
           {/* Section header */}
           <div style={{ textAlign:"center", marginBottom:48 }}>
@@ -1307,7 +1314,7 @@ export default function Home() {
             <p style={{fontSize:13,color:pal.muted,marginBottom:16,fontFamily:"'DM Sans',sans-serif"}}>
               Our universe is always growing — view all live reports and the full pipeline.
             </p>
-            <Link to="/research-universe" style={{
+            <Link to="/research-universe" onClick={scrollToTop} style={{
               display:"inline-block",
               background: isDark ? "transparent" : GOLD,
               border: isDark ? `1px solid ${GOLD}` : "none",

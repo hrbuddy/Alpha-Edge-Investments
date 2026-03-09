@@ -89,6 +89,8 @@ export default function Navbar() {
   const [menuOpen,          setMenuOpen]           = useState(false);
   const [stocksOpen,        setStocksOpen]         = useState(false);
   const [mobileStocksOpen,  setMobileStocksOpen]   = useState(false);
+  const [mobilePortfolioOpen, setMobilePortfolioOpen] = useState(false);
+  const [mobileResearchOpen,  setMobileResearchOpen]  = useState(false);
   const [quantOpen,        setQuantOpen]        = useState(false);
   const [mobileQuantOpen,  setMobileQuantOpen]  = useState(false);
   const [aboutOpen,        setAboutOpen]        = useState(false);
@@ -463,7 +465,7 @@ export default function Navbar() {
                   {user.name.charAt(0).toUpperCase()}
                 </span>
               ) : (
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={isDark ? "rgba(255,255,255,0.5)" : "rgba(13,27,42,0.5)"} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke={isDark?GOLD:"#B8870A"} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
                 </svg>
               )}
@@ -521,7 +523,7 @@ export default function Navbar() {
             <button onClick={() => setQuantOpen(o => !o)} className="nav-link"
               style={{ background:"none", border:"none", cursor:"pointer", color: quantOpen ? (isDark ? GOLD : "#B8870A") : textCol, display:"flex", alignItems:"center", gap:4, fontFamily:"inherit", fontSize:"inherit", fontWeight:"inherit", padding:0 }}>
               Quant Hub
-              <span style={{ fontSize:9, transition:"transform .2s", display:"inline-block", transform: quantOpen ? "rotate(180deg)" : "rotate(0deg)", marginLeft:2 }}>▼</span>
+              <span style={{ fontSize:9, transition:"transform .2s", display:"inline-block", transform: quantOpen ? "rotate(90deg)" : "rotate(0deg)", marginLeft:2 }}>▶</span>
             </button>
             {quantOpen && (
               <div style={{ position:"absolute", top:"calc(100% + 10px)", left:0, minWidth:180, background: isDark ? "rgba(6,14,26,0.98)" : "rgba(255,255,255,0.99)", border:`1px solid rgba(212,160,23,0.18)`, borderRadius:10, boxShadow:"0 8px 32px rgba(0,0,0,0.4)", backdropFilter:"blur(12px)", overflow:"hidden", zIndex:99999 }}>
@@ -537,7 +539,6 @@ export default function Navbar() {
                     style={{ display:"flex", alignItems:"center", gap:10, padding:"9px 16px", borderBottom:`1px solid rgba(255,255,255,0.04)`, textDecoration:"none", opacity: q.live ? 1 : 0.4, pointerEvents: q.live ? "auto" : "none", background:"transparent" }}
                     onMouseEnter={e => { if(q.live) e.currentTarget.style.background="rgba(212,160,23,0.07)"; }}
                     onMouseLeave={e => e.currentTarget.style.background="transparent"}>
-                    <span style={{ fontSize:13 }}>{q.icon}</span>
                     <span style={{ fontSize:11, fontWeight:700, color: isDark ? "#c8dae8" : "#1a2e42" }}>{q.label}</span>
                     {!q.live && <span style={{ fontSize:8, fontWeight:800, color:MUTED, letterSpacing:"1px", marginLeft:"auto" }}>SOON</span>}
                   </Link>
@@ -554,7 +555,7 @@ export default function Navbar() {
             <button onClick={() => setAboutOpen(o => !o)} className="nav-link"
               style={{ background:"none", border:"none", cursor:"pointer", color: aboutOpen ? (isDark ? GOLD : "#B8870A") : textCol, display:"flex", alignItems:"center", gap:4, fontFamily:"inherit", fontSize:"inherit", fontWeight:"inherit", padding:0 }}>
               About Us
-              <span style={{ fontSize:9, transition:"transform .2s", display:"inline-block", transform: aboutOpen ? "rotate(180deg)" : "rotate(0deg)", marginLeft:2 }}>▼</span>
+              <span style={{ fontSize:9, transition:"transform .2s", display:"inline-block", transform: aboutOpen ? "rotate(90deg)" : "rotate(0deg)", marginLeft:2 }}>▶</span>
             </button>
             {aboutOpen && (
               <div style={{ position:"absolute", top:"calc(100% + 10px)", left:0, minWidth:200, background: isDark ? "rgba(6,14,26,0.98)" : "rgba(255,255,255,0.99)", border:`1px solid rgba(212,160,23,0.18)`, borderRadius:10, boxShadow:"0 8px 32px rgba(0,0,0,0.4)", backdropFilter:"blur(12px)", overflow:"hidden", zIndex:99999 }}>
@@ -563,7 +564,6 @@ export default function Navbar() {
                     style={{ display:"flex", alignItems:"center", gap:10, padding:"10px 16px", borderBottom:`1px solid rgba(255,255,255,0.04)`, textDecoration:"none", background:"transparent" }}
                     onMouseEnter={e => e.currentTarget.style.background="rgba(212,160,23,0.07)"}
                     onMouseLeave={e => e.currentTarget.style.background="transparent"}>
-                    <span style={{ fontSize:13 }}>{a.icon}</span>
                     <span style={{ fontSize:11, fontWeight:700, color: isDark ? "#c8dae8" : "#1a2e42" }}>{a.label}</span>
                   </Link>
                 ))}
@@ -576,7 +576,7 @@ export default function Navbar() {
             <button onClick={() => setStocksOpen(o => !o)} className="nav-link"
               style={{ background:"none", border:"none", cursor:"pointer", color:stocksOpen ? (isDark ? GOLD : "#B8870A") : textCol, display:"flex", alignItems:"center", gap:5, padding:0 }}>
               All Stocks
-              <span style={{ fontSize:9, transition:"transform .2s", display:"inline-block", transform:stocksOpen?"rotate(180deg)":"rotate(0deg)" }}>▼</span>
+              <span style={{ fontSize:9, transition:"transform .2s", display:"inline-block", transform:stocksOpen?"rotate(90deg)":"rotate(0deg)" }}>▶</span>
             </button>
             {stocksOpen && (
               <div style={{ position:"absolute", top:"calc(100% + 10px)", left:0, minWidth:240, background:dropBg, border:`1px solid ${borderCol}`, borderRadius:10, boxShadow:"0 16px 40px rgba(0,0,0,0.55)", overflow:"hidden", animation:"searchDrop .2s ease", zIndex:999999 }}>
@@ -604,10 +604,9 @@ export default function Navbar() {
         {menuOpen && (
           <div className="mobile-menu" style={{ borderTop:`1px solid ${isDark ? "rgba(212,160,23,0.10)" : "rgba(13,27,42,0.08)"}`, background:ribbonBg, padding:"0 0 8px", boxShadow:"0 8px 32px rgba(0,0,0,0.5)", animation:"menuSlide .25s ease forwards" }}>
 
-            {/* ── ACCOUNT BLOCK — top ── */}
-            {user ? (
+            {/* ── SIGNED IN: name + profile at top ── */}
+            {user && (
               <div style={{ padding:"16px 20px 14px", borderBottom:`1px solid ${isDark ? 'rgba(212,160,23,0.12)' : 'rgba(13,27,42,0.07)'}` }}>
-                {/* Name + plan row */}
                 <div style={{ display:"flex", alignItems:"center", gap:12, marginBottom:12 }}>
                   <div style={{ width:40, height:40, borderRadius:"50%", flexShrink:0,
                     background: isDark ? "rgba(212,160,23,0.12)" : "rgba(13,27,42,0.07)",
@@ -624,7 +623,6 @@ export default function Navbar() {
                     </div>
                   </div>
                 </div>
-                {/* Profile + Upgrade side by side */}
                 <div style={{ display:"flex", gap:8 }}>
                   <button onClick={() => { navigate("/profile"); setMenuOpen(false); }}
                     style={{ flex:1, padding:"10px 12px",
@@ -647,23 +645,6 @@ export default function Navbar() {
                   )}
                 </div>
               </div>
-            ) : (
-              <div style={{ padding:"14px 20px", borderBottom:`1px solid ${isDark ? 'rgba(212,160,23,0.12)' : 'rgba(13,27,42,0.07)'}` }}>
-                <Link to="/signup" onClick={() => setMenuOpen(false)}
-                  style={{ display:"block", textAlign:"center",
-                    background: isDark ? "rgba(212,160,23,0.12)" : "#0D1B2A",
-                    color: isDark ? GOLD : "#FFFFFF",
-                    border: isDark ? "1px solid rgba(212,160,23,0.3)" : "none", borderRadius:8,
-                    padding:"11px 18px", fontSize:11, fontWeight:800, letterSpacing:"1px",
-                    fontFamily:"'DM Sans',sans-serif", textDecoration:"none" }}>
-                  CREATE FREE ACCOUNT
-                </Link>
-                <div style={{ textAlign:"center", marginTop:8, fontSize:11, color: isDark ? "rgba(212,160,23,0.45)" : "#4A6B82", fontFamily:"'DM Sans',sans-serif" }}>
-                  Already a member?{" "}
-                  <span onClick={() => { navigate("/signup"); setMenuOpen(false); }}
-                    style={{ color: isDark ? GOLD : "#B8870A", cursor:"pointer", fontWeight:700 }}>Sign in</span>
-                </div>
-              </div>
             )}
 
             {/* Home */}
@@ -672,24 +653,62 @@ export default function Navbar() {
               Home
             </Link>
 
-            {/* Research Universe */}
-            <Link to="/research-universe" className="nav-link" onClick={() => setMenuOpen(false)}
-              style={{ display:"block", padding:"13px 24px", fontSize:12, borderBottom:`1px solid rgba(212,160,23,0.06)`, letterSpacing:"1.6px", color:textCol }}>
-              Research Universe
-            </Link>
+            {/* Research Universe — submenu */}
+            <div>
+              <button onClick={() => setMobileResearchOpen(o => !o)}
+                style={{ width:"100%", textAlign:"left", background:"none", border:"none", borderBottom:`1px solid rgba(212,160,23,0.06)`, padding:"13px 24px", fontSize:12, fontWeight:700, letterSpacing:"1.6px", color: mobileResearchOpen ? (isDark ? GOLD : "#B8870A") : textCol, cursor:"pointer", display:"flex", justifyContent:"space-between", alignItems:"center", fontFamily:"'DM Sans',sans-serif" }}>
+                Research Universe
+                <span style={{ fontSize:10, transition:"transform .2s", display:"inline-block", transform: mobileResearchOpen ? "rotate(90deg)" : "rotate(0deg)" }}>▶</span>
+              </button>
+              {mobileResearchOpen && (
+                <div style={{ background: isDark ? "rgba(0,0,0,0.18)" : "rgba(13,27,42,0.04)" }}>
+                  <Link to="/research-universe" onClick={() => { setMenuOpen(false); setMobileResearchOpen(false); }}
+                    style={{ display:"flex", alignItems:"center", padding:"11px 32px", borderBottom:`1px solid rgba(212,160,23,0.05)`, textDecoration:"none" }}
+                    onMouseEnter={e => e.currentTarget.style.background="rgba(212,160,23,0.07)"}
+                    onMouseLeave={e => e.currentTarget.style.background="transparent"}>
+                    <span style={{ fontSize:12, fontWeight:700, letterSpacing:"1.6px", color:textCol, fontFamily:"'DM Sans',sans-serif" }}>All Stocks</span>
+                  </Link>
+                  <Link to="/dcf" onClick={() => { setMenuOpen(false); setMobileResearchOpen(false); }}
+                    style={{ display:"flex", alignItems:"center", padding:"11px 32px", borderBottom:`1px solid rgba(212,160,23,0.05)`, textDecoration:"none" }}
+                    onMouseEnter={e => e.currentTarget.style.background="rgba(212,160,23,0.07)"}
+                    onMouseLeave={e => e.currentTarget.style.background="transparent"}>
+                    <span style={{ fontSize:12, fontWeight:700, letterSpacing:"1.6px", color:textCol, fontFamily:"'DM Sans',sans-serif" }}>Build DCF</span>
+                  </Link>
+                </div>
+              )}
+            </div>
 
-            {/* Portfolio Simulator */}
-            <Link to="/portfolio" className="nav-link" onClick={() => setMenuOpen(false)}
-              style={{ display:"block", padding:"13px 24px", fontSize:12, borderBottom:`1px solid rgba(212,160,23,0.06)`, letterSpacing:"1.6px", color:textCol }}>
-              Portfolio Simulator
-            </Link>
+            {/* Portfolio Simulator — submenu */}
+            <div>
+              <button onClick={() => setMobilePortfolioOpen(o => !o)}
+                style={{ width:"100%", textAlign:"left", background:"none", border:"none", borderBottom:`1px solid rgba(212,160,23,0.06)`, padding:"13px 24px", fontSize:12, fontWeight:700, letterSpacing:"1.6px", color: mobilePortfolioOpen ? (isDark ? GOLD : "#B8870A") : textCol, cursor:"pointer", display:"flex", justifyContent:"space-between", alignItems:"center", fontFamily:"'DM Sans',sans-serif" }}>
+                Portfolio Simulator
+                <span style={{ fontSize:10, transition:"transform .2s", display:"inline-block", transform: mobilePortfolioOpen ? "rotate(90deg)" : "rotate(0deg)" }}>▶</span>
+              </button>
+              {mobilePortfolioOpen && (
+                <div style={{ background: isDark ? "rgba(0,0,0,0.18)" : "rgba(13,27,42,0.04)" }}>
+                  <Link to="/portfolio" onClick={() => { setMenuOpen(false); setMobilePortfolioOpen(false); }}
+                    style={{ display:"flex", alignItems:"center", padding:"11px 32px", borderBottom:`1px solid rgba(212,160,23,0.05)`, textDecoration:"none" }}
+                    onMouseEnter={e => e.currentTarget.style.background="rgba(212,160,23,0.07)"}
+                    onMouseLeave={e => e.currentTarget.style.background="transparent"}>
+                    <span style={{ fontSize:12, fontWeight:700, letterSpacing:"1.6px", color:textCol, fontFamily:"'DM Sans',sans-serif" }}>Run Simulation</span>
+                  </Link>
+                  <Link to="/portfolio?tab=load" onClick={() => { setMenuOpen(false); setMobilePortfolioOpen(false); }}
+                    style={{ display:"flex", alignItems:"center", padding:"11px 32px", borderBottom:`1px solid rgba(212,160,23,0.05)`, textDecoration:"none" }}
+                    onMouseEnter={e => e.currentTarget.style.background="rgba(212,160,23,0.07)"}
+                    onMouseLeave={e => e.currentTarget.style.background="transparent"}>
+                    <span style={{ fontSize:12, fontWeight:700, letterSpacing:"1.6px", color:textCol, fontFamily:"'DM Sans',sans-serif" }}>Load Portfolios</span>
+                  </Link>
+                </div>
+              )}
+            </div>
 
             {/* Quant submenu */}
             <div>
               <button onClick={() => setMobileQuantOpen(o => !o)}
-                style={{ width:"100%", textAlign:"left", background:"none", border:"none", borderBottom:`1px solid ${isDark ? "rgba(212,160,23,0.06)" : "rgba(13,27,42,0.07)"}`, padding:"13px 24px", fontSize:12, color: mobileQuantOpen ? (isDark ? GOLD : "#B8870A") : textCol, fontWeight:700, cursor:"pointer", display:"flex", justifyContent:"space-between", alignItems:"center", fontFamily:"'DM Sans',sans-serif", letterSpacing:"0" }}>
+                style={{ width:"100%", textAlign:"left", background:"none", border:"none", borderBottom:`1px solid rgba(212,160,23,0.06)`, padding:"13px 24px", fontSize:12, fontWeight:700, letterSpacing:"1.6px", color: mobileQuantOpen ? (isDark ? GOLD : "#B8870A") : textCol, cursor:"pointer", display:"flex", justifyContent:"space-between", alignItems:"center", fontFamily:"'DM Sans',sans-serif" }}>
                 Quant Hub
-                <span style={{ fontSize:10, transition:"transform .2s", display:"inline-block", transform: mobileQuantOpen ? "rotate(180deg)" : "rotate(0deg)" }}>▼</span>
+                <span style={{ fontSize:10, transition:"transform .2s", display:"inline-block", transform: mobileQuantOpen ? "rotate(90deg)" : "rotate(0deg)" }}>▶</span>
               </button>
               {mobileQuantOpen && (
                 <div style={{ background: isDark ? "rgba(0,0,0,0.18)" : "rgba(13,27,42,0.04)" }}>
@@ -705,8 +724,7 @@ export default function Navbar() {
                       style={{ display:"flex", alignItems:"center", gap:10, padding:"10px 32px", borderBottom:`1px solid rgba(212,160,23,0.05)`, textDecoration:"none", opacity: q.live ? 1 : 0.4, pointerEvents: q.live ? "auto" : "none" }}
                       onMouseEnter={e => { if(q.live) e.currentTarget.style.background="rgba(212,160,23,0.07)"; }}
                       onMouseLeave={e => e.currentTarget.style.background="transparent"}>
-                      <span style={{ fontSize:13 }}>{q.icon}</span>
-                      <span style={{ fontSize:12, fontWeight:700, color: isDark ? "#c8dae8" : "#1a2e42" }}>{q.label}</span>
+                      <span style={{ fontSize:12, fontWeight:700, letterSpacing:"1.6px", color:textCol, fontFamily:"'DM Sans',sans-serif" }}>{q.label}</span>
                       {!q.live && <span style={{ fontSize:8, fontWeight:800, color:MUTED, letterSpacing:"1px", marginLeft:"auto" }}>SOON</span>}
                     </Link>
                   ))}
@@ -723,9 +741,9 @@ export default function Navbar() {
             {/* About Us submenu */}
             <div>
               <button onClick={() => setMobileAboutOpen(o => !o)}
-                style={{ width:"100%", textAlign:"left", background:"none", border:"none", borderBottom:`1px solid ${isDark ? "rgba(212,160,23,0.06)" : "rgba(13,27,42,0.07)"}`, padding:"13px 24px", fontSize:12, color: mobileAboutOpen ? (isDark ? GOLD : "#B8870A") : textCol, fontWeight:700, cursor:"pointer", display:"flex", justifyContent:"space-between", alignItems:"center", fontFamily:"'DM Sans',sans-serif", letterSpacing:"0" }}>
+                style={{ width:"100%", textAlign:"left", background:"none", border:"none", borderBottom:`1px solid rgba(212,160,23,0.06)`, padding:"13px 24px", fontSize:12, fontWeight:700, letterSpacing:"1.6px", color: mobileAboutOpen ? (isDark ? GOLD : "#B8870A") : textCol, cursor:"pointer", display:"flex", justifyContent:"space-between", alignItems:"center", fontFamily:"'DM Sans',sans-serif" }}>
                 About Us
-                <span style={{ fontSize:10, transition:"transform .2s", display:"inline-block", transform: mobileAboutOpen ? "rotate(180deg)" : "rotate(0deg)" }}>▼</span>
+                <span style={{ fontSize:10, transition:"transform .2s", display:"inline-block", transform: mobileAboutOpen ? "rotate(90deg)" : "rotate(0deg)" }}>▶</span>
               </button>
               {mobileAboutOpen && (
                 <div style={{ background: isDark ? "rgba(0,0,0,0.18)" : "rgba(13,27,42,0.04)" }}>
@@ -734,8 +752,7 @@ export default function Navbar() {
                       style={{ display:"flex", alignItems:"center", gap:10, padding:"10px 32px", borderBottom:`1px solid rgba(212,160,23,0.05)`, textDecoration:"none" }}
                       onMouseEnter={e => e.currentTarget.style.background="rgba(212,160,23,0.07)"}
                       onMouseLeave={e => e.currentTarget.style.background="transparent"}>
-                      <span style={{ fontSize:13 }}>{a.icon}</span>
-                      <span style={{ fontSize:12, fontWeight:700, color: isDark ? "#c8dae8" : "#1a2e42" }}>{a.label}</span>
+                      <span style={{ fontSize:12, fontWeight:700, letterSpacing:"1.6px", color:textCol, fontFamily:"'DM Sans',sans-serif" }}>{a.label}</span>
                     </Link>
                   ))}
                 </div>
@@ -745,9 +762,9 @@ export default function Navbar() {
             {/* All Stocks submenu */}
             <div>
               <button onClick={() => setMobileStocksOpen(o => !o)}
-                style={{ width:"100%", textAlign:"left", background:"none", border:"none", borderBottom:`1px solid ${isDark ? "rgba(212,160,23,0.06)" : "rgba(13,27,42,0.07)"}`, padding:"13px 24px", fontSize:12, fontWeight:700, letterSpacing:"0", color:mobileStocksOpen ? (isDark ? GOLD : "#B8870A") : textCol, fontFamily:"'DM Sans',sans-serif", cursor:"pointer", display:"flex", justifyContent:"space-between", alignItems:"center" }}>
+                style={{ width:"100%", textAlign:"left", background:"none", border:"none", borderBottom:`1px solid rgba(212,160,23,0.06)`, padding:"13px 24px", fontSize:12, fontWeight:700, letterSpacing:"1.6px", color:mobileStocksOpen ? (isDark ? GOLD : "#B8870A") : textCol, fontFamily:"'DM Sans',sans-serif", cursor:"pointer", display:"flex", justifyContent:"space-between", alignItems:"center" }}>
                 All Stocks
-                <span style={{ fontSize:10, transition:"transform .2s", display:"inline-block", transform:mobileStocksOpen?"rotate(180deg)":"rotate(0deg)" }}>▼</span>
+                <span style={{ fontSize:10, transition:"transform .2s", display:"inline-block", transform:mobileStocksOpen?"rotate(90deg)":"rotate(0deg)" }}>▶</span>
               </button>
               {mobileStocksOpen && (
                 <div style={{ background: isDark ? "rgba(0,0,0,0.18)" : "rgba(13,27,42,0.04)" }}>
@@ -769,9 +786,29 @@ export default function Navbar() {
               )}
             </div>
 
-            {/* Sign Out — bottom, low emphasis */}
+            {/* ── SIGNED OUT: create account at bottom ── */}
+            {!user && (
+              <div style={{ padding:"14px 20px", borderTop:`1px solid ${isDark ? 'rgba(212,160,23,0.12)' : 'rgba(13,27,42,0.07)'}`, marginTop:4 }}>
+                <Link to="/signup" onClick={() => setMenuOpen(false)}
+                  style={{ display:"block", textAlign:"center",
+                    background: isDark ? "rgba(212,160,23,0.12)" : "#0D1B2A",
+                    color: isDark ? GOLD : "#FFFFFF",
+                    border: isDark ? "1px solid rgba(212,160,23,0.3)" : "none", borderRadius:8,
+                    padding:"11px 18px", fontSize:11, fontWeight:800, letterSpacing:"1px",
+                    fontFamily:"'DM Sans',sans-serif", textDecoration:"none" }}>
+                  CREATE FREE ACCOUNT
+                </Link>
+                <div style={{ textAlign:"center", marginTop:8, fontSize:11, color: isDark ? "rgba(212,160,23,0.45)" : "#4A6B82", fontFamily:"'DM Sans',sans-serif" }}>
+                  Already a member?{" "}
+                  <span onClick={() => { navigate("/signup"); setMenuOpen(false); }}
+                    style={{ color: isDark ? GOLD : "#B8870A", cursor:"pointer", fontWeight:700 }}>Sign in</span>
+                </div>
+              </div>
+            )}
+
+            {/* ── SIGNED IN: sign out at bottom ── */}
             {user && (
-              <div style={{ padding:"12px 20px", borderTop:`1px solid rgba(212,160,23,0.06)`, marginTop:4 }}>
+              <div style={{ padding:"8px 20px", borderTop:`1px solid rgba(212,160,23,0.06)`, marginTop:4 }}>
                 <button onClick={() => { signOut(); setMenuOpen(false); }}
                   style={{ background:"none", border:"none", padding:"8px 0", cursor:"pointer",
                     fontSize:11, fontWeight:500, color:"rgba(212,160,23,0.35)",
@@ -781,7 +818,7 @@ export default function Navbar() {
               </div>
             )}
 
-            <div className="theme-btn-mobile" style={{ padding:"14px 24px", borderTop:`1px solid rgba(212,160,23,0.08)`, marginTop:4, alignItems:"center", justifyContent:"space-between" }}>
+            <div className="theme-btn-mobile" style={{ padding:"14px 24px", borderTop:`1px solid rgba(212,160,23,0.08)`, alignItems:"center", justifyContent:"space-between" }}>
               <span style={{ fontSize:10, fontWeight:700, letterSpacing:"1.6px", color:"rgba(212,160,23,0.55)", fontFamily:"'DM Sans',sans-serif" }}>
                 {isDark ? "SWITCH TO LIGHT" : "SWITCH TO DARK"}
               </span>

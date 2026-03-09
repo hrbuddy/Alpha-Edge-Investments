@@ -194,9 +194,9 @@ export default function SignUp() {
 <div style={{ fontSize:9, letterSpacing:"0.38em", color:"rgba(212,160,23,0.6)", fontWeight:700, marginBottom:8, textAlign:"center" }}>
                   JOIN VANTAGE CAPITAL
                 </div>
-<h1 style={{ fontSize:"clamp(26px,5vw,36px)", fontWeight:900, color:GOLD, fontFamily:"'Playfair Display',serif", margin:"0 0 0", letterSpacing:"0.02em", textAlign:"center" }}>
+{/* <h1 style={{ fontSize:"clamp(26px,5vw,36px)", fontWeight:900, color:GOLD, fontFamily:"'Playfair Display',serif", margin:"0 0 0", letterSpacing:"0.02em", textAlign:"center" }}>
                   Sign Up
-                </h1>
+                </h1> */}
                 <h1 className="vc-signup-tagline" style={{ fontSize:"clamp(24px,4vw,32px)", fontWeight:900, color:pal.text, fontFamily:"'Playfair Display',serif", margin:"10px 0 10px", lineHeight:1.15, textAlign:"center" }}>
                   Institutional-grade research.<br/>
                   <span style={{ background:"linear-gradient(135deg,#f8dc72,#D4A017)", WebkitBackgroundClip:"text", WebkitTextFillColor:"transparent", backgroundClip:"text" }}>

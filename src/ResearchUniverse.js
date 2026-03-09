@@ -65,6 +65,11 @@ function useReveal(threshold = 0.05) {
   return [ref, vis];
 }
 
+// ── Scroll to top on navigation ──────────────────────────────────────────────
+function scrollToTop() {
+  window.scrollTo({ top: 0, behavior: "instant" });
+}
+
 // ── Stock tile ────────────────────────────────────────────────────────────────
 function StockTile({ stock, delay = 0, pal, viewed = false }) {
   const [hov, setHov] = useState(false);
@@ -78,7 +83,7 @@ function StockTile({ stock, delay = 0, pal, viewed = false }) {
       <Link
         to={stock.active ? stock.path : "/signup"}
         style={{ textDecoration: "none" }}
-        onClick={!stock.active ? e => e.preventDefault() : undefined}
+        onClick={!stock.active ? e => e.preventDefault() : scrollToTop}
       >
         <div
           onMouseEnter={() => setHov(true)} onMouseLeave={() => setHov(false)}
@@ -216,6 +221,14 @@ export default function ResearchUniverse() {
   const location = useLocation();
   const isViewedTab = location.pathname === "/my-research";
 
+  // Pagination — show 6 at a time
+  const PAGE_SIZE = 6;
+  const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
+  const loadMore = () => setVisibleCount(n => n + PAGE_SIZE);
+
+  // Reset to first page when switching tabs
+  useEffect(() => { setVisibleCount(PAGE_SIZE); }, [location.pathname]);
+
   useEffect(() => { window.scrollTo(0, 0); setTimeout(() => setVisible(true), 80); }, [location.pathname]);
 
   const { viewedReports } = useAccess();
@@ -327,15 +340,39 @@ Deep-dive fundamental analysis on quality compounders. FY30 price targets. Indep
               </Link>
             </div>
           ) : (
+            <>
             <div className="ru-active-grid" style={{
               display: "grid",
               gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 340px), 1fr))",
-              gap: 16,
+              gap: 16, marginBottom: 20,
             }}>
-              {viewedStocks.map((s, i) => (
+              {viewedStocks.slice(0, visibleCount).map((s, i) => (
                 <StockTile key={s.name} stock={s} delay={i * 90} pal={pal} viewed={true}/>
               ))}
             </div>
+
+            {/* Load More — viewed stocks */}
+            {visibleCount < viewedStocks.length && (
+              <div style={{ textAlign: "center", marginTop: 24 }}>
+                <button
+                  onClick={loadMore}
+                  style={{
+                    background: "transparent",
+                    border: `1px solid ${GOLD}`,
+                    color: GOLD,
+                    padding: "11px 36px", borderRadius: 999,
+                    fontWeight: 800, fontSize: 11, letterSpacing: "0.18em",
+                    cursor: "pointer", fontFamily: "'DM Sans',sans-serif",
+                    transition: "all .2s",
+                  }}
+                  onMouseEnter={e => { e.currentTarget.style.background = "rgba(212,160,23,0.08)"; }}
+                  onMouseLeave={e => { e.currentTarget.style.background = "transparent"; }}
+                >
+                  LOAD MORE ({viewedStocks.length - visibleCount} remaining)
+                </button>
+              </div>
+            )}
+            </>
           )
         ) : (
           /* ── ALL STOCKS TAB ── */
@@ -348,16 +385,38 @@ Deep-dive fundamental analysis on quality compounders. FY30 price targets. Indep
             </span>
           </div>
 
-          {/* Active grid */}
+          {/* Active grid — paginated 6 at a time */}
           <div className="ru-active-grid" style={{
             display: "grid",
             gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 340px), 1fr))",
-            gap: 16, marginBottom: 32,
+            gap: 16, marginBottom: 20,
           }}>
-            {activeStocks.map((s, i) => (
+            {activeStocks.slice(0, visibleCount).map((s, i) => (
               <StockTile key={s.name} stock={s} delay={i * 90} pal={pal} viewed={viewedTickers.has(s.stockId)}/>
             ))}
           </div>
+
+          {/* Load More — active stocks */}
+          {visibleCount < activeStocks.length && (
+            <div style={{ textAlign: "center", marginBottom: 32 }}>
+              <button
+                onClick={loadMore}
+                style={{
+                  background: "transparent",
+                  border: `1px solid ${GOLD}`,
+                  color: GOLD,
+                  padding: "11px 36px", borderRadius: 999,
+                  fontWeight: 800, fontSize: 11, letterSpacing: "0.18em",
+                  cursor: "pointer", fontFamily: "'DM Sans',sans-serif",
+                  transition: "all .2s",
+                }}
+                onMouseEnter={e => { e.currentTarget.style.background = "rgba(212,160,23,0.08)"; }}
+                onMouseLeave={e => { e.currentTarget.style.background = "transparent"; }}
+              >
+                LOAD MORE ({activeStocks.length - visibleCount} remaining)
+              </button>
+            </div>
+          )}
 
           {/* Coming soon label */}
           <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 16, marginTop: 8 }}>

@@ -1295,7 +1295,7 @@ export const STOCKS = {
 "ICICIAMC": {
   // ── Identity ──
   id:           "ICICIAMC",
-  name:         "ICICI Prudential Asset Management Company Ltd",
+  name:         "ICICI Prudential Asset Management Co Ltd",
   nse:          "ICICIAMC",
   bse:          "544658",
   indices:      "BSE 500 · BSE Financial Services",

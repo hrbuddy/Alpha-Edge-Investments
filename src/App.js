@@ -25,6 +25,8 @@ import QuantPage      from "./QuantPage";
 import ValueDashboard from "./ValueDashboard";
 import SizeDashboard  from "./SizeDashboard";
 
+import MyPortfolio from "./MyPortfolio";
+
 export const ThemeContext = createContext();
 
 function App() {
@@ -67,6 +69,8 @@ function App() {
               <Route path="/dcf/:ticker"       element={<GenericDCFTemplate />} />
               <Route path="/upgrade"           element={<UpgradePage />} />
               <Route path="/profile"           element={<ProfilePage />} />
+              <Route path="/my-portfolio"      element={<MyPortfolio />} />
+
 
               {/* Auto-generated stock routes */}
               {STOCK_ROUTES.map(({ path, stockId }) => (
