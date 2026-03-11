@@ -78,6 +78,23 @@ export default function Navbar() {
   const [wishlistOpen,      setWishlistOpen]      = useState(false);
   const [wishlistItems,     setWishlistItems]     = useState([]);
 
+  // ── Desktop sidebar ──
+  const [sidebarOpen, setSidebarOpen] = useState(() => {
+    try { return localStorage.getItem('vc-sidebar-open') !== 'false'; } catch { return true; }
+  });
+  const toggleSidebar = () => setSidebarOpen(o => {
+    const next = !o;
+    try { localStorage.setItem('vc-sidebar-open', String(next)); } catch {}
+    return next;
+  });
+
+  // Desktop sidebar nav state
+  const [deskResearchOpen,  setDeskResearchOpen]  = useState(false);
+  const [deskPortfolioOpen, setDeskPortfolioOpen] = useState(false);
+  const [deskQuantOpen,     setDeskQuantOpen]     = useState(false);
+  const [deskAboutOpen,     setDeskAboutOpen]     = useState(false);
+  const [deskStocksOpen,    setDeskStocksOpen]    = useState(false);
+
   // Refresh wishlist count on focus (user may have swiped in another tab)
   useEffect(() => {
     const refresh = () => { try { setWishlistCount(lsGetWishlist().length); } catch {} };
@@ -143,6 +160,24 @@ export default function Navbar() {
     return () => { document.removeEventListener("mousedown", fn); document.removeEventListener("touchstart", fn); };
   }, [menuOpen]);
 
+  // Push page content right on desktop when sidebar opens/closes
+  useEffect(() => {
+    const SIDEBAR_W = sidebarOpen ? 240 : 60;
+    const update = () => {
+      if (window.innerWidth > 640) {
+        document.body.style.paddingLeft = `${SIDEBAR_W}px`;
+        document.body.style.transition = 'padding-left 0.25s cubic-bezier(0.4,0,0.2,1)';
+        document.documentElement.style.setProperty('--sidebar-w', `${SIDEBAR_W}px`);
+      } else {
+        document.body.style.paddingLeft = '';
+        document.documentElement.style.removeProperty('--sidebar-w');
+      }
+    };
+    update();
+    window.addEventListener('resize', update);
+    return () => window.removeEventListener('resize', update);
+  }, [sidebarOpen]);
+
   // scroll-to-top tracking
   useEffect(() => {
     const onScroll = () => setScrollY(window.scrollY);
@@ -158,6 +193,11 @@ export default function Navbar() {
   const inputText = isDark ? "#c8dae8"               : "#0D1B2A";
   const inputBg   = isDark ? "rgba(212,160,23,0.08)" : "rgba(212,160,23,0.1)";
   const qnavBg    = isDark ? "rgba(10,21,36,0.96)"  : "rgba(240,237,230,0.97)";
+
+  const isActive = (path) => {
+    if (path === '/') return location.pathname === '/';
+    return location.pathname.startsWith(path);
+  };
 
   const filtered = SEARCH_ITEMS.filter(s =>
     s.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -270,6 +310,28 @@ export default function Navbar() {
         /* Reduce the large top-padding on every page's header section */
         .ae-page-header { padding-top: 20px !important; }
 
+        /* ── Sidebar tooltip ── */
+        .sb-link:hover .sb-tooltip { opacity: 1 !important; pointer-events: none; }
+        .sb-tooltip {
+          position: absolute; left: calc(100% + 10px); top: 50%; transform: translateY(-50%);
+          background: rgba(6,14,26,0.97); color: #D4A017;
+          padding: 5px 10px; border-radius: 7px;
+          font-size: 11px; font-weight: 700; letter-spacing: 1px;
+          white-space: nowrap; border: 1px solid rgba(212,160,23,0.25);
+          font-family: 'DM Sans', sans-serif; z-index: 999999;
+          opacity: 0; transition: opacity .15s;
+          box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+        }
+        .sb-scroll::-webkit-scrollbar { width: 3px; }
+        .sb-scroll::-webkit-scrollbar-track { background: transparent; }
+        .sb-scroll::-webkit-scrollbar-thumb { background: rgba(212,160,23,0.2); border-radius: 3px; }
+        .sb-scroll::-webkit-scrollbar-thumb:hover { background: rgba(212,160,23,0.4); }
+        .sb-section-label {
+          font-size: 8px; font-weight: 800; letter-spacing: 2px;
+          color: rgba(212,160,23,0.3); font-family: 'DM Sans', sans-serif;
+          padding: 10px 18px 4px; text-transform: uppercase;
+        }
+
         /* ── DESKTOP ── */
         @media(min-width:641px){
           .hamburger-btn{display:none !important;}
@@ -284,6 +346,11 @@ export default function Navbar() {
           .nav-btn-light{border:1px solid rgba(13,27,42,0.10) !important;background:transparent !important;}
           .theme-btn-desktop{display:flex !important;}
           .theme-btn-mobile{display:none !important;}
+          /* Hide ribbon — sidebar replaces it on desktop */
+          .ribbon-links{display:none !important;}
+          /* Show desktop sidebar */
+          .desktop-sidebar{display:flex !important;}
+          /* Page content shifts right with sidebar — handled via body.paddingLeft in useEffect */
         }
         /* ── MOBILE ── */
         @media(max-width:640px){
@@ -299,6 +366,7 @@ export default function Navbar() {
           .mobile-search-bar{display:flex;position:absolute;top:0;left:0;right:0;height:58px;align-items:center;padding:0 12px;gap:10px;animation:searchSlideIn .2s ease;z-index:20;background:inherit;}
           .mobile-search-results{display:block;position:absolute;top:58px;left:0;right:0;border-top:1px solid rgba(13,27,42,0.08);border-bottom:1px solid rgba(13,27,42,0.08);z-index:20;}
           .desktop-search-dropdown{display:none !important;}
+          .desktop-sidebar{display:none !important;}
         }
       `}</style>
 
@@ -829,6 +897,369 @@ export default function Navbar() {
           </div>
         )}
       </nav>
+
+      {/* ═══════════════════════════════════════════
+          DESKTOP LEFT SIDEBAR — hidden on mobile
+      ═══════════════════════════════════════════ */}
+      <div
+        className="desktop-sidebar"
+        style={{
+          display: 'none', // shown via CSS on desktop
+          position: 'fixed',
+          top: 58,
+          left: 0,
+          bottom: 0,
+          width: sidebarOpen ? 240 : 60,
+          zIndex: 99998,
+          background: isDark ? 'rgba(7,14,26,0.99)' : 'rgba(244,242,238,0.99)',
+          borderRight: `1px solid ${borderCol}`,
+          backdropFilter: 'blur(24px)',
+          WebkitBackdropFilter: 'blur(24px)',
+          transition: 'width 0.25s cubic-bezier(0.4,0,0.2,1)',
+          overflow: 'hidden',
+          flexDirection: 'column',
+          boxShadow: isDark ? '4px 0 24px rgba(0,0,0,0.4)' : '2px 0 12px rgba(13,27,42,0.07)',
+        }}
+      >
+        {/* Gold shimmer line at top */}
+        <div style={{ height: 1, background: 'linear-gradient(90deg,transparent,rgba(212,160,23,0.3),transparent)', flexShrink: 0 }}/>
+
+        {/* Scrollable nav links */}
+        <div className="sb-scroll" style={{ flex: 1, overflowY: 'auto', overflowX: 'hidden', paddingBottom: 12, paddingTop: 4 }}>
+
+          {sidebarOpen && <div className="sb-section-label">NAVIGATE</div>}
+
+          {/* ── SidebarLink helper (inline) ── */}
+          {[
+            { icon: '🏠', label: 'Home',               path: '/' },
+          ].map(({ icon, label, path }) => {
+            const active = isActive(path);
+            return (
+              <Link key={path} to={path} className="sb-link"
+                style={{
+                  display: 'flex', alignItems: 'center',
+                  gap: sidebarOpen ? 12 : 0,
+                  padding: sidebarOpen ? '10px 14px 10px 18px' : '11px 0',
+                  justifyContent: sidebarOpen ? 'flex-start' : 'center',
+                  textDecoration: 'none',
+                  background: active ? (isDark ? 'rgba(212,160,23,0.10)' : 'rgba(184,135,10,0.08)') : 'transparent',
+                  borderLeft: active ? `2.5px solid ${GOLD}` : '2.5px solid transparent',
+                  borderRadius: '0 8px 8px 0', marginRight: 8,
+                  transition: 'background .15s', position: 'relative',
+                }}
+                onMouseEnter={e => { if (!active) e.currentTarget.style.background = isDark ? 'rgba(212,160,23,0.06)' : 'rgba(184,135,10,0.05)'; }}
+                onMouseLeave={e => { if (!active) e.currentTarget.style.background = 'transparent'; }}
+              >
+                <span style={{ fontSize: 14, width: 22, textAlign: 'center', lineHeight: 1, flexShrink: 0 }}>{icon}</span>
+                {sidebarOpen && <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: '1px', color: active ? GOLD : textCol, fontFamily: "'DM Sans',sans-serif", whiteSpace: 'nowrap' }}>{label}</span>}
+                {!sidebarOpen && <span className="sb-tooltip">{label}</span>}
+              </Link>
+            );
+          })}
+
+          {/* Research Universe accordion */}
+          {(() => {
+            const active = isActive('/research-universe') || isActive('/dcf');
+            return (
+              <div>
+                <button onClick={() => { if (!sidebarOpen) { setSidebarOpen(true); } setDeskResearchOpen(o => !o); }}
+                  className="sb-link"
+                  style={{
+                    width: '100%', display: 'flex', alignItems: 'center',
+                    gap: sidebarOpen ? 12 : 0, padding: sidebarOpen ? '10px 14px 10px 18px' : '11px 0',
+                    justifyContent: sidebarOpen ? 'flex-start' : 'center',
+                    background: active ? (isDark ? 'rgba(212,160,23,0.10)' : 'rgba(184,135,10,0.08)') : 'transparent',
+                    borderLeft: active ? `2.5px solid ${GOLD}` : '2.5px solid transparent',
+                    borderRadius: '0 8px 8px 0', marginRight: 8,
+                    border: 'none', cursor: 'pointer', transition: 'background .15s', position: 'relative',
+                  }}
+                  onMouseEnter={e => { if (!active) e.currentTarget.style.background = isDark ? 'rgba(212,160,23,0.06)' : 'rgba(184,135,10,0.05)'; }}
+                  onMouseLeave={e => { if (!active) e.currentTarget.style.background = 'transparent'; }}
+                >
+                  <span style={{ fontSize: 14, width: 22, textAlign: 'center', lineHeight: 1, flexShrink: 0 }}>🔬</span>
+                  {sidebarOpen && (<>
+                    <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: '1px', color: active ? GOLD : textCol, fontFamily: "'DM Sans',sans-serif", whiteSpace: 'nowrap', flex: 1, textAlign: 'left' }}>Research Universe</span>
+                    <span style={{ fontSize: 9, color: active ? GOLD : 'rgba(212,160,23,0.4)', transform: deskResearchOpen ? 'rotate(90deg)' : 'rotate(0deg)', transition: 'transform .2s', display: 'inline-block', marginRight: 4 }}>▶</span>
+                  </>)}
+                  {!sidebarOpen && <span className="sb-tooltip">Research</span>}
+                </button>
+                {deskResearchOpen && sidebarOpen && (
+                  <div style={{ borderLeft: '1px solid rgba(212,160,23,0.12)', marginLeft: 29, paddingLeft: 12 }}>
+                    {[{label:'All Stocks',path:'/research-universe'},{label:'Build DCF',path:'/dcf'}].map(({label,path}) => (
+                      <Link key={path} to={path} style={{ display:'flex', alignItems:'center', padding:'8px 8px 8px 4px', textDecoration:'none', borderRadius:6, transition:'background .15s', fontSize:11, fontWeight:700, color:textCol, fontFamily:"'DM Sans',sans-serif", letterSpacing:'0.5px' }}
+                        onMouseEnter={e => e.currentTarget.style.background=isDark?'rgba(212,160,23,0.06)':'rgba(184,135,10,0.05)'}
+                        onMouseLeave={e => e.currentTarget.style.background='transparent'}>{label}</Link>
+                    ))}
+                  </div>
+                )}
+              </div>
+            );
+          })()}
+
+          {/* Portfolio Simulator accordion */}
+          {(() => {
+            const active = isActive('/portfolio') || isActive('/my-portfolio');
+            return (
+              <div>
+                <button onClick={() => { if (!sidebarOpen) setSidebarOpen(true); setDeskPortfolioOpen(o => !o); }}
+                  className="sb-link"
+                  style={{
+                    width: '100%', display: 'flex', alignItems: 'center',
+                    gap: sidebarOpen ? 12 : 0, padding: sidebarOpen ? '10px 14px 10px 18px' : '11px 0',
+                    justifyContent: sidebarOpen ? 'flex-start' : 'center',
+                    background: active ? (isDark?'rgba(212,160,23,0.10)':'rgba(184,135,10,0.08)') : 'transparent',
+                    borderLeft: active ? `2.5px solid ${GOLD}` : '2.5px solid transparent',
+                    borderRadius: '0 8px 8px 0', marginRight: 8,
+                    border: 'none', cursor: 'pointer', transition: 'background .15s', position: 'relative',
+                  }}
+                  onMouseEnter={e => { if (!active) e.currentTarget.style.background=isDark?'rgba(212,160,23,0.06)':'rgba(184,135,10,0.05)'; }}
+                  onMouseLeave={e => { if (!active) e.currentTarget.style.background='transparent'; }}
+                >
+                  <span style={{ fontSize:14, width:22, textAlign:'center', lineHeight:1, flexShrink:0 }}>🗂️</span>
+                  {sidebarOpen && (<>
+                    <span style={{ fontSize:11, fontWeight:700, letterSpacing:'1px', color:active?GOLD:textCol, fontFamily:"'DM Sans',sans-serif", whiteSpace:'nowrap', flex:1, textAlign:'left' }}>Portfolio</span>
+                    <span style={{ fontSize:9, color:active?GOLD:'rgba(212,160,23,0.4)', transform:deskPortfolioOpen?'rotate(90deg)':'rotate(0deg)', transition:'transform .2s', display:'inline-block', marginRight:4 }}>▶</span>
+                  </>)}
+                  {!sidebarOpen && <span className="sb-tooltip">Portfolio</span>}
+                </button>
+                {deskPortfolioOpen && sidebarOpen && (
+                  <div style={{ borderLeft:'1px solid rgba(212,160,23,0.12)', marginLeft:29, paddingLeft:12 }}>
+                    {[{label:'Run Simulation',path:'/portfolio'},{label:'My Portfolios',path:'/my-portfolio'}].map(({label,path}) => (
+                      <Link key={path} to={path} style={{ display:'flex', alignItems:'center', padding:'8px 8px 8px 4px', textDecoration:'none', borderRadius:6, transition:'background .15s', fontSize:11, fontWeight:700, color:textCol, fontFamily:"'DM Sans',sans-serif" }}
+                        onMouseEnter={e => e.currentTarget.style.background=isDark?'rgba(212,160,23,0.06)':'rgba(184,135,10,0.05)'}
+                        onMouseLeave={e => e.currentTarget.style.background='transparent'}>{label}</Link>
+                    ))}
+                  </div>
+                )}
+              </div>
+            );
+          })()}
+
+          {/* Quant Hub accordion */}
+          {(() => {
+            const active = isActive('/quant') || isActive('/momentum') || isActive('/value') || isActive('/size');
+            return (
+              <div>
+                <button onClick={() => { if (!sidebarOpen) setSidebarOpen(true); setDeskQuantOpen(o => !o); }}
+                  className="sb-link"
+                  style={{
+                    width:'100%', display:'flex', alignItems:'center',
+                    gap:sidebarOpen?12:0, padding:sidebarOpen?'10px 14px 10px 18px':'11px 0',
+                    justifyContent:sidebarOpen?'flex-start':'center',
+                    background:active?(isDark?'rgba(212,160,23,0.10)':'rgba(184,135,10,0.08)'):'transparent',
+                    borderLeft:active?`2.5px solid ${GOLD}`:'2.5px solid transparent',
+                    borderRadius:'0 8px 8px 0', marginRight:8,
+                    border:'none', cursor:'pointer', transition:'background .15s', position:'relative',
+                  }}
+                  onMouseEnter={e => { if (!active) e.currentTarget.style.background=isDark?'rgba(212,160,23,0.06)':'rgba(184,135,10,0.05)'; }}
+                  onMouseLeave={e => { if (!active) e.currentTarget.style.background='transparent'; }}
+                >
+                  <span style={{ fontSize:15, width:22, textAlign:'center', lineHeight:1, flexShrink:0, fontFamily:'serif', fontWeight:900, color:active?GOLD:(isDark?textCol:'#1E3A52') }}>π</span>
+                  {sidebarOpen && (<>
+                    <span style={{ fontSize:11, fontWeight:700, letterSpacing:'1px', color:active?GOLD:textCol, fontFamily:"'DM Sans',sans-serif", whiteSpace:'nowrap', flex:1, textAlign:'left' }}>Quant Hub</span>
+                    <span style={{ fontSize:9, color:active?GOLD:'rgba(212,160,23,0.4)', transform:deskQuantOpen?'rotate(90deg)':'rotate(0deg)', transition:'transform .2s', display:'inline-block', marginRight:4 }}>▶</span>
+                  </>)}
+                  {!sidebarOpen && <span className="sb-tooltip">Quant Hub</span>}
+                </button>
+                {deskQuantOpen && sidebarOpen && (
+                  <div style={{ borderLeft:'1px solid rgba(212,160,23,0.12)', marginLeft:29, paddingLeft:12 }}>
+                    {QUANT_SUB_LINKS.map(q => (
+                      <Link key={q.label} to={q.live?q.path:'#'}
+                        style={{ display:'flex', alignItems:'center', gap:6, padding:'8px 8px 8px 4px', textDecoration:'none', borderRadius:6, transition:'background .15s', opacity:q.live?1:0.38, pointerEvents:q.live?'auto':'none', fontSize:11, fontWeight:700, color:textCol, fontFamily:"'DM Sans',sans-serif" }}
+                        onMouseEnter={e => { if(q.live) e.currentTarget.style.background=isDark?'rgba(212,160,23,0.06)':'rgba(184,135,10,0.05)'; }}
+                        onMouseLeave={e => e.currentTarget.style.background='transparent'}>
+                        <span style={{ fontSize:11 }}>{q.icon}</span>{q.label}
+                        {!q.live && <span style={{ fontSize:8, fontWeight:800, color:MUTED, letterSpacing:'1px', marginLeft:'auto' }}>SOON</span>}
+                      </Link>
+                    ))}
+                  </div>
+                )}
+              </div>
+            );
+          })()}
+
+          {/* Macro */}
+          {[{ icon:'📊', label:'Macro Dashboard', path:'/macro' }, { icon:'⚡', label:'Discover Stocks', path:'/discover' }].map(({ icon, label, path }) => {
+            const active = isActive(path);
+            return (
+              <Link key={path} to={path} className="sb-link"
+                style={{
+                  display:'flex', alignItems:'center', gap:sidebarOpen?12:0,
+                  padding:sidebarOpen?'10px 14px 10px 18px':'11px 0',
+                  justifyContent:sidebarOpen?'flex-start':'center',
+                  textDecoration:'none',
+                  background:active?(isDark?'rgba(212,160,23,0.10)':'rgba(184,135,10,0.08)'):'transparent',
+                  borderLeft:active?`2.5px solid ${GOLD}`:'2.5px solid transparent',
+                  borderRadius:'0 8px 8px 0', marginRight:8,
+                  transition:'background .15s', position:'relative',
+                }}
+                onMouseEnter={e => { if (!active) e.currentTarget.style.background=isDark?'rgba(212,160,23,0.06)':'rgba(184,135,10,0.05)'; }}
+                onMouseLeave={e => { if (!active) e.currentTarget.style.background='transparent'; }}
+              >
+                <span style={{ fontSize:14, width:22, textAlign:'center', lineHeight:1, flexShrink:0 }}>{icon}</span>
+                {sidebarOpen && <span style={{ fontSize:11, fontWeight:700, letterSpacing:'1px', color:active?GOLD:textCol, fontFamily:"'DM Sans',sans-serif", whiteSpace:'nowrap' }}>{label}</span>}
+                {!sidebarOpen && <span className="sb-tooltip">{label}</span>}
+              </Link>
+            );
+          })}
+
+          {/* About Us accordion */}
+          {(() => {
+            const active = isActive('/about') || isActive('/philosophy') || isActive('/terms');
+            return (
+              <div>
+                <button onClick={() => { if (!sidebarOpen) setSidebarOpen(true); setDeskAboutOpen(o => !o); }}
+                  className="sb-link"
+                  style={{
+                    width:'100%', display:'flex', alignItems:'center',
+                    gap:sidebarOpen?12:0, padding:sidebarOpen?'10px 14px 10px 18px':'11px 0',
+                    justifyContent:sidebarOpen?'flex-start':'center',
+                    background:active?(isDark?'rgba(212,160,23,0.10)':'rgba(184,135,10,0.08)'):'transparent',
+                    borderLeft:active?`2.5px solid ${GOLD}`:'2.5px solid transparent',
+                    borderRadius:'0 8px 8px 0', marginRight:8,
+                    border:'none', cursor:'pointer', transition:'background .15s', position:'relative',
+                  }}
+                  onMouseEnter={e => { if (!active) e.currentTarget.style.background=isDark?'rgba(212,160,23,0.06)':'rgba(184,135,10,0.05)'; }}
+                  onMouseLeave={e => { if (!active) e.currentTarget.style.background='transparent'; }}
+                >
+                  <span style={{ fontSize:14, width:22, textAlign:'center', lineHeight:1, flexShrink:0 }}>👥</span>
+                  {sidebarOpen && (<>
+                    <span style={{ fontSize:11, fontWeight:700, letterSpacing:'1px', color:active?GOLD:textCol, fontFamily:"'DM Sans',sans-serif", whiteSpace:'nowrap', flex:1, textAlign:'left' }}>About Us</span>
+                    <span style={{ fontSize:9, color:active?GOLD:'rgba(212,160,23,0.4)', transform:deskAboutOpen?'rotate(90deg)':'rotate(0deg)', transition:'transform .2s', display:'inline-block', marginRight:4 }}>▶</span>
+                  </>)}
+                  {!sidebarOpen && <span className="sb-tooltip">About Us</span>}
+                </button>
+                {deskAboutOpen && sidebarOpen && (
+                  <div style={{ borderLeft:'1px solid rgba(212,160,23,0.12)', marginLeft:29, paddingLeft:12 }}>
+                    {ABOUT_SUB_LINKS.map(a => (
+                      <Link key={a.label} to={a.path} style={{ display:'flex', alignItems:'center', gap:6, padding:'8px 8px 8px 4px', textDecoration:'none', borderRadius:6, transition:'background .15s', fontSize:11, fontWeight:700, color:textCol, fontFamily:"'DM Sans',sans-serif" }}
+                        onMouseEnter={e => e.currentTarget.style.background=isDark?'rgba(212,160,23,0.06)':'rgba(184,135,10,0.05)'}
+                        onMouseLeave={e => e.currentTarget.style.background='transparent'}>
+                        <span style={{ fontSize:11 }}>{a.icon}</span>{a.label}
+                      </Link>
+                    ))}
+                  </div>
+                )}
+              </div>
+            );
+          })()}
+
+          {/* All Stocks accordion */}
+          {(() => {
+            return (
+              <div>
+                <button onClick={() => { if (!sidebarOpen) setSidebarOpen(true); setDeskStocksOpen(o => !o); }}
+                  className="sb-link"
+                  style={{
+                    width:'100%', display:'flex', alignItems:'center',
+                    gap:sidebarOpen?12:0, padding:sidebarOpen?'10px 14px 10px 18px':'11px 0',
+                    justifyContent:sidebarOpen?'flex-start':'center',
+                    background:'transparent',
+                    borderLeft:'2.5px solid transparent',
+                    borderRadius:'0 8px 8px 0', marginRight:8,
+                    border:'none', cursor:'pointer', transition:'background .15s', position:'relative',
+                  }}
+                  onMouseEnter={e => { e.currentTarget.style.background=isDark?'rgba(212,160,23,0.06)':'rgba(184,135,10,0.05)'; }}
+                  onMouseLeave={e => { e.currentTarget.style.background='transparent'; }}
+                >
+                  <span style={{ fontSize:14, width:22, textAlign:'center', lineHeight:1, flexShrink:0 }}>📈</span>
+                  {sidebarOpen && (<>
+                    <span style={{ fontSize:11, fontWeight:700, letterSpacing:'1px', color:textCol, fontFamily:"'DM Sans',sans-serif", whiteSpace:'nowrap', flex:1, textAlign:'left' }}>All Stocks</span>
+                    <span style={{ fontSize:9, color:'rgba(212,160,23,0.4)', transform:deskStocksOpen?'rotate(90deg)':'rotate(0deg)', transition:'transform .2s', display:'inline-block', marginRight:4 }}>▶</span>
+                  </>)}
+                  {!sidebarOpen && <span className="sb-tooltip">All Stocks</span>}
+                </button>
+                {deskStocksOpen && sidebarOpen && (
+                  <div style={{ borderLeft:'1px solid rgba(212,160,23,0.12)', marginLeft:29, paddingLeft:12 }}>
+                    {STOCK_ROUTES.map(({ path, stockId }) => {
+                      const s = STOCKS[stockId];
+                      return (
+                        <Link key={stockId} to={path}
+                          style={{ display:'flex', justifyContent:'space-between', alignItems:'center', padding:'8px 6px 8px 4px', textDecoration:'none', borderRadius:6, transition:'background .15s' }}
+                          onMouseEnter={e => e.currentTarget.style.background=isDark?'rgba(212,160,23,0.07)':'rgba(184,135,10,0.06)'}
+                          onMouseLeave={e => e.currentTarget.style.background='transparent'}>
+                          <div>
+                            <div style={{ fontSize:11, fontWeight:700, color:isDark?'#c8dae8':'#0D1B2A', fontFamily:"'DM Sans',sans-serif" }}>{s.name}</div>
+                            <div style={{ fontSize:8, color:isDark?'rgba(212,160,23,0.5)':'#4A6B82', letterSpacing:'0.8px', marginTop:1, fontFamily:"'DM Sans',sans-serif" }}>NSE: {s.nse}</div>
+                          </div>
+                          <span style={{ fontSize:8, fontWeight:800, color:isDark?GOLD:'#B8870A', background:isDark?'rgba(212,160,23,0.1)':'rgba(184,135,10,0.07)', padding:'2px 7px', borderRadius:999, letterSpacing:'0.8px', fontFamily:"'DM Sans',sans-serif", flexShrink:0, whiteSpace:'nowrap' }}>GO →</span>
+                        </Link>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+            );
+          })()}
+
+        </div>{/* end scrollable */}
+
+        {/* ── Bottom: Theme + Auth ── */}
+        <div style={{ borderTop:`1px solid ${isDark?'rgba(212,160,23,0.1)':'rgba(13,27,42,0.07)'}`, paddingTop:4, paddingBottom:8, flexShrink:0 }}>
+          {/* Theme toggle */}
+          <button onClick={toggleTheme} className="sb-link"
+            style={{ width:'100%', display:'flex', alignItems:'center', gap:sidebarOpen?12:0, padding:sidebarOpen?'10px 18px':'10px 0', justifyContent:sidebarOpen?'flex-start':'center', background:'none', border:'none', cursor:'pointer', transition:'background .15s', position:'relative' }}
+            onMouseEnter={e => e.currentTarget.style.background=isDark?'rgba(212,160,23,0.06)':'rgba(184,135,10,0.05)'}
+            onMouseLeave={e => e.currentTarget.style.background='transparent'}
+          >
+            <span style={{ fontSize:15, width:22, textAlign:'center', lineHeight:1, flexShrink:0 }}>{isDark?'☀️':'🌙'}</span>
+            {sidebarOpen && <span style={{ fontSize:11, fontWeight:700, letterSpacing:'1px', color:textCol, fontFamily:"'DM Sans',sans-serif", whiteSpace:'nowrap' }}>{isDark?'Light Mode':'Dark Mode'}</span>}
+            {!sidebarOpen && <span className="sb-tooltip">{isDark?'Light Mode':'Dark Mode'}</span>}
+          </button>
+          {/* Sign out */}
+          {user && (
+            <button onClick={signOut} className="sb-link"
+              style={{ width:'100%', display:'flex', alignItems:'center', gap:sidebarOpen?12:0, padding:sidebarOpen?'9px 18px':'9px 0', justifyContent:sidebarOpen?'flex-start':'center', background:'none', border:'none', cursor:'pointer', transition:'background .15s', position:'relative' }}
+              onMouseEnter={e => e.currentTarget.style.background=isDark?'rgba(212,160,23,0.06)':'rgba(184,135,10,0.05)'}
+              onMouseLeave={e => e.currentTarget.style.background='transparent'}
+            >
+              <span style={{ fontSize:14, width:22, textAlign:'center', lineHeight:1, flexShrink:0, color:'rgba(212,160,23,0.4)' }}>→</span>
+              {sidebarOpen && <span style={{ fontSize:11, fontWeight:600, color:'rgba(212,160,23,0.4)', fontFamily:"'DM Sans',sans-serif", letterSpacing:'0.5px', whiteSpace:'nowrap' }}>Sign out</span>}
+              {!sidebarOpen && <span className="sb-tooltip">Sign out</span>}
+            </button>
+          )}
+          {!user && sidebarOpen && (
+            <div style={{ padding:'8px 14px 4px' }}>
+              <Link to="/signup" style={{ display:'block', textAlign:'center', background:isDark?'rgba(212,160,23,0.12)':'#0D1B2A', color:isDark?GOLD:'#FFFFFF', border:isDark?'1px solid rgba(212,160,23,0.3)':'none', borderRadius:8, padding:'10px 14px', fontSize:10, fontWeight:800, letterSpacing:'1.2px', fontFamily:"'DM Sans',sans-serif", textDecoration:'none', transition:'opacity .15s' }}
+                onMouseEnter={e => e.currentTarget.style.opacity='0.85'}
+                onMouseLeave={e => e.currentTarget.style.opacity='1'}>
+                CREATE FREE ACCOUNT
+              </Link>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Sidebar collapse/expand chevron button */}
+      <button
+        className="desktop-sidebar"
+        onClick={toggleSidebar}
+        title={sidebarOpen ? 'Collapse sidebar' : 'Expand sidebar'}
+        style={{
+          position: 'fixed',
+          top: 58 + 20,
+          left: (sidebarOpen ? 240 : 60) - 12,
+          width: 24, height: 24,
+          borderRadius: '50%',
+          background: isDark ? 'rgba(10,21,36,0.97)' : 'rgba(248,247,244,0.97)',
+          border: `1px solid ${borderCol}`,
+          cursor: 'pointer',
+          display: 'none', // shown via CSS on desktop
+          alignItems: 'center',
+          justifyContent: 'center',
+          zIndex: 99999,
+          transition: `left 0.25s cubic-bezier(0.4,0,0.2,1), background .2s`,
+          boxShadow: isDark ? '0 2px 12px rgba(0,0,0,0.5)' : '0 2px 8px rgba(13,27,42,0.12)',
+        }}
+        onMouseEnter={e => { e.currentTarget.style.background = 'rgba(212,160,23,0.12)'; }}
+        onMouseLeave={e => { e.currentTarget.style.background = isDark ? 'rgba(10,21,36,0.97)' : 'rgba(248,247,244,0.97)'; }}
+      >
+        <svg width="10" height="10" viewBox="0 0 10 10" fill="none"
+          style={{ transition: 'transform 0.25s cubic-bezier(0.4,0,0.2,1)', transform: sidebarOpen ? 'rotate(0deg)' : 'rotate(180deg)' }}>
+          <path d="M6.5 2L3.5 5L6.5 8" stroke={isDark ? GOLD : '#B8870A'} strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/>
+        </svg>
+      </button>
+
     {/* ── Wishlist sheet ── */}
     {wishlistOpen && (
       <>

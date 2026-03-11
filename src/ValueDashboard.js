@@ -1,8 +1,8 @@
 /**
  * ValueDashboard.js  — Value Factor  (/value)
  *
- * Data: Firestore stock_fundamentals/{ticker} → factors.value_score
- * Meta: Firestore stock_fundamentals/_meta    → { as_of: "YYYY-MM-DD" }
+ * Data: Firestore factor_scores/_latest → factor_scores/{YYYY-MM}.value_scores
+ * Meta: factor_scores/_latest → { month, date }
  *
  * Score: +1 = DEEP VALUE (cheap),  -1 = HIGH GROWTH (expensive)
  */
@@ -13,7 +13,7 @@ import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip,
   ResponsiveContainer, Cell, ReferenceLine,
 } from "recharts";
-import { collection, getDocs } from "firebase/firestore";
+import { doc, getDoc } from "firebase/firestore";
 import { db } from "./firebase";
 
 const NAVY   = "#0D1B2A";
@@ -175,21 +175,28 @@ export default function ValueDashboard() {
     async function load() {
       setLoading(true); setError(null);
       try {
-        const snap = await getDocs(collection(db, "stock_fundamentals"));
-        const raw = [];
-        let metaAsOf = null;
-        snap.forEach(d => {
-          if (d.id === "_meta") { metaAsOf = d.data()?.as_of ?? null; return; }
-          const score = d.data()?.factors?.value_score;
-          if (score != null) raw.push({ ticker: d.id, norm_score: score });
-        });
+        // 1. Get the latest month key from _latest pointer
+        const latestSnap = await getDoc(doc(db, "factor_scores", "_latest"));
+        if (!latestSnap.exists()) throw new Error("_latest pointer missing");
+        const { month, date: asOfDate } = latestSnap.data();
+
+        // 2. Fetch that month's scores document
+        const monthSnap = await getDoc(doc(db, "factor_scores", month));
+        if (!monthSnap.exists()) throw new Error(`factor_scores/${month} missing`);
+        const monthData = monthSnap.data();
+
+        // 3. Map array → { ticker, norm_score, rank }
+        const raw = (monthData.value_scores || []).map(row => ({
+          ticker:     row.ticker,
+          norm_score: row.score,
+          rank:       row.rank,
+        }));
+
         if (!cancelled) {
           if (raw.length >= 5) {
-            raw.sort((a, b) => b.norm_score - a.norm_score);
-            raw.forEach((s, i) => { s.rank = i + 1; });
             setScores(raw);
             setIsLive(true);
-            setAsOf(metaAsOf);
+            setAsOf(asOfDate ?? monthData.date ?? null);
           } else {
             setScores(MOCK); setIsLive(false);
           }
